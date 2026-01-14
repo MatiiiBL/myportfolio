@@ -1,0 +1,154 @@
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  background: #1a1a1a;
+  color: white;
+  
+  position: fixed;
+  top: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 4rem);
+  max-width: 1400px;
+  border-radius: 50px;
+  z-index: 1000;
+  border-color: #555;
+}
+
+.toolbar-logo {
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.toolbar-links {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  gap: 2rem;
+  margin: 0;
+  padding: 0;
+}
+
+.toolbar-links a {
+  color: #a1a1a1;
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: color 0.2s;
+}
+
+.toolbar-links a:hover {
+  color: white;
+
+}
+
+.toolbar-links a {
+  display: inline-block;
+  position: relative;
+}
+
+.toolbar-links a::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  transform: scaleX(0);
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background-color: white;
+  transform-origin: bottom center;
+  transition: transform 0.25s ease-out;
+}
+
+.toolbar-links a:hover::after {
+  transform: scaleX(1);
+}
+
+
+.btn-contact {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.2rem;
+  background: transparent;
+  border: 1px solid #333;
+  border-radius: 50px;
+  color: white;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.btn-contact:hover {
+  border-color: #555;
+}
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .toolbar {
+    padding: 0.8rem 1.2rem;
+  }
+  
+  .toolbar-links {
+    gap: 1.5rem;
+  }
+  
+  .toolbar-links a {
+    font-size: 0.9rem;
+  }
+  
+  .btn-contact {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .toolbar {
+    padding: 0.8rem 1rem;
+    border-radius: 25px;
+    top: 0.5rem;
+    width: calc(100% - 2rem);
+  }
+  
+  .toolbar-logo {
+    font-size: 1rem;
+  }
+  
+  .toolbar-links {
+    gap: 1rem;
+  }
+  
+  .toolbar-links a {
+    font-size: 0.85rem;
+  }
+  
+  .btn-contact {
+    padding: 0.5rem 0.8rem;
+    font-size: 0.85rem;
+    gap: 0.3rem;
+  }
+}
+
+/* Small Mobile */
+@media (max-width: 480px) {
+  .toolbar {
+    padding: 0.6rem 0.8rem;
+    width: calc(100% - 1.5rem);
+  }
+  
+  .toolbar-links {
+    gap: 0.5rem;
+  }
+  
+  .toolbar-links li:not(:last-child) a {
+    font-size: 0.75rem;
+  }
+  
+  .btn-contact {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.75rem;
+  }
+}
