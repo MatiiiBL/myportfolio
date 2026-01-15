@@ -1,8 +1,55 @@
 .contact-section {
-  background: linear-gradient(135deg, #1a3a52 0%, #2d4a5f 100%);
+  background: #f5f5f5;
   padding: 6rem 2rem;
   position: relative;
   overflow: hidden;
+}
+
+.contact-section::before,
+.contact-section::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.4;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.contact-section::before {
+  width: 550px;
+  height: 550px;
+  background: radial-gradient(circle, #fce7f3 0%, #f8b4d9 50%, transparent 100%);
+  top: -100px;
+  left: -150px;
+  animation: floatContact 5s ease-in-out infinite;
+}
+
+.contact-section::after {
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, #dbeafe 0%, #93c5fd 50%, transparent 100%);
+  bottom: -100px;
+  right: -150px;
+  animation: floatContact 6s ease-in-out infinite reverse;
+}
+
+@keyframes floatContact {
+  0% {
+    transform: translate(0, 0) scale(1) rotate(0deg);
+  }
+  25% {
+    transform: translate(150px, -120px) scale(1.2) rotate(90deg);
+  }
+  50% {
+    transform: translate(-80px, 100px) scale(0.85) rotate(180deg);
+  }
+  75% {
+    transform: translate(-150px, -80px) scale(1.15) rotate(270deg);
+  }
+  100% {
+    transform: translate(0, 0) scale(1) rotate(360deg);
+  }
 }
 
 .contact-content {
@@ -12,34 +59,59 @@
   grid-template-columns: 1fr 1fr;
   gap: 4rem;
   align-items: center;
+  position: relative;
+  z-index: 1;
 }
 
 .contact-text {
-  color: white;
+  color: #333;
 }
 
 .contact-title {
   font-size: 3.5rem;
   font-weight: 500;
   margin: 0 0 1.5rem 0;
-  color: white;
+  color: #1a1a1a;
+  transition: all 0.4s ease;
+  cursor: default;
+  position: relative;
+}
+
+.contact-title:hover {
+  background: linear-gradient(135deg, #ff6b4a 0%, #00bfa5 50%, #9c27b0 100%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmerTitle 1.5s ease-in-out infinite;
+  transform: translateY(-5px);
+  filter: drop-shadow(0 8px 20px rgba(255, 107, 74, 0.5));
+}
+
+@keyframes shimmerTitle {
+  0%, 100% {
+    background-position: 0% center;
+  }
+  50% {
+    background-position: 200% center;
+  }
 }
 
 .contact-description {
   font-size: 1.1rem;
   line-height: 1.7;
-  color: #e0e0e0;
+  color: #666;
   margin: 0 0 1.5rem 0;
 }
 
 .highlight {
-  color: #80cbc4;
+  color: #ff8a75;
   font-weight: 500;
 }
 
 .contact-subtitle {
   font-size: 1rem;
-  color: #b0b0b0;
+  color: #888;
   margin: 0;
 }
 
@@ -66,6 +138,54 @@
   font-size: 0.9rem;
   font-weight: 500;
   color: #333;
+}
+
+.animated-label {
+  position: relative;
+  display: inline-block;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  cursor: default;
+}
+
+.animated-label::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #80cbc4, #ffb4a2);
+  transition: width 0.4s ease;
+}
+
+.animated-label:hover {
+  color: #00bfa5;
+  transform: translateX(5px);
+}
+
+.animated-label:hover::after {
+  width: 100%;
+}
+
+.word-count {
+  font-size: 0.8rem;
+  color: #999;
+  font-weight: 400;
+  margin-left: 0.5rem;
+  transition: color 0.3s ease;
+}
+
+.error-message {
+  font-size: 0.85rem;
+  color: #ff6b6b;
+  margin-top: -0.3rem;
+  animation: shake 0.3s ease;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
 }
 
 .form-group input,
@@ -103,7 +223,7 @@
   justify-content: center;
   gap: 0.5rem;
   padding: 1rem 2rem;
-  background: #80cbc4;
+  background: linear-gradient(135deg, #ffb4a2 0%, #ff8a75 100%);
   color: white;
   border: none;
   border-radius: 50px;
@@ -112,12 +232,13 @@
   cursor: pointer;
   transition: all 0.3s ease;
   margin-top: 0.5rem;
+  box-shadow: 0 4px 15px rgba(255, 138, 117, 0.3);
 }
 
 .btn-submit:hover {
-  background: #66b5aa;
+  background: linear-gradient(135deg, #ff8a75 0%, #ff6b4a 100%);
   transform: translateY(-2px);
-  box-shadow: 0 10px 30px rgba(128, 203, 196, 0.3);
+  box-shadow: 0 10px 30px rgba(255, 107, 74, 0.4);
 }
 
 .btn-submit svg {
