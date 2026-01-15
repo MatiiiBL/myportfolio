@@ -11,7 +11,7 @@ function App() {
       <Toolbar />
       <main className="hero-section">
         <div className="hero-content">
-          <h1 className="hero-title">I'm Matias.</h1>
+          <h1 className="hero-title">I'm Matías.</h1>
           <p className="hero-subtitle">Welcome.</p>
           <p className="hero-description">
             Designing and engineering digital experiences that people can truly feel and enjoy.

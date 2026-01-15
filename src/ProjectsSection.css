@@ -29,7 +29,7 @@
   background: radial-gradient(circle, #fff4e6 0%, #ffd89b 50%, transparent 100%);
   top: 10%;
   right: -150px;
-  animation: floatSlow 16s ease-in-out infinite;
+  animation: floatSlow 6s ease-in-out infinite;
 }
 
 .projects-section::after {
@@ -38,7 +38,7 @@
   background: radial-gradient(circle, #e8f5e9 0%, #a5d6a7 50%, transparent 100%);
   bottom: 20%;
   left: -120px;
-  animation: floatSlow 19s ease-in-out infinite reverse;
+  animation: floatSlow 7s ease-in-out infinite reverse;
 }
 
 @keyframes floatSlow {

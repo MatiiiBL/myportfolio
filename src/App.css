@@ -33,7 +33,7 @@
   background: radial-gradient(circle, #ffe4e1 0%, #ffb4a2 50%, transparent 100%);
   top: -100px;
   left: -100px;
-  animation: float 12s ease-in-out infinite;
+  animation: float 5s ease-in-out infinite;
 }
 
 .hero-section::after {
@@ -42,7 +42,7 @@
   background: radial-gradient(circle, #e0f2f1 0%, #80cbc4 50%, transparent 100%);
   bottom: -50px;
   right: -50px;
-  animation: float 9s ease-in-out infinite reverse;
+  animation: float 4s ease-in-out infinite reverse;
 }
 
 @keyframes float {
