@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import './Toolbar.css'
 
 export default function Toolbar() {
@@ -31,12 +32,11 @@ export default function Toolbar() {
 
   return (
     <nav className={`toolbar ${!isVisible ? 'toolbar-hidden' : ''}`}>
-      <div className="toolbar-logo">Matias's Portfolio</div>
+      <Link to="/" className="toolbar-logo">Matias's Portfolio</Link>
       <ul className="toolbar-links">
-        <li><a href="#home">Home</a></li>
-        <li><a href="#about">About</a></li>
-        <li><a href="#work">Work</a></li>
-        <li><a href="#resume">Resume</a></li>
+        <li><Link to="/">Home</Link></li>
+        <li><Link to="/about">About</Link></li>
+        <li><Link to="/projects">Work</Link></li>
         <li>
           <button className="btn-contact">
             ✦ Get in touch
