@@ -72,23 +72,56 @@
 }
 
 .hero-title {
-  font-size: 4rem;
-  font-weight: 400;
-  color: #1a1a1a;
+  font-size: 4.5rem;
+  font-weight: 900;
   margin: 0 0 0.5rem 0;
   line-height: 1.2;
+  background: linear-gradient(
+    90deg,
+    #ff6b4a 0%,
+    #ffb4a2 25%,
+    #80cbc4 50%,
+    #ffb4a2 75%,
+    #ff6b4a 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmerHeroTitle 3s ease-in-out infinite, fadeInScale 0.8s ease-out;
+  letter-spacing: -0.02em;
+}
+
+@keyframes shimmerHeroTitle {
+  0%, 100% {
+    background-position: 0% center;
+  }
+  50% {
+    background-position: 200% center;
+  }
+}
+
+@keyframes fadeInScale {
+  0% {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .hero-subtitle {
   font-size: 1.1rem;
-  color: #999;
+  color: #666;
   margin: 0 0 2rem 0;
   font-weight: 400;
 }
 
 .hero-description {
   font-size: 1rem;
-  color: #999;
+  color: #666;
   line-height: 1.6;
   margin: 0 0 2.5rem 0;
   max-width: 600px;
