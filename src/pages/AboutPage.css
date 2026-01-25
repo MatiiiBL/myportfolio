@@ -29,7 +29,7 @@
 .about-hero::before {
   width: 550px;
   height: 550px;
-  background: radial-gradient(circle, #ffe4e1 0%, #ffb4a2 50%, transparent 100%);
+  background: radial-gradient(circle, #d1fae5 0%, #34d399 50%, transparent 100%);
   top: -100px;
   left: -150px;
   animation: floatHeroAbout 6s ease-in-out infinite;
@@ -38,7 +38,7 @@
 .about-hero::after {
   width: 500px;
   height: 500px;
-  background: radial-gradient(circle, #e0f2f1 0%, #80cbc4 50%, transparent 100%);
+  background: radial-gradient(circle, #fef3c7 0%, #fbbf24 50%, transparent 100%);
   bottom: -100px;
   right: -150px;
   animation: floatHeroAbout 8s ease-in-out infinite reverse;
@@ -76,11 +76,11 @@
   margin: 0 0 1rem 0;
   background: linear-gradient(
     90deg,
-    #ff6b4a 0%,
-    #ffb4a2 25%,
-    #80cbc4 50%,
-    #ffb4a2 75%,
-    #ff6b4a 100%
+    #10b981 0%,
+    #34d399 25%,
+    #fbbf24 50%,
+    #34d399 75%,
+    #10b981 100%
   );
   background-size: 200% 100%;
   -webkit-background-clip: text;
@@ -152,7 +152,7 @@
 }
 
 .scroll-indicator svg {
-  color: #ff6b4a;
+  color: #10b981;
 }
 
 @keyframes bounce {
@@ -229,6 +229,7 @@
   grid-template-columns: repeat(2, 1fr);
   gap: 2rem;
   align-items: start;
+  grid-auto-flow: dense;
 }
 
 .about-card {
@@ -244,18 +245,11 @@
   grid-column: 1 / -1;
 }
 
-/* Shift Experience card up to fill gap */
-.about-card.offset-up {
-  transform: translateY(-8rem);
-}
+/* Experience card positioning - no offset to prevent animation conflicts */
 
 .about-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
-}
-
-.about-card.offset-up:hover {
-  transform: translateY(calc(-8rem - 5px));
 }
 
 .card-title {
@@ -428,12 +422,8 @@
   }
   
   /* Remove offset on mobile to prevent overlap */
-  .about-card.offset-up {
-    transform: none;
-  }
-  
-  .about-card.offset-up:hover {
-    transform: translateY(-5px);
+  .about-grid > *:nth-child(4) {
+    grid-column: 1;
   }
   
   .card-title {
