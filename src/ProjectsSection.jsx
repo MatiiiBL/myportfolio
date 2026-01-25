@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import './ProjectsSection.css'
 import ScrollReveal from './components/ScrollReveal.jsx'
-import project1Image from './assets/project1.png'
+import project1Image from './assets/Project1.png'
 import project2Image from './assets/Project2.png'
 import project3Image from './assets/Project3.png'
 import project4Image from './assets/Project4.png'
