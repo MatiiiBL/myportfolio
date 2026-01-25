@@ -11,7 +11,7 @@ export default function Footer() {
             Software Engineer<br />
             Designing Backend and Frontend Services
           </p>
-          <a href="mcb2324@columbia.edu" className="footer-email">
+          <a href="mailto:mcb2324@columbia.edu" className="footer-email">
             mcb2324@columbia.edu
           </a>
         </div>
@@ -24,7 +24,7 @@ export default function Footer() {
               <a href="#contact" className="footer-link">Contact me</a>
             </div>
             <div className="footer-column">
-              <a href="www.linkedin.com/in/matias-blanco-uy" target="_blank" rel="noopener noreferrer" className="footer-link">LinkedIn</a>
+              <a href="https://www.linkedin.com/in/matias-blanco-uy/" target="_blank" rel="noopener noreferrer" className="footer-link">LinkedIn</a>
               <a href="https://github.com/MatiiiBL" target="_blank" rel="noopener noreferrer" className="footer-link">GitHub</a>
             </div>
           </div>

@@ -16,13 +16,13 @@ export default function HomePage() {
             Designing and engineering digital experiences that people can truly feel and enjoy.
           </p>
           <div className="hero-buttons">
-            <button className="btn-hero btn-contact-hero">
+            <a href="#/contact" className="btn-hero btn-contact-hero">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <rect x="2" y="4" width="20" height="16" rx="2"/>
                 <path d="M22 7l-10 7L2 7"/>
               </svg>
               Contact
-            </button>
+            </a>
             <button className="btn-hero btn-explore">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M19 9l-7 7-7-7"/>
