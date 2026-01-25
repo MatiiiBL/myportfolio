@@ -1,16 +1,85 @@
-# React + Vite
+# Matías Portfolio
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Welcome to my project for learning how to do a modern, responsive personal portfolio website built with React and Vite.
 
-Currently, two official plugins are available:
+🌐 **Live Demo:** [matiiibl.github.io/myportfolio](https://matiiibl.github.io/myportfolio/)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+![React](https://img.shields.io/badge/React-19.2.0-61DAFB?logo=react&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-7.2.5-646CFF?logo=vite&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-green)
 
-## React Compiler
+## ✨ Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Modern Design** - Clean and minimalist UI with smooth animations (The style is named Glassmorphic UI)
+- **Responsive** - Fully responsive design that works on all devices
+- **Interactive Cursor** - Custom cursor follower effect!!!
+- **Scroll Animations** - Elegant reveal animations on scroll!!!!!
+- **Fast Performance** - Built with Vite!
+- **SPA Routing** - Client-side routing with React Router!
 
-## Expanding the ESLint configuration
+## 🛠️ Tech Stack
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- **Framework:** React 19
+- **Build Tool:** Vite
+- **Routing:** React Router DOM
+- **Styling:** CSS3 with custom properties
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js (v18 or higher)
+- npm or yarn
+
+### Installation
+
+1. Clone the repository
+   ```bash
+   git clone https://github.com/MatiiiBL/myportfolio.git
+   cd myportfolio
+   ```
+
+2. Install dependencies
+   ```bash
+   npm install
+   ```
+
+3. Start the development server
+   ```bash
+   npm run dev
+   ```
+
+4. Open [http://localhost:5173/myportfolio/](http://localhost:5173/myportfolio/) in your browser
+
+## 📁 Project Structure
+
+```
+myportfolio/
+├── public/              # Static assets
+├── src/
+│   ├── assets/          # Images and media
+│   ├── components/      # Reusable components
+│   │   ├── ScrollReveal.jsx
+│   │   └── ScrollToTop.jsx
+│   ├── hooks/           # Custom React hooks
+│   │   └── useScrollReveal.js
+│   ├── pages/           # Page components
+│   │   ├── AboutPage.jsx
+│   │   ├── ContactPage.jsx
+│   │   ├── HomePage.jsx
+│   │   └── ProjectsPage.jsx
+│   ├── App.jsx          # Main app component
+│   ├── main.jsx         # App entry point
+│   └── *.css            # Component styles
+├── index.html
+├── vite.config.js
+└── package.json
+```
+
+## 📄 License
+
+This project is open source and available under the [MIT License](LICENSE).
+
+## 📬 Contact
+
+**Matías** - [Portfolio](https://matiiibl.github.io/myportfolio/)
