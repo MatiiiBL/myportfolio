@@ -1,0 +1,115 @@
+/* Base styles for scroll reveal */
+.scroll-reveal {
+  transition-property: opacity, transform;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Fade Up Animation */
+.scroll-reveal.fade-up {
+  opacity: 0;
+  transform: translateY(60px);
+}
+
+.scroll-reveal.fade-up.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Fade Down Animation */
+.scroll-reveal.fade-down {
+  opacity: 0;
+  transform: translateY(-60px);
+}
+
+.scroll-reveal.fade-down.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Fade Left Animation */
+.scroll-reveal.fade-left {
+  opacity: 0;
+  transform: translateX(-60px);
+}
+
+.scroll-reveal.fade-left.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Fade Right Animation */
+.scroll-reveal.fade-right {
+  opacity: 0;
+  transform: translateX(60px);
+}
+
+.scroll-reveal.fade-right.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Fade In (no movement) */
+.scroll-reveal.fade-in {
+  opacity: 0;
+}
+
+.scroll-reveal.fade-in.visible {
+  opacity: 1;
+}
+
+/* Scale Up Animation */
+.scroll-reveal.scale-up {
+  opacity: 0;
+  transform: scale(0.8);
+}
+
+.scroll-reveal.scale-up.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Scale Down Animation */
+.scroll-reveal.scale-down {
+  opacity: 0;
+  transform: scale(1.2);
+}
+
+.scroll-reveal.scale-down.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Rotate In Animation */
+.scroll-reveal.rotate-in {
+  opacity: 0;
+  transform: rotate(-10deg) scale(0.9);
+}
+
+.scroll-reveal.rotate-in.visible {
+  opacity: 1;
+  transform: rotate(0) scale(1);
+}
+
+/* Flip Animation */
+.scroll-reveal.flip-up {
+  opacity: 0;
+  transform: perspective(1000px) rotateX(20deg) translateY(40px);
+}
+
+.scroll-reveal.flip-up.visible {
+  opacity: 1;
+  transform: perspective(1000px) rotateX(0) translateY(0);
+}
+
+/* Blur In Animation */
+.scroll-reveal.blur-in {
+  opacity: 0;
+  filter: blur(10px);
+  transform: translateY(30px);
+}
+
+.scroll-reveal.blur-in.visible {
+  opacity: 1;
+  filter: blur(0);
+  transform: translateY(0);
+}
