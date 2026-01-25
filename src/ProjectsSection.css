@@ -278,7 +278,7 @@
   .project-card {
     grid-template-columns: 1fr;
     gap: 2rem;
-    margin-bottom: 4rem;
+    margin-bottom: 6rem;
     padding: 0;
   }
   
@@ -308,6 +308,10 @@
   .project-content {
     padding: 0;
     text-align: center;
+  }
+  
+  .project-link {
+    margin-bottom: 2rem;
   }
 }
 
