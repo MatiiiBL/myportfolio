@@ -1,0 +1,186 @@
+.contact-page {
+  background: #f5f5f5;
+  min-height: 100vh;
+  padding-top: 0;
+}
+
+.contact-hero {
+  background: #f5f5f5;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.contact-hero::before,
+.contact-hero::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.4;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.contact-hero::before {
+  width: 550px;
+  height: 550px;
+  background: radial-gradient(circle, #fecdd3 0%, #fb7185 50%, transparent 100%);
+  top: -100px;
+  left: -150px;
+  animation: floatHeroContact 6s ease-in-out infinite;
+}
+
+.contact-hero::after {
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, #ede9fe 0%, #a78bfa 50%, transparent 100%);
+  bottom: -100px;
+  right: -150px;
+  animation: floatHeroContact 8s ease-in-out infinite reverse;
+}
+
+@keyframes floatHeroContact {
+  0% {
+    transform: translate(0, 0) scale(1) rotate(0deg);
+  }
+  25% {
+    transform: translate(130px, -110px) scale(1.15) rotate(90deg);
+  }
+  50% {
+    transform: translate(-70px, 90px) scale(0.9) rotate(180deg);
+  }
+  75% {
+    transform: translate(-130px, -70px) scale(1.1) rotate(270deg);
+  }
+  100% {
+    transform: translate(0, 0) scale(1) rotate(360deg);
+  }
+}
+
+.contact-hero-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.contact-page-title {
+  font-size: 5rem;
+  font-weight: 900;
+  margin: 0 0 1rem 0;
+  background: linear-gradient(
+    90deg,
+    #e11d48 0%,
+    #fb7185 25%,
+    #a78bfa 50%,
+    #fb7185 75%,
+    #e11d48 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmerContactTitle 3s ease-in-out infinite, fadeInScaleContact 0.8s ease-out;
+  letter-spacing: -0.02em;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+@keyframes shimmerContactTitle {
+  0%, 100% {
+    background-position: 0% center;
+  }
+  50% {
+    background-position: 200% center;
+  }
+}
+
+@keyframes fadeInScaleContact {
+  0% {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.contact-page-subtitle {
+  font-size: 1.5rem;
+  color: #666;
+  margin: 0;
+  font-weight: 400;
+  animation: fadeInUpContact 0.8s ease-out 0.3s both;
+}
+
+@keyframes fadeInUpContact {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.contact-hero .scroll-indicator {
+  position: absolute;
+  bottom: 5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  opacity: 0.7;
+  animation: fadeInUpContact 0.8s ease-out 0.6s both, bounceContact 2s ease-in-out 1.4s infinite;
+}
+
+.contact-hero .scroll-indicator p {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  color: #666;
+}
+
+.contact-hero .scroll-indicator svg {
+  color: #e11d48;
+}
+
+@keyframes bounceContact {
+  0%, 100% {
+    transform: translateX(-50%) translateY(0);
+  }
+  50% {
+    transform: translateX(-50%) translateY(10px);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .contact-page-title {
+    font-size: 2.5rem;
+  }
+  
+  .contact-page-subtitle {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .contact-hero {
+    padding: 4rem 1.5rem 3rem;
+  }
+  
+  .contact-page-title {
+    font-size: 2rem;
+  }
+}
