@@ -4,12 +4,7 @@ import ScrollReveal from './components/ScrollReveal.jsx'
 import project1Image from './assets/project1.png'
 import project2Image from './assets/Project2.png'
 import project3Image from './assets/Project3.png'
-<<<<<<< HEAD
-import project4Image from './assets/project4.png'
-
-=======
 import project4Image from './assets/Project4.png'
->>>>>>> 15af1c31962a0d7858cd9ebfcb39d3ec84192222
 export default function ProjectsSection() {
   const projects = [
     {
