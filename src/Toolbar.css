@@ -147,12 +147,6 @@
     font-size: 0.75rem;
   }
   
-  /* Hide some navigation items on very small screens */
-  .toolbar-links li:nth-child(2),
-  .toolbar-links li:nth-child(4) {
-    display: none;
-  }
-  
   .btn-contact {
     padding: 0.4rem 0.7rem;
     font-size: 0.75rem;

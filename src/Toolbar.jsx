@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import './Toolbar.css'
 
 export default function Toolbar() {
   const [isVisible, setIsVisible] = useState(true)
   const [lastScrollY, setLastScrollY] = useState(0)
+  const navigate = useNavigate()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -38,7 +39,7 @@ export default function Toolbar() {
         <li><Link to="/about">About</Link></li>
         <li><Link to="/projects">Work</Link></li>
         <li>
-          <button className="btn-contact">
+          <button className="btn-contact" onClick={() => navigate('/contact')}>
             ✦ Get in touch
           </button>
         </li>
