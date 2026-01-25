@@ -1,7 +1,7 @@
 import './ProjectsSection.css'
 import project2Image from './assets/Project2.png'
 import project3Image from './assets/Project3.png'
-import project4Image from './assets/project4.png'
+import project4Image from './assets/Project4.png'
 export default function ProjectsSection() {
   const projects = [
     {
