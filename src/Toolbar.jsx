@@ -33,14 +33,19 @@ export default function Toolbar() {
 
   return (
     <nav className={`toolbar ${!isVisible ? 'toolbar-hidden' : ''}`}>
-      <Link to="/" className="toolbar-logo">Matias's Portfolio</Link>
+      <Link to="/" className="toolbar-logo">
+        <span className="logo-prompt">~/</span>matias<span className="logo-caret">_</span>
+      </Link>
       <ul className="toolbar-links">
-        <li><Link to="/">Home</Link></li>
-        <li><Link to="/about">About</Link></li>
-        <li><Link to="/projects">Work</Link></li>
+        <li><Link to="/">home</Link></li>
+        <li><Link to="/about">about</Link></li>
+        <li><Link to="/projects">work</Link></li>
         <li>
           <button className="btn-contact" onClick={() => navigate('/contact')}>
-            ✦ Get in touch
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+              <path d="M4 17l6-6-6-6M12 19h8"/>
+            </svg>
+            ./connect
           </button>
         </li>
       </ul>

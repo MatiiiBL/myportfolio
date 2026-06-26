@@ -12,8 +12,13 @@ export default function AboutPage() {
       <div className="about-page">
         <section className="about-hero">
           <div className="about-hero-content">
+            <p className="page-eyebrow">
+              <span className="prompt">~</span>
+              <span className="sep"> $ </span>
+              <span className="cmd">cat about.md</span>
+            </p>
             <h1 className="about-title">About Me</h1>
-            <p className="about-subtitle">Software Engineer & Creative Problem Solver</p>
+            <p className="about-subtitle">// Full-Stack Engineer &amp; Problem Solver</p>
           </div>
           <div className="scroll-indicator">
             <p></p>
@@ -70,6 +75,14 @@ export default function AboutPage() {
               <ScrollReveal animation="fade-left" delay={0.2} duration={0.8}>
                 <div className="about-card">
                   <h2 className="card-title">Experience</h2>
+                  <div className="experience-item">
+                    <h3>Y Combinator Startup School</h3>
+                    <p className="company">Y Combinator</p>
+                    <p className="duration">July, 2026</p>
+                    <p className="description">
+                      Accepted to join the SF
+                    </p>
+                  </div>
                   <div className="experience-item">
                     <h3>Software Developer</h3>
                     <p className="company">Kaiden Team (Uruguay, remote)</p>

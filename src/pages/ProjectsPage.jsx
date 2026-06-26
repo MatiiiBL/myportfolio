@@ -14,8 +14,13 @@ export default function ProjectsPage() {
       <div className="projects-page">
         <section className="projects-hero">
           <div className="projects-hero-content">
+            <p className="page-eyebrow">
+              <span className="prompt">~/projects</span>
+              <span className="sep"> $ </span>
+              <span className="cmd">git log --oneline</span>
+            </p>
             <h1 className="projects-title">My Work</h1>
-            <p className="projects-subtitle">Projects & Creations</p>
+            <p className="projects-subtitle">// builds, experiments &amp; ships</p>
           </div>
           <div className="scroll-indicator">
             <p></p>

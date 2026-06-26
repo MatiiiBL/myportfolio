@@ -98,17 +98,24 @@ export default function ContactSection() {
       <div className="contact-content">
         <div className="contact-text">
           <ScrollReveal animation="fade-right" duration={0.7}>
-            <h2 className="contact-title">Let's Talk?</h2>
+            <p className="contact-eyebrow">
+              <span className="prompt">~</span>
+              <span className="sep"> $ </span>
+              <span className="cmd">./connect --status open</span>
+            </p>
+          </ScrollReveal>
+          <ScrollReveal animation="fade-right" delay={0.1} duration={0.7}>
+            <h2 className="contact-title">Let's ship something.</h2>
           </ScrollReveal>
           <ScrollReveal animation="fade-right" delay={0.15} duration={0.7}>
             <p className="contact-description">
-              I'd love to hear about you and discuss how we can 
-              <span className="highlight"> work together</span>.
+              Got an idea, a role, or a hackathon team in need of an engineer? Let's
+              <span className="highlight"> build it together</span>.
             </p>
           </ScrollReveal>
           <ScrollReveal animation="fade-right" delay={0.3} duration={0.7}>
             <p className="contact-subtitle">
-              Let's schedule a meeting and see where to start.
+              Drop your details below!
             </p>
           </ScrollReveal>
         </div>
@@ -134,7 +141,7 @@ export default function ContactSection() {
               
               <ScrollReveal animation="fade-up" delay={0.4} duration={0.5}>
                 <div className="form-group">
-                  <label htmlFor="contact" className="animated-label">Phone</label>
+                  <label htmlFor="contact" className="animated-label">Email or Phone</label>
                   <input 
                     type="text" 
                     id="contact" 
@@ -167,8 +174,8 @@ export default function ContactSection() {
               <ScrollReveal animation="fade-up" delay={0.6} duration={0.5}>
                 <div className="form-group">
                   <label htmlFor="message" className="animated-label">
-                    Topics of Interest 
-                    <span className="word-count">({messageCharCount}/1000 characters)</span>
+                    Message
+                    <span className="word-count">({messageCharCount}/1000 chars)</span>
                   </label>
                   <textarea 
                     id="message" 
@@ -185,8 +192,8 @@ export default function ContactSection() {
               
               <ScrollReveal animation="scale-up" delay={0.7} duration={0.5}>
                 <button type="submit" className="btn-submit">
-                  Let's have a coffee
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  send --message
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                     <path d="M5 12h14M12 5l7 7-7 7"/>
                   </svg>
                 </button>

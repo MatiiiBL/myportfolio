@@ -11,8 +11,13 @@ export default function ContactPage() {
       <div className="contact-page">
         <section className="contact-hero">
           <div className="contact-hero-content">
+            <p className="page-eyebrow">
+              <span className="prompt">~</span>
+              <span className="sep"> $ </span>
+              <span className="cmd">./connect</span>
+            </p>
             <h1 className="contact-page-title">Get In Touch</h1>
-            <p className="contact-page-subtitle">Let's Create Something Amazing</p>
+            <p className="contact-page-subtitle">// let&apos;s build something together</p>
           </div>
           <div className="scroll-indicator">
             <p></p>

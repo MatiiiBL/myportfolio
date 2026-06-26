@@ -6,10 +6,10 @@ export default function Footer() {
     <footer className="footer">
       <div className="footer-content">
         <div className="footer-left">
-          <h3 className="footer-title">Matias's Portfolio</h3>
+          <h3 className="footer-title"><span className="footer-prompt">~/</span>matias</h3>
           <p className="footer-subtitle">
-            Software Engineer<br />
-            Designing Backend and Frontend Services
+            Full-Stack Engineer · ML &amp; Systems<br />
+            Shipping frontend &amp; backend, end-to-end.
           </p>
           <a href="mailto:mcb2324@columbia.edu" className="footer-email">
             mcb2324@columbia.edu
@@ -32,6 +32,7 @@ export default function Footer() {
       </div>
       
       <div className="footer-bottom">
+        <p className="footer-build">built with React + Vite</p>
         <p className="footer-credit">© 2026 Matias Blanco Balaguer. All rights reserved.</p>
       </div>
     </footer>
