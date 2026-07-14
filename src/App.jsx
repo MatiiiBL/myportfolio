@@ -4,7 +4,7 @@ import ProjectsSection from './ProjectsSection.jsx'
 import ContactSection from './ContactSection.jsx'
 import CursorFollower from './CursorFollower.jsx'
 
-const STACK = ['React', 'TypeScript', 'Node.js', 'Python', 'PyTorch', 'PostgreSQL', 'Docker', 'Azure']
+const STACK = ['React', 'JavaScript', 'Node.js', 'Python', 'PostgreSQL', 'MongoDB', 'Docker', 'Azure']
 
 const STATS = [
   { value: '4+', label: 'projects shipped' },
@@ -47,9 +47,9 @@ function App() {
               </p>
               <p className="hero-description">
                 CS student <span className="kw">@Columbia</span>, engineering performant,
-                scalable products end-to-end — from <span className="kw">React</span> frontends to
+                scalable products end-to-end. From <span className="kw">React</span> frontends to
                 <span className="kw"> Python</span> backends and <span className="kw">ML</span> pipelines.
-                I build things people can <span className="accent">actually feel</span>.
+          
               </p>
 
               <p className="terminal-line muted-line">
@@ -92,13 +92,6 @@ function App() {
               </div>
             ))}
           </dl>
-        </div>
-
-        <div className="scroll-indicator">
-          <p>scroll</p>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-            <path d="M12 5v14M19 12l-7 7-7-7"/>
-          </svg>
         </div>
       </main>
       <ProjectsSection />

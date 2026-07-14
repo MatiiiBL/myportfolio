@@ -54,7 +54,7 @@ export default function ProjectsSection() {
             </p>
             <h2 className="section-heading">Selected Builds</h2>
             <p className="section-sub">
-              Things I&apos;ve designed, engineered, and shipped — frontend to backend.
+              Things I&apos;ve designed, engineered, and shipped: frontend to backend.
             </p>
           </div>
         </ScrollReveal>

@@ -20,12 +20,6 @@ export default function AboutPage() {
             <h1 className="about-title">About Me</h1>
             <p className="about-subtitle">// Full-Stack Engineer &amp; Problem Solver</p>
           </div>
-          <div className="scroll-indicator">
-            <p></p>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M12 5v14M19 12l-7 7-7-7"/>
-            </svg>
-          </div>
         </section>
 
         <section className="about-content-section">

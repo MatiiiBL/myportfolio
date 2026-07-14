@@ -22,12 +22,6 @@ export default function ProjectsPage() {
             <h1 className="projects-title">My Work</h1>
             <p className="projects-subtitle">// builds, experiments &amp; ships</p>
           </div>
-          <div className="scroll-indicator">
-            <p></p>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M12 5v14M19 12l-7 7-7-7"/>
-            </svg>
-          </div>
         </section>
         <ProjectsSection />
         <ScrollReveal animation="fade-up" delay={0.1} duration={0.8}>
