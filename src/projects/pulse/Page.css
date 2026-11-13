@@ -10,12 +10,6 @@
   color: var(--text);
 }
 
-.pulse-caption {
-  max-width: var(--prose-width);
-  font-size: var(--step--1);
-  color: var(--text-2);
-}
-
 .pulse-source {
   font-size: var(--step--1);
   color: var(--text-2);
@@ -123,6 +117,7 @@
 }
 
 .pulse-table thead th {
+  white-space: normal;
   font-family: var(--font-mono);
   font-size: 0.75rem;
   font-weight: 500;
@@ -140,7 +135,7 @@
 
 .pulse-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(20rem, 100%), 1fr));
   gap: var(--space-6);
 }
 

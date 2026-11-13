@@ -433,6 +433,14 @@
   color: var(--text);
 }
 
+@media (max-width: 24rem) {
+  .matrix th,
+  .matrix td {
+    min-width: 0;
+    padding-inline: 0.15rem;
+  }
+}
+
 .matrix td.is-past {
   color: var(--text-3);
 }
