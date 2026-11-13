@@ -1,0 +1,96 @@
+{
+  "sift1m": [
+    {
+      "lib": "vecdex",
+      "buildSeconds": 141.5,
+      "memoryMB": 674,
+      "points": [
+        { "ef": 10, "recall": 0.7068, "qps": 70259 },
+        { "ef": 16, "recall": 0.8012, "qps": 52462 },
+        { "ef": 32, "recall": 0.9039, "qps": 31813 },
+        { "ef": 64, "recall": 0.9639, "qps": 17958 },
+        { "ef": 128, "recall": 0.9901, "qps": 9858 },
+        { "ef": 256, "recall": 0.998, "qps": 5296 },
+        { "ef": 512, "recall": 0.9997, "qps": 2839 }
+      ]
+    },
+    {
+      "lib": "FAISS HNSW",
+      "buildSeconds": 245.7,
+      "memoryMB": 656,
+      "points": [
+        { "ef": 10, "recall": 0.7164, "qps": 40465 },
+        { "ef": 16, "recall": 0.8085, "qps": 30309 },
+        { "ef": 32, "recall": 0.9117, "qps": 18138 },
+        { "ef": 64, "recall": 0.9683, "qps": 10083 },
+        { "ef": 128, "recall": 0.9911, "qps": 5340 },
+        { "ef": 256, "recall": 0.998, "qps": 2761 },
+        { "ef": 512, "recall": 0.9997, "qps": 1366 }
+      ]
+    },
+    {
+      "lib": "hnswlib",
+      "buildSeconds": 355.4,
+      "memoryMB": 661,
+      "points": [
+        { "ef": 10, "recall": 0.7116, "qps": 24451 },
+        { "ef": 16, "recall": 0.8028, "qps": 18525 },
+        { "ef": 32, "recall": 0.9053, "qps": 11465 },
+        { "ef": 64, "recall": 0.9645, "qps": 6706 },
+        { "ef": 128, "recall": 0.9901, "qps": 3752 },
+        { "ef": 256, "recall": 0.998, "qps": 2093 },
+        { "ef": 512, "recall": 0.9997, "qps": 1164 }
+      ]
+    }
+  ],
+  "glove100": [
+    {
+      "lib": "vecdex",
+      "buildSeconds": 211.7,
+      "memoryMB": 665,
+      "points": [
+        { "ef": 10, "recall": 0.4719, "qps": 62961 },
+        { "ef": 16, "recall": 0.5576, "qps": 45782 },
+        { "ef": 32, "recall": 0.6712, "qps": 27132 },
+        { "ef": 64, "recall": 0.7618, "qps": 15492 },
+        { "ef": 128, "recall": 0.8322, "qps": 8568 },
+        { "ef": 256, "recall": 0.8844, "qps": 4535 },
+        { "ef": 512, "recall": 0.9258, "qps": 2438 },
+        { "ef": 768, "recall": 0.9447, "qps": 1628 },
+        { "ef": 1024, "recall": 0.9562, "qps": 1259 }
+      ]
+    },
+    {
+      "lib": "FAISS HNSW",
+      "buildSeconds": 355.2,
+      "memoryMB": 644,
+      "points": [
+        { "ef": 10, "recall": 0.4761, "qps": 34247 },
+        { "ef": 16, "recall": 0.5631, "qps": 24951 },
+        { "ef": 32, "recall": 0.6753, "qps": 14642 },
+        { "ef": 64, "recall": 0.7639, "qps": 8399 },
+        { "ef": 128, "recall": 0.8325, "qps": 4497 },
+        { "ef": 256, "recall": 0.8825, "qps": 2255 },
+        { "ef": 512, "recall": 0.9213, "qps": 1076 },
+        { "ef": 768, "recall": 0.9399, "qps": 739 },
+        { "ef": 1024, "recall": 0.9514, "qps": 536 }
+      ]
+    },
+    {
+      "lib": "hnswlib",
+      "buildSeconds": 479.8,
+      "memoryMB": 649,
+      "points": [
+        { "ef": 10, "recall": 0.4712, "qps": 25513 },
+        { "ef": 16, "recall": 0.5583, "qps": 18779 },
+        { "ef": 32, "recall": 0.6704, "qps": 11568 },
+        { "ef": 64, "recall": 0.7619, "qps": 6851 },
+        { "ef": 128, "recall": 0.8313, "qps": 3868 },
+        { "ef": 256, "recall": 0.8841, "qps": 2149 },
+        { "ef": 512, "recall": 0.9254, "qps": 1144 },
+        { "ef": 768, "recall": 0.9441, "qps": 801 },
+        { "ef": 1024, "recall": 0.9555, "qps": 618 }
+      ]
+    }
+  ]
+}

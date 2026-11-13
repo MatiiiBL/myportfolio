@@ -1,0 +1,21 @@
+[
+  { "version": "Baseline", "detail": "first working HNSW", "buildSeconds": 254, "qps": 9074 },
+  {
+    "version": "Pooled buffers",
+    "detail": "no allocation per query",
+    "buildSeconds": 242,
+    "qps": 9455
+  },
+  {
+    "version": "Prefetch",
+    "detail": "software prefetch of neighbor vectors",
+    "buildSeconds": 142,
+    "qps": 17999
+  },
+  {
+    "version": "Final",
+    "detail": "after save/load, threading, bindings",
+    "buildSeconds": 143,
+    "qps": 17972
+  }
+]

@@ -1,0 +1,282 @@
+.hx {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
+  gap: var(--space-6);
+  align-items: start;
+}
+
+@media (max-width: 52rem) {
+  .hx {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-5);
+  }
+}
+
+.hx-plot {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2);
+  background: var(--bg);
+  cursor: crosshair;
+  touch-action: manipulation;
+}
+
+.hx-plot svg {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+}
+
+.hx-help {
+  margin-top: var(--space-2);
+  font-size: var(--step--1);
+  color: var(--text-3);
+}
+
+/* Marks. Fills and strokes come from the tokens only. */
+.hx-edges line {
+  stroke: var(--border);
+  stroke-width: 1px;
+}
+
+.hx-node {
+  fill: var(--text-3);
+  opacity: 0.75;
+}
+
+.hx-off {
+  opacity: 0.3;
+}
+
+.hx-upper {
+  fill: var(--text-2);
+  opacity: 1;
+  stroke: var(--bg);
+  stroke-width: 3;
+}
+
+.hx-evaluated {
+  fill: var(--series-2);
+  opacity: 1;
+}
+
+.hx-bound {
+  fill: var(--accent-soft);
+  stroke: var(--accent);
+  stroke-width: 1px;
+  opacity: 0.6;
+}
+
+.hx-scan {
+  stroke: var(--series-2);
+  stroke-width: 1.5px;
+}
+
+.hx-path {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2px;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.hx-path-node {
+  fill: var(--accent);
+  stroke: var(--bg);
+  stroke-width: 3;
+}
+
+.hx-kept,
+.hx-kept-key {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.5px;
+}
+
+.hx-current {
+  fill: none;
+  stroke: var(--text);
+  stroke-width: 2px;
+}
+
+.hx-found {
+  fill: var(--accent);
+  stroke: var(--bg);
+  stroke-width: 3;
+}
+
+.hx-true,
+.hx-true-key {
+  fill: none;
+  stroke: var(--series-3);
+  stroke-width: 2px;
+}
+
+.hx-query circle {
+  fill: var(--bg);
+  stroke: var(--text);
+  stroke-width: 2px;
+}
+
+.hx-query path,
+.hx-query-key {
+  stroke: var(--text);
+  stroke-width: 2px;
+}
+
+.hx-path-key {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2px;
+  stroke-linejoin: round;
+}
+
+/* The side panel. */
+.hx-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  min-width: 0;
+}
+
+.hx-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.hx-controls button {
+  min-height: 2.25rem;
+  padding: 0 var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-1);
+  background: var(--surface-2);
+  color: var(--text);
+  font: 500 var(--step--1) var(--font-mono);
+  cursor: pointer;
+}
+
+.hx-controls button:hover:not(:disabled) {
+  border-color: var(--text-3);
+}
+
+.hx-controls button:disabled {
+  color: var(--text-3);
+  cursor: default;
+}
+
+.hx-slider {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  color: var(--text);
+}
+
+.hx-slider > span {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+
+.hx-slider output {
+  margin-left: auto;
+  font-variant-numeric: tabular-nums;
+}
+
+.hx-slider input {
+  width: 100%;
+  accent-color: var(--accent);
+}
+
+.hx-dim {
+  color: var(--text-3);
+}
+
+.hx-status {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-height: 6.5em;
+  font-size: var(--step--1);
+  line-height: 1.5;
+  color: var(--text-2);
+}
+
+.hx-status .hx-dim {
+  font-family: var(--font-mono);
+}
+
+.hx-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+  margin: 0;
+}
+
+.hx-stats dt {
+  font-size: var(--step--1);
+  color: var(--text-3);
+}
+
+.hx-stats dd {
+  margin: 0;
+  color: var(--text);
+  font-size: var(--step-2);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.hx-stats dd .hx-dim {
+  font-size: var(--step--1);
+  font-weight: 400;
+}
+
+.hx-layers {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2);
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+}
+
+.hx-layers li {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--space-2) var(--space-3);
+  border-left: 3px solid transparent;
+  color: var(--text-2);
+}
+
+.hx-layers li + li {
+  border-top: 1px solid var(--grid);
+}
+
+.hx-layers li[aria-current="step"] {
+  border-left-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--text);
+}
+
+.hx-legend {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2) var(--space-4);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: var(--step--1);
+  color: var(--text-2);
+}
+
+.hx-legend li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.hx-legend svg {
+  flex: none;
+}

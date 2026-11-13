@@ -1,0 +1,44 @@
+[
+  {
+    "lib": "vecdex",
+    "buildSeconds": 142.4,
+    "memoryMB": 674,
+    "points": [
+      { "ef": 10, "recall": 0.7068, "qps": 69097 },
+      { "ef": 16, "recall": 0.8012, "qps": 51576 },
+      { "ef": 32, "recall": 0.9039, "qps": 31382 },
+      { "ef": 64, "recall": 0.9639, "qps": 17964 },
+      { "ef": 128, "recall": 0.9901, "qps": 9830 },
+      { "ef": 256, "recall": 0.9979, "qps": 5302 },
+      { "ef": 512, "recall": 0.9997, "qps": 2815 }
+    ]
+  },
+  {
+    "lib": "hnswlib + vecdex kernel",
+    "buildSeconds": 254.0,
+    "memoryMB": 661,
+    "points": [
+      { "ef": 10, "recall": 0.7115, "qps": 34804 },
+      { "ef": 16, "recall": 0.8028, "qps": 25782 },
+      { "ef": 32, "recall": 0.9053, "qps": 15898 },
+      { "ef": 64, "recall": 0.9645, "qps": 9190 },
+      { "ef": 128, "recall": 0.9901, "qps": 5051 },
+      { "ef": 256, "recall": 0.998, "qps": 2858 },
+      { "ef": 512, "recall": 0.9997, "qps": 1573 }
+    ]
+  },
+  {
+    "lib": "hnswlib (stock)",
+    "buildSeconds": 356.9,
+    "memoryMB": 661,
+    "points": [
+      { "ef": 10, "recall": 0.7115, "qps": 24349 },
+      { "ef": 16, "recall": 0.8028, "qps": 18253 },
+      { "ef": 32, "recall": 0.9053, "qps": 11466 },
+      { "ef": 64, "recall": 0.9645, "qps": 6746 },
+      { "ef": 128, "recall": 0.9901, "qps": 3674 },
+      { "ef": 256, "recall": 0.998, "qps": 2068 },
+      { "ef": 512, "recall": 0.9997, "qps": 1094 }
+    ]
+  }
+]
