@@ -1,25 +1,19 @@
 import { BarChart, LineChart } from "../../components/charts";
 import { Figure } from "../../components/Figure";
 import { Section } from "../../components/Section";
+import { SourceLink } from "../../components/SourceLink";
+import { TableRegion } from "../../components/TableRegion";
+import { projectBySlug } from "../../content/projects";
 import { ArchitectureDiagram } from "./ArchitectureDiagram";
 import replay from "./data/replay.json";
 import results from "./data/results.json";
 import { ReplayViewer } from "./ReplayViewer";
 import "../../components/ProjectPage.css";
 
-const REPO = "https://github.com/MatiiiBL/apex-driverless";
-const COMMIT = "442528b";
-
-function SourceLink({ file, anchor }: { file: string; anchor?: string }) {
-  return (
-    <a
-      className="project-file"
-      href={`${REPO}/blob/${COMMIT}/${file}${anchor ? `#${anchor}` : ""}`}
-    >
-      {file}
-    </a>
-  );
-}
+const project = projectBySlug("apex");
+if (!project) throw new Error("src/content/projects.ts has no apex project");
+/** The repository at the commit every number on this page comes from (data/SOURCE.md). */
+const SOURCE = { repo: project.repo, commit: "442528b6452fcca24b986a463a1169e893cb3ee9" };
 
 const micro = (us: number) => (us >= 1000 ? `${us / 1000} ms` : `${us} µs`);
 
@@ -80,7 +74,8 @@ export default function Page() {
               Faint dots are cones it has not mapped yet; the car never sees them. Play, scrub with
               the slider (its arrow keys move 1 s, Page Up and Page Down 10 s), or pick a lap.
               Recorded with <code>apex replay</code> and{" "}
-              <SourceLink file="results/runs/configs/replay.json" />, then downsampled for the page.
+              <SourceLink {...SOURCE} file="results/runs/configs/replay.json" />, then downsampled
+              for the page.
             </>
           }
         >
@@ -99,13 +94,7 @@ export default function Page() {
           </p>
         </div>
 
-        {/* Wide tables scroll sideways on a phone, so the wrapper takes focus for keyboards. */}
-        <div
-          className="project-table-wrap"
-          role="region"
-          aria-label="Baseline results table"
-          tabIndex={0}
-        >
+        <TableRegion label="Baseline results table">
           <table className="project-table">
             <caption>33 simulated ten-lap runs, the full stack against the oracle</caption>
             <thead>
@@ -136,13 +125,14 @@ export default function Page() {
               )}
             </tbody>
           </table>
-        </div>
+        </TableRegion>
         <p className="project-source">
           Means over the runs; the racing lap is the mean of laps 2 to 10, map error is the RMS
           distance from each landmark to its cone after lap 1 (1.4 cm at the median run), tracking
           is the RMS lateral error from the raceline. Perfect perception and state make a racing lap
           0.04 s faster. Source:{" "}
           <SourceLink
+            {...SOURCE}
             file="results/runs/README.md"
             anchor="baseline-the-full-stack-against-the-oracles"
           />
@@ -170,7 +160,7 @@ export default function Page() {
               each reference layout, with nothing else running. The MPC is the tightest, at{" "}
               {results.compute[0]?.p99Us} µs against 2 ms; the whole closed loop, simulator
               included, runs 43.6 times faster than real time. Source:{" "}
-              <SourceLink file="docs/evaluation.md" anchor="compute" />.
+              <SourceLink {...SOURCE} file="docs/evaluation.md" anchor="compute" />.
             </>
           }
         />
@@ -202,7 +192,12 @@ export default function Page() {
               Every run finishes with no penalty from noiseless sensors to four times the default
               noise, with racing laps within 0.12% of the default&apos;s. The errors grow roughly in
               proportion; at four times the noise, association recall falls to 81%. Source:{" "}
-              <SourceLink file="results/runs/README.md" anchor="ablation-sensor-noise" />.
+              <SourceLink
+                {...SOURCE}
+                file="results/runs/README.md"
+                anchor="ablation-sensor-noise"
+              />
+              .
             </>
           }
         />
@@ -232,17 +227,12 @@ export default function Page() {
               structure-exploiting solver is 4.7 to 5.2 times faster warm-started, and its cost
               grows linearly with the horizon. The raceline&apos;s dense QP solver beats OSQP too:{" "}
               {results.racelineQp.oursMs} ms against {results.racelineQp.osqpMs} ms at 1e-9. Source:{" "}
-              <SourceLink file="results/control/qp_bench.md" />.
+              <SourceLink {...SOURCE} file="results/control/qp_bench.md" />.
             </>
           }
         />
 
-        <div
-          className="project-table-wrap"
-          role="region"
-          aria-label="Controller comparison table"
-          tabIndex={0}
-        >
+        <TableRegion label="Controller comparison table">
           <table className="project-table">
             <caption>The path-tracking controller, 12 simulated runs each</caption>
             <thead>
@@ -266,11 +256,11 @@ export default function Page() {
               ))}
             </tbody>
           </table>
-        </div>
+        </TableRegion>
         <p className="project-source">
           Pure pursuit cuts corners: in the two runs traced, its cones fell with the car&apos;s
           center 0.78 to 1.07 m off the centerline. Source:{" "}
-          <SourceLink file="docs/evaluation.md" anchor="tracking" />.
+          <SourceLink {...SOURCE} file="docs/evaluation.md" anchor="tracking" />.
         </p>
       </Section>
 
@@ -283,7 +273,7 @@ export default function Page() {
               <>
                 The runner steps the simulator and the car together and delivers the LiDAR and
                 camera results after their processing latency. Source:{" "}
-                <SourceLink file="docs/design.md" anchor="2-architecture" />.
+                <SourceLink {...SOURCE} file="docs/design.md" anchor="2-architecture" />.
               </>
             }
           >
@@ -355,7 +345,7 @@ export default function Page() {
           </li>
         </ul>
         <p className="project-source">
-          Source: <SourceLink file="README.md" anchor="limitations" />.
+          Source: <SourceLink {...SOURCE} file="README.md" anchor="limitations" />.
         </p>
       </Section>
     </div>

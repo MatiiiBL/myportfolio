@@ -1,25 +1,19 @@
 import { BarChart } from "../../components/charts";
 import { Figure } from "../../components/Figure";
 import { Section } from "../../components/Section";
+import { SourceLink } from "../../components/SourceLink";
+import { TableRegion } from "../../components/TableRegion";
+import { projectBySlug } from "../../content/projects";
 import { ArchitectureDiagram } from "./ArchitectureDiagram";
 import results from "./data/results.json";
 import { FmaxChart } from "./FmaxChart";
 import { SystolicStepper } from "./SystolicStepper";
 import "../../components/ProjectPage.css";
 
-const REPO = "https://github.com/MatiiiBL/riscv-npu-soc";
-const COMMIT = "5bc8ccf";
-
-function SourceLink({ file, anchor }: { file: string; anchor?: string }) {
-  return (
-    <a
-      className="project-file"
-      href={`${REPO}/blob/${COMMIT}/${file}${anchor ? `#${anchor}` : ""}`}
-    >
-      {file}
-    </a>
-  );
-}
+const project = projectBySlug("pulse");
+if (!project) throw new Error("src/content/projects.ts has no pulse project");
+/** The repository at the commit every number on this page comes from (data/SOURCE.md). */
+const SOURCE = { repo: project.repo, commit: "5bc8ccf604e92bab164cab90bbf0d6a9dfc36106" };
 
 // The Pulse page body, inside ProjectLayout (docs/site.md, "Project pages").
 export default function Page() {
@@ -74,10 +68,11 @@ export default function Page() {
               keys move one cycle at a time. The counter is the NPU&apos;s <code>CYCLES</code>{" "}
               register. Operands are drawn from −7 to 7 so the sums fit in a cell; the hardware
               takes the full INT8 range. The picture runs a cycle-level model written from{" "}
-              <SourceLink file="rtl/npu/npu_opbuf.sv" />, <SourceLink file="rtl/npu/npu_pe.sv" />{" "}
-              and <SourceLink file="rtl/npu/npu_top.sv" />; its tests check it against a plain
-              matrix product and against every cycle count measured in RTL simulation in{" "}
-              <SourceLink file="docs/npu.md" anchor="6-performance" />.
+              <SourceLink {...SOURCE} file="rtl/npu/npu_opbuf.sv" />,{" "}
+              <SourceLink {...SOURCE} file="rtl/npu/npu_pe.sv" /> and{" "}
+              <SourceLink {...SOURCE} file="rtl/npu/npu_top.sv" />; its tests check it against a
+              plain matrix product and against every cycle count measured in RTL simulation in{" "}
+              <SourceLink {...SOURCE} file="docs/npu.md" anchor="6-performance" />.
             </>
           }
         >
@@ -111,7 +106,7 @@ export default function Page() {
               {mnist?.cpu.toLocaleString("en-US")} cycles per image on the CPU (8.8 ms at 40 MHz)
               against {mnist?.npu.toLocaleString("en-US")} (76 µs). Small GEMMs are dominated by the
               driver, large ones by moving operands. Source:{" "}
-              <SourceLink file="README.md" anchor="results" />.
+              <SourceLink {...SOURCE} file="README.md" anchor="results" />.
             </>
           }
         />
@@ -140,7 +135,7 @@ export default function Page() {
               loads nothing and only compute and write-back remain: it is the array&apos;s ceiling,
               not a sustained rate. End to end, with the driver&apos;s register writes and polling,
               the GEMM benchmarks reach up to 29.5 MACs per cycle. Source:{" "}
-              <SourceLink file="README.md" anchor="npu-vs-cpu" />.
+              <SourceLink {...SOURCE} file="README.md" anchor="npu-vs-cpu" />.
             </>
           }
         />
@@ -154,6 +149,7 @@ export default function Page() {
               removed one. The final pipeline reaches {fpga.fmaxRange} at a 40 MHz constraint; Fmax
               is nextpnr&apos;s estimate after place and route. Source:{" "}
               <SourceLink
+                {...SOURCE}
                 file="README.md"
                 anchor="fpga-radiona-ulx3s-lattice-lfe5u-85f-speed-grade-6"
               />
@@ -164,61 +160,67 @@ export default function Page() {
 
         <div className="project-grid">
           <div>
-            <table className="project-table">
-              <caption>CoreMark, 10 iterations</caption>
-              <thead>
-                <tr>
-                  <td />
-                  <th scope="col">Branch prediction</th>
-                  <th scope="col">Static not-taken</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <th scope="row">CoreMark / MHz</th>
-                  <td>{coremark.predictorOn.perMHz}</td>
-                  <td>{coremark.predictorOff.perMHz}</td>
-                </tr>
-                <tr>
-                  <th scope="row">CPI</th>
-                  <td>{coremark.predictorOn.cpi}</td>
-                  <td>{coremark.predictorOff.cpi}</td>
-                </tr>
-                <tr>
-                  <th scope="row">CoreMark / s at 40 MHz</th>
-                  <td>{coremark.predictorOn.perSecond}</td>
-                  <td>{coremark.predictorOff.perSecond}</td>
-                </tr>
-              </tbody>
-            </table>
+            <TableRegion label="CoreMark results table">
+              <table className="project-table">
+                <caption>CoreMark, 10 iterations, in RTL simulation</caption>
+                <thead>
+                  <tr>
+                    <td />
+                    <th scope="col">Branch prediction</th>
+                    <th scope="col">Static not-taken</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">CoreMark / MHz</th>
+                    <td>{coremark.predictorOn.perMHz}</td>
+                    <td>{coremark.predictorOff.perMHz}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">CPI</th>
+                    <td>{coremark.predictorOn.cpi}</td>
+                    <td>{coremark.predictorOff.cpi}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">CoreMark / s at 40 MHz</th>
+                    <td>{coremark.predictorOn.perSecond}</td>
+                    <td>{coremark.predictorOff.perSecond}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </TableRegion>
             <p className="project-source">
               A 64-entry BTB with 2-bit counters mispredicts {coremark.mispredictRate}% of
-              CoreMark&apos;s branches. Source: <SourceLink file="README.md" anchor="cpu" />.
+              CoreMark&apos;s branches. Source:{" "}
+              <SourceLink {...SOURCE} file="README.md" anchor="cpu" />.
             </p>
           </div>
           <div>
-            <table className="project-table">
-              <caption>FPGA: {fpga.board}</caption>
-              <thead>
-                <tr>
-                  <td />
-                  <th scope="col">Used</th>
-                  <th scope="col">Share</th>
-                </tr>
-              </thead>
-              <tbody>
-                {fpga.resources.map((r) => (
-                  <tr key={r.resource}>
-                    <th scope="row">{r.resource}</th>
-                    <td>{r.used}</td>
-                    <td>{r.share}</td>
+            <TableRegion label="FPGA resources table">
+              <table className="project-table">
+                <caption>FPGA: {fpga.board}</caption>
+                <thead>
+                  <tr>
+                    <td />
+                    <th scope="col">Used</th>
+                    <th scope="col">Share</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {fpga.resources.map((r) => (
+                    <tr key={r.resource}>
+                      <th scope="row">{r.resource}</th>
+                      <td>{r.used}</td>
+                      <td>{r.share}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </TableRegion>
             <p className="project-source">
-              At {fpga.clockMHz} MHz from the on-chip PLL. Source:{" "}
-              <SourceLink file="docs/fpga.md" anchor="6-results" />.
+              nextpnr&apos;s count after place and route of the {fpga.clockMHz} MHz build; the
+              bitstream has not run on a board yet. Source:{" "}
+              <SourceLink {...SOURCE} file="docs/fpga.md" anchor="6-results" />.
             </p>
           </div>
         </div>
@@ -233,7 +235,7 @@ export default function Page() {
               <>
                 The CPU reaches data memory, the UART and the NPU&apos;s registers through an
                 address decoder; the NPU&apos;s DMA owns the second port of the data memory. Source:{" "}
-                <SourceLink file="docs/spec.md" />.
+                <SourceLink {...SOURCE} file="docs/spec.md" />.
               </>
             }
           >
@@ -304,7 +306,7 @@ export default function Page() {
           </li>
         </ul>
         <p className="project-source">
-          Source: <SourceLink file="README.md" anchor="limitations-and-next-steps" />.
+          Source: <SourceLink {...SOURCE} file="README.md" anchor="limitations-and-next-steps" />.
         </p>
       </Section>
     </div>
