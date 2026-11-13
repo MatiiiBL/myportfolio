@@ -1,15 +1,25 @@
-.project-layout {
-  max-width: var(--content-width);
-  margin-inline: auto;
-  padding-inline: var(--space-5);
-}
-
 .project-header {
-  padding-block: var(--space-8) var(--space-6);
+  padding-block: var(--space-6) var(--space-6);
   border-bottom: 1px solid var(--grid);
 }
 
+.project-back {
+  display: inline-block;
+  margin-bottom: var(--space-6);
+  color: var(--text-2);
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  text-decoration: none;
+}
+
+.project-back:hover {
+  color: var(--text);
+}
+
 .project-kicker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-4);
   font-family: var(--font-mono);
   font-size: var(--step--1);
   letter-spacing: 0.08em;
@@ -17,15 +27,23 @@
   color: var(--accent);
 }
 
+.project-date {
+  color: var(--text-3);
+  letter-spacing: 0.04em;
+}
+
 .project-name {
   font-size: var(--step-5);
   font-weight: 700;
-  letter-spacing: -0.025em;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
   margin-top: var(--space-2);
 }
 
 .project-tagline {
   font-size: var(--step-2);
+  color: var(--text);
+  line-height: 1.35;
   margin-top: var(--space-3);
   max-width: var(--prose-width);
 }
@@ -33,17 +51,33 @@
 .project-links {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-5);
+  gap: var(--space-2) var(--space-5);
   margin-top: var(--space-4);
   font-family: var(--font-mono);
   font-size: var(--step--1);
 }
 
+.project-links a {
+  color: var(--text-2);
+  text-decoration-color: var(--accent);
+  text-underline-offset: 3px;
+}
+
+.project-links a:hover {
+  color: var(--text);
+}
+
 .project-stats {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--space-5);
+  max-width: 52rem;
   margin: var(--space-6) 0 0;
+}
+
+.project-stats .stat {
+  padding-left: var(--space-4);
+  border-left: 2px solid var(--accent);
 }
 
 .project-tags {
@@ -53,4 +87,134 @@
   list-style: none;
   padding: 0;
   margin: var(--space-5) 0 0;
+}
+
+.project-main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.project-body {
+  min-width: 0;
+}
+
+.toc {
+  display: none;
+}
+
+@media (min-width: 1100px) {
+  .project-main {
+    grid-template-columns: minmax(0, 1fr) 13rem;
+    gap: var(--space-7);
+  }
+
+  .toc {
+    display: block;
+    position: sticky;
+    top: 5rem;
+    align-self: start;
+    padding-top: var(--space-7);
+    font-size: var(--step--1);
+  }
+}
+
+.toc-title {
+  margin-bottom: var(--space-2);
+  color: var(--text-3);
+  font-family: var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.toc ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-left: 1px solid var(--grid);
+}
+
+.toc a {
+  display: block;
+  margin-left: -1px;
+  padding: var(--space-1) var(--space-3);
+  border-left: 2px solid transparent;
+  color: var(--text-2);
+  text-decoration: none;
+  line-height: 1.45;
+}
+
+.toc a:hover {
+  color: var(--text);
+}
+
+.toc a[aria-current="location"] {
+  border-left-color: var(--accent);
+  color: var(--text);
+}
+
+.project-neighbors {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+  margin-top: var(--space-7);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--grid);
+}
+
+.project-neighbor {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-4) var(--space-5);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-3);
+  background: var(--surface);
+  color: var(--text-2);
+  text-decoration: none;
+  transition: border-color 150ms var(--ease-out);
+}
+
+.project-neighbor:hover {
+  border-color: var(--text-3);
+}
+
+.project-neighbor.is-next {
+  align-items: flex-end;
+  text-align: right;
+}
+
+.project-neighbor-dir {
+  color: var(--text-3);
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+}
+
+.project-neighbor-name {
+  color: var(--text);
+  font-size: var(--step-2);
+  font-weight: 650;
+}
+
+.project-neighbor-kicker {
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 640px) {
+  .project-stats {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-4);
+  }
+
+  .project-neighbors {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .project-neighbor.is-next {
+    align-items: flex-start;
+    text-align: left;
+  }
 }
