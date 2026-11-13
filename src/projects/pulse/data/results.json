@@ -1,0 +1,161 @@
+{
+  "speedups": [
+    {
+      "workload": "MNIST MLP 784-128-10, per image",
+      "short": "MNIST, per image",
+      "cpu": 351905,
+      "npu": 3053,
+      "speedup": 115
+    },
+    {
+      "workload": "GEMM 16 × 16 × 2048, K split",
+      "short": "16 × 16 × 2048",
+      "cpu": 1777955,
+      "npu": 17766,
+      "speedup": 100
+    },
+    {
+      "workload": "GEMM 64 × 64 × 256, INT8 out",
+      "short": "64 × 64 × 256, INT8",
+      "cpu": 3812349,
+      "npu": 38937,
+      "speedup": 98
+    },
+    {
+      "workload": "GEMM 64 × 64 × 256, INT32 out",
+      "short": "64 × 64 × 256, INT32",
+      "cpu": 3670955,
+      "npu": 38929,
+      "speedup": 94
+    },
+    {
+      "workload": "GEMM 64 × 64 × 64",
+      "short": "64 × 64 × 64",
+      "cpu": 1016747,
+      "npu": 19614,
+      "speedup": 52
+    },
+    {
+      "workload": "GEMM 32 × 32 × 32",
+      "short": "32 × 32 × 32",
+      "cpu": 143867,
+      "npu": 4292,
+      "speedup": 34
+    },
+    {
+      "workload": "GEMM 8 × 8 × 64, one tile",
+      "short": "8 × 8 × 64",
+      "cpu": 16061,
+      "npu": 527,
+      "speedup": 30
+    }
+  ],
+  "tileSteps": [
+    { "config": "4-byte DMA port", "cycles": 5209, "macsPerCycle": 12.6 },
+    { "config": "16-byte DMA port, banked DMEM", "cycles": 2137, "macsPerCycle": 30.7 },
+    { "config": "+ B_KEEP", "cycles": 1625, "macsPerCycle": 40.3 },
+    { "config": "+ A_KEEP and B_KEEP", "cycles": 1113, "macsPerCycle": 58.9 }
+  ],
+  "cycleTable": [
+    {
+      "m": 8,
+      "n": 8,
+      "k": 64,
+      "d4": 409,
+      "d8": 281,
+      "d16": 217,
+      "d16BKept": 185,
+      "d16BothKept": 153
+    },
+    {
+      "m": 8,
+      "n": 8,
+      "k": 256,
+      "d4": 1369,
+      "d8": 857,
+      "d16": 601,
+      "d16BKept": 473,
+      "d16BothKept": 345
+    },
+    {
+      "m": 8,
+      "n": 8,
+      "k": 1024,
+      "d4": 5209,
+      "d8": 3161,
+      "d16": 2137,
+      "d16BKept": 1625,
+      "d16BothKept": 1113
+    },
+    {
+      "m": 1,
+      "n": 8,
+      "k": 784,
+      "d4": 2574,
+      "d8": 1692,
+      "d16": 1251,
+      "d16BKept": 859,
+      "d16BothKept": 810
+    }
+  ],
+  "timingClosure": [
+    {
+      "step": 0,
+      "change": "Baseline: load data forwarded from WB into a single-cycle 33 × 33 multiply",
+      "short": "Baseline",
+      "fmaxMin": 26.3,
+      "fmaxMax": 27.8
+    },
+    {
+      "step": 1,
+      "change": "Multiply moved to MEM behind a one-cycle interlock",
+      "short": "Multiply in MEM",
+      "fmaxMin": 27.3,
+      "fmaxMax": 28.3
+    },
+    {
+      "step": 2,
+      "change": "Load data no longer forwarded from the RAM output",
+      "short": "No load forwarding",
+      "fmaxMin": 33.6,
+      "fmaxMax": 38.4
+    },
+    {
+      "step": 3,
+      "change": "IMEM fetches every cycle, with a skid register for stalls",
+      "short": "IMEM skid register",
+      "fmaxMin": 36.0,
+      "fmaxMax": 40.0
+    },
+    {
+      "step": 4,
+      "change": "BTB in LUT RAM, predicted-target check moved to EX",
+      "short": "BTB in LUT RAM",
+      "fmaxMin": 40.1,
+      "fmaxMax": 44.0
+    },
+    {
+      "step": 5,
+      "change": "Hazard interlock as a one-hot scoreboard lookup",
+      "short": "One-hot interlock",
+      "fmaxMin": 43.7,
+      "fmaxMax": 46.3
+    }
+  ],
+  "coremark": {
+    "predictorOn": { "perMHz": 2.855, "cpi": 1.345, "perSecond": 114 },
+    "predictorOff": { "perMHz": 2.453, "cpi": 1.566, "perSecond": 98 },
+    "mispredictRate": 9.7
+  },
+  "fpga": {
+    "board": "Radiona ULX3S, Lattice LFE5U-85F, speed grade 6",
+    "clockMHz": 40,
+    "fmaxRange": "42.1–46.5 MHz over 8 nextpnr seeds",
+    "resources": [
+      { "resource": "LUT4", "used": "15,098", "share": "18.1%" },
+      { "resource": "Flip-flops", "used": "7,025", "share": "8.4%" },
+      { "resource": "Block RAM (DP16KD)", "used": "173 of 208", "share": "83%" },
+      { "resource": "Multipliers (MULT18X18D)", "used": "70 of 156", "share": "45%" }
+    ]
+  }
+}
