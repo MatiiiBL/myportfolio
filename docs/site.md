@@ -101,13 +101,21 @@ same:
 
 - `src/components/ProjectPage.css`: the body styles. Wrap the sections in `.project-page` and use
   `.project-prose` (reading width), `.project-subhead` (an `<h3>` that splits a long section),
-  `.project-source` with `.project-file` (the one-line source
-  under a table or list), `.project-table-wrap` and `.project-table` (small results tables; a wrap
-  that can scroll sideways on a phone gets `role="region"`, an `aria-label` and `tabIndex={0}`;
-  `.project-text` on the cells of a column of words), `.project-grid`, `.project-how` (the
+  `.project-source` (the one-line source under a table or list), `.project-table` (small results
+  tables; `.project-text` on the cells of a column of words), `.project-grid`, `.project-how` (the
   architecture figure beside the design decisions; `.project-figures` stacks several figures in
   its first column), `.project-decisions` (one `<article>` with an `<h3>` per decision) and
   `.project-limits`.
+- `src/components/SourceLink.tsx`: a link to the project's repository at the commit the page's
+  numbers come from. `<SourceLink repo commit file />` links a file: `repo` is the project's
+  `repo` URL, `commit` the full 40-character SHA named in the page's `data/SOURCE.md`, and `file`
+  the path, shown in mono as the link text unless children replace it. Add `anchor` for a
+  Markdown heading, `line={42}` or `line={[12, 30]}` for lines (Markdown files open in the plain
+  view so line anchors work), or `dir` for a folder. It refuses a short or symbolic commit, so
+  the build fails instead of shipping a link that can drift.
+- `src/components/TableRegion.tsx`: `<TableRegion label="Baseline results">` around a
+  `.project-table`. It scrolls sideways on a phone instead of widening the page, and it is a
+  labelled, focusable region so keyboards can scroll it.
 - `src/components/BlockDiagram.tsx`: the architecture diagram. `<BlockDiagram>` takes a title and
   a prose description (its text alternative) and holds `<Block>` boxes or group frames, `<Arrow>`
   polylines with an optional label, and free `<Label>`s, all themed through the tokens. Draw it in

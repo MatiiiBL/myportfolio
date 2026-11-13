@@ -5,10 +5,9 @@
  *
  *   .project-prose        paragraphs at reading width
  *   .project-subhead      an <h3> that splits a long section (Results) into parts
- *   .project-source       the one-line source under a table or a list; .project-file for the
- *                         file name in it (mono)
- *   .project-table-wrap   a table that may scroll sideways on a phone: give it role="region",
- *                         an aria-label and tabIndex={0} so keyboards can scroll it
+ *   .project-source       the one-line source under a table or a list; the file name in it is
+ *                         a <SourceLink> (.project-file, mono)
+ *   .project-table-wrap   set by <TableRegion>: a table that may scroll sideways on a phone
  *   .project-table        a small results table (a caption, row headers, numeric cells);
  *                         .project-text on the cells of a column of words
  *   .project-grid         side-by-side blocks that stack on narrow screens
