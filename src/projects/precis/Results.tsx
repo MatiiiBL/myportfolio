@@ -46,26 +46,14 @@ export function ThroughputResults() {
             color: 1,
           },
         ]}
-        annotations={
-          at128
-            ? [
-                {
-                  x: 128,
-                  y: at128.papers_per_minute,
-                  label: "input-token limit binds",
-                  note: `${pct(at128.input_tokens_per_minute / bench.itpm_limit)} of 2M tokens/min, no 429s`,
-                  placement: "below-right",
-                },
-              ]
-            : []
-        }
         caption={
           <>
             Offline: the real scheduler, agents and gateway against a fake API with 4,000 requests,
             2 million input and 400,000 output tokens per minute, and 2 s to the first token plus 20
             ms per output token. Up to a ceiling of 64, throughput grows with concurrency (about 1.9
-            papers per minute per slot); from 128 the input-token limit holds it at 165 to 166.
-            Source: <SourceLink file="results/bench-throughput.md" />.
+            papers per minute per slot); from 128 the input-token limit holds it at 165 to 166,
+            using {pct((at128?.input_tokens_per_minute ?? 0) / bench.itpm_limit)} of it with no
+            429s. Source: <SourceLink file="results/bench-throughput.md" />.
           </>
         }
       />
