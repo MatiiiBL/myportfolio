@@ -1,9 +1,5 @@
-/* The card keeps the page background: muted text (--text-3) is only AA on --bg in light mode. */
+/* The stepper sits inside a Figure panel, which draws the card around it. */
 .stepper {
-  border: 1px solid var(--border);
-  border-radius: var(--radius-3);
-  background: var(--bg);
-  padding: var(--space-5);
   display: grid;
   gap: var(--space-5);
 }

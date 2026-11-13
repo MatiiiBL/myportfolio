@@ -1,38 +1,42 @@
+import { BarChart } from "../../components/charts";
+import { Figure } from "../../components/Figure";
 import { Section } from "../../components/Section";
+import { ArchitectureDiagram } from "./ArchitectureDiagram";
 import results from "./data/results.json";
+import { FmaxChart } from "./FmaxChart";
 import { SystolicStepper } from "./SystolicStepper";
 import "./Page.css";
 
 const REPO = "https://github.com/MatiiiBL/riscv-npu-soc";
-const SOURCE_COMMIT = "5bc8ccf";
+const COMMIT = "5bc8ccf";
 
-function Source({ file, children }: { file: string; children?: string }) {
+function SourceLink({ file, anchor }: { file: string; anchor?: string }) {
   return (
-    <p className="pulse-source">
-      Source: <a href={`${REPO}/blob/${SOURCE_COMMIT}/${file}`}>{file}</a>
-      {children ? `, ${children}` : ""}.
-    </p>
+    <a className="pulse-file" href={`${REPO}/blob/${COMMIT}/${file}${anchor ? `#${anchor}` : ""}`}>
+      {file}
+    </a>
   );
 }
 
 // The Pulse page body, inside ProjectLayout (docs/site.md, "Project pages").
 export default function Page() {
   const { coremark, fpga } = results;
+  const mnist = results.speedups[0];
   return (
     <div className="pulse">
       <Section id="overview" title="Overview">
         <div className="pulse-prose">
           <p>
             Pulse is a small system-on-chip I wrote in SystemVerilog. A 5-stage pipelined RISC-V CPU
-            (RV32IM: the base integer ISA plus multiply and divide) drives a neural processing unit
-            (NPU): an 8 × 8 systolic array of INT8 multiply-accumulate cells with its own DMA
-            engine. Bare-metal C firmware, built with clang, programs the NPU through memory-mapped
-            registers. Quantized MNIST runs 115 times faster on the NPU than on the CPU alone, with
-            bit-identical results, and the design meets timing at 40 MHz on a Lattice ECP5 FPGA with
-            a fully open-source flow.
+            (RV32IM: the base integer instructions plus multiply and divide) drives a neural
+            processing unit (NPU): an 8 × 8 systolic array of INT8 multiply-accumulate cells with
+            its own DMA engine. Bare-metal C firmware, built with clang, programs the NPU through
+            memory-mapped registers. Quantized MNIST runs 115 times faster on the NPU than on the
+            CPU alone, with bit-identical results, and the design meets timing at 40 MHz on a
+            Lattice ECP5 FPGA with a fully open-source flow.
           </p>
           <p>
-            The array is the easy part. The hard parts are keeping it fed and proving the whole chip
+            The array is the easy part. The hard parts are keeping it fed and proving the chip
             right. Eight rows and eight columns of operands must arrive every cycle, so the memory
             system, not the multipliers, sets the throughput. And the RTL is checked against a C++
             reference simulator written separately from the same spec, compared at every retired
@@ -42,10 +46,10 @@ export default function Page() {
         </div>
       </Section>
 
-      <Section id="array" title="The array, cycle by cycle" kicker="Interactive">
+      <Section id="array" title="The array, cycle by cycle" kicker="Interactive" navLabel="Array">
         <div className="pulse-prose">
           <p>
-            One NPU command, at the timing of the RTL. The CPU writes the registers and{" "}
+            One NPU command at the timing of the RTL. The CPU writes the registers and{" "}
             <code>START</code>; the DMA loads each row of A and B into the operand buffers, one
             16-byte block per cycle; then the operands enter the array skewed. Row <i>i</i> of A
             enters from the west and row <i>j</i> of B from the north, each one cycle behind its
@@ -57,14 +61,24 @@ export default function Page() {
             reads its operand buffer one step later than the row above.
           </p>
         </div>
-        <SystolicStepper />
-        <p className="pulse-caption">
-          Hover or tap a PE to see what it does in the current step; the slider and the arrow keys
-          move one cycle at a time. The counter is the NPU&apos;s <code>CYCLES</code> register.
-          Operands are drawn from −7 to 7 so the sums fit in a cell; the hardware takes the full
-          INT8 range. The model behind this picture is checked against a plain matrix product and
-          reproduces every cycle count the repository measured on the RTL.
-        </p>
+        <Figure
+          title="One NPU command on the 8 × 8 array"
+          subtitle="C = A × Bᵀ · INT8 operands · INT32 sums · 16-byte DMA port"
+          caption={
+            <>
+              Hover or tap a PE to see what it does in the current step; the slider and its arrow
+              keys move one cycle at a time. The counter is the NPU&apos;s <code>CYCLES</code>{" "}
+              register. Operands are drawn from −7 to 7 so the sums fit in a cell; the hardware
+              takes the full INT8 range. The picture runs a cycle-level model written from{" "}
+              <SourceLink file="rtl/npu/npu_opbuf.sv" />, <SourceLink file="rtl/npu/npu_pe.sv" />{" "}
+              and <SourceLink file="rtl/npu/npu_top.sv" />; its tests check it against a plain
+              matrix product and against every cycle count measured on the RTL in{" "}
+              <SourceLink file="docs/npu.md" anchor="6-performance" />.
+            </>
+          }
+        >
+          <SystolicStepper />
+        </Figure>
       </Section>
 
       <Section id="results" title="Results">
@@ -76,53 +90,66 @@ export default function Page() {
           </p>
         </div>
 
-        <div className="pulse-table-wrap">
-          <table className="pulse-table">
-            <caption>NPU against the CPU alone, cycles per workload</caption>
-            <thead>
-              <tr>
-                <th scope="col">Workload</th>
-                <th scope="col">CPU only</th>
-                <th scope="col">CPU + NPU</th>
-                <th scope="col">Speedup</th>
-              </tr>
-            </thead>
-            <tbody>
-              {results.speedups.map((row) => (
-                <tr key={row.workload}>
-                  <th scope="row">{row.workload}</th>
-                  <td>{row.cpu.toLocaleString("en-US")}</td>
-                  <td>{row.npu.toLocaleString("en-US")}</td>
-                  <td>{row.speedup}×</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <Source file="README.md">Results, NPU vs. CPU</Source>
+        <BarChart
+          title="Speedup of the NPU over the CPU alone"
+          subtitle="cycles on the CPU ÷ cycles on CPU + NPU · driver and polling included"
+          categories={results.speedups.map((s) => s.short)}
+          categoryLabel="Workload"
+          series={[
+            { id: "speedup", label: "Speedup", values: results.speedups.map((s) => s.speedup) },
+          ]}
+          value={{ type: "linear", label: "speedup", format: (v) => `${v}×` }}
+          caption={
+            <>
+              MNIST is a 784-128-10 multilayer perceptron, batch 8:{" "}
+              {mnist?.cpu.toLocaleString("en-US")} cycles per image on the CPU (8.8 ms) against{" "}
+              {mnist?.npu.toLocaleString("en-US")} (76 µs). Small GEMMs are dominated by the driver,
+              large ones by moving operands. Source:{" "}
+              <SourceLink file="README.md" anchor="results" />.
+            </>
+          }
+        />
 
-        <div className="pulse-table-wrap">
-          <table className="pulse-table">
-            <caption>One 8 × 8 × 1024 tile, as the operand path got wider and smarter</caption>
-            <thead>
-              <tr>
-                <th scope="col">NPU configuration</th>
-                <th scope="col">Cycles</th>
-                <th scope="col">MACs per cycle (of 64)</th>
-              </tr>
-            </thead>
-            <tbody>
-              {results.tileSteps.map((row) => (
-                <tr key={row.config}>
-                  <th scope="row">{row.config}</th>
-                  <td>{row.cycles.toLocaleString("en-US")}</td>
-                  <td>{row.macsPerCycle}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <Source file="README.md">Results, NPU vs. CPU</Source>
+        <BarChart
+          title="One 8 × 8 × 1024 tile, as the operand path improved"
+          subtitle="multiply-accumulates per cycle · peak 64"
+          categories={results.tileSteps.map((s) => s.config)}
+          categoryLabel="NPU configuration"
+          series={[
+            {
+              id: "macs",
+              label: "MACs per cycle",
+              values: results.tileSteps.map((s) => s.macsPerCycle),
+            },
+          ]}
+          value={{ type: "linear", domain: [0, 64], label: "MACs per cycle" }}
+          references={[{ value: 64, label: "peak" }]}
+          caption={
+            <>
+              A wider DMA port (16 bytes per cycle from four banks) and operand reuse took one tile
+              from {results.tileSteps[0]?.cycles.toLocaleString("en-US")} cycles to{" "}
+              {results.tileSteps.at(-1)?.cycles.toLocaleString("en-US")}. Source:{" "}
+              <SourceLink file="README.md" anchor="npu-vs-cpu" />.
+            </>
+          }
+        />
+
+        <FmaxChart
+          steps={results.timingClosure}
+          targetMHz={fpga.clockMHz}
+          caption={
+            <>
+              Every critical path of the first version started at a block RAM output; each step
+              removed one. The final pipeline reaches {fpga.fmaxRange} at a 40 MHz constraint.
+              Source:{" "}
+              <SourceLink
+                file="README.md"
+                anchor="fpga-radiona-ulx3s-lattice-lfe5u-85f-speed-grade-6"
+              />
+              .
+            </>
+          }
+        />
 
         <div className="pulse-grid">
           <div className="pulse-table-wrap">
@@ -130,7 +157,7 @@ export default function Page() {
               <caption>CoreMark, 10 iterations</caption>
               <thead>
                 <tr>
-                  <th scope="col" />
+                  <td />
                   <th scope="col">Branch prediction</th>
                   <th scope="col">Static not-taken</th>
                 </tr>
@@ -153,18 +180,22 @@ export default function Page() {
                 </tr>
               </tbody>
             </table>
-            <Source file="README.md">Results, CPU</Source>
+            <p className="pulse-source">
+              A 64-entry BTB with 2-bit counters mispredicts {coremark.mispredictRate}% of
+              CoreMark&apos;s branches. Source: <SourceLink file="README.md" anchor="cpu" />.
+            </p>
           </div>
           <div className="pulse-table-wrap">
             <table className="pulse-table">
               <caption>FPGA: {fpga.board}</caption>
-              <tbody>
+              <thead>
                 <tr>
-                  <th scope="row">Clock</th>
-                  <td colSpan={2}>
-                    {fpga.clockMHz} MHz ({fpga.fmaxRange})
-                  </td>
+                  <td />
+                  <th scope="col">Used</th>
+                  <th scope="col">Share</th>
                 </tr>
+              </thead>
+              <tbody>
                 {fpga.resources.map((r) => (
                   <tr key={r.resource}>
                     <th scope="row">{r.resource}</th>
@@ -174,56 +205,66 @@ export default function Page() {
                 ))}
               </tbody>
             </table>
-            <Source file="docs/fpga.md">section 6</Source>
+            <p className="pulse-source">
+              At {fpga.clockMHz} MHz from the on-chip PLL. Source:{" "}
+              <SourceLink file="docs/fpga.md" anchor="6-results" />.
+            </p>
           </div>
         </div>
       </Section>
 
       <Section id="how" title="How it works">
-        <div className="pulse-prose">
-          <p>
-            The memories are Harvard: 64 KiB of instruction memory and 256 KiB of data memory, all
-            block RAM with one cycle of latency. The CPU reaches the data memory, the UART and the
-            NPU&apos;s registers through an address decoder; the NPU has a port of its own.
-          </p>
+        <div className="pulse-how">
+          <Figure
+            title="The system-on-chip"
+            subtitle="Harvard memories · one clock · every slave answers in one cycle"
+            caption={
+              <>
+                The CPU reaches data memory, the UART and the NPU&apos;s registers through an
+                address decoder; the NPU&apos;s DMA owns the second port of the data memory. Source:{" "}
+                <SourceLink file="docs/spec.md" />.
+              </>
+            }
+          >
+            <ArchitectureDiagram />
+          </Figure>
+          <div className="pulse-decisions">
+            <article>
+              <h3>Two implementations of one spec</h3>
+              <p>
+                The RTL and a C++ instruction-set simulator are written separately against one spec,
+                which fixes the memory map, the bus timing and the NPU&apos;s exact arithmetic.
+                Random programs run on both, and their commit logs (PC, instruction, register write,
+                memory access) must match line for line, so a bug has to be made twice, in two
+                languages, to go unnoticed. The tests were tested too: of 23 bugs injected into the
+                NPU RTL, the suite caught 22, and the survivor writes a word that is always
+                overwritten.
+              </p>
+            </article>
+            <article>
+              <h3>A memory port for the NPU</h3>
+              <p>
+                The data memory is four word-interleaved, true dual-port banks. The CPU uses one
+                32-bit port; the NPU&apos;s DMA reads or writes a 16-byte block per cycle on the
+                other, so it never stalls the CPU, and banking costs no extra block RAM. That made
+                MNIST on the NPU 1.9 times faster. A full tile still needs 16 new operand bytes per
+                step, so the NPU also keeps what it loaded: <code>A_KEEP</code> and{" "}
+                <code>B_KEEP</code> skip reloading an operand, and because the NPU tags each buffer
+                with its address, stride, rows and K, a wrong hint costs time, never correctness.
+              </p>
+            </article>
+            <article>
+              <h3>Clock over CPI</h3>
+              <p>
+                Forwarding load data from block RAM put the RAM&apos;s clock-to-out, bank steering,
+                alignment and an adder in one cycle. Loads now reach their consumers through the
+                register file instead, one or two bubbles later. That costs 15% CPI on CoreMark and
+                buys a 1.6 times faster clock: a net 1.39 times faster on CoreMark and 1.59 times on
+                MNIST.
+              </p>
+            </article>
+          </div>
         </div>
-        <div className="pulse-decisions">
-          <article>
-            <h3>Two implementations of one spec</h3>
-            <p>
-              The RTL and a C++ instruction-set simulator are written separately against{" "}
-              <a href={`${REPO}/blob/${SOURCE_COMMIT}/docs/spec.md`}>docs/spec.md</a>, which defines
-              the memory map, the bus timing and the NPU&apos;s exact semantics. Random programs run
-              on both, and their commit logs (PC, instruction, register write, memory access) must
-              match line for line, so a bug has to be made twice, in two languages, to go unnoticed.
-              The tests were tested too: of 23 bugs injected into the NPU RTL, the suite caught 22,
-              and the survivor writes a word that is always overwritten.
-            </p>
-          </article>
-          <article>
-            <h3>A memory port for the NPU</h3>
-            <p>
-              The data memory is four word-interleaved, true dual-port banks. The CPU uses one
-              32-bit port; the NPU&apos;s DMA reads or writes a 16-byte block per cycle on the
-              other, so it never stalls the CPU, and banking costs no extra block RAM. That made
-              MNIST on the NPU 1.9 times faster. A full tile still needs 16 new operand bytes per
-              step, so the NPU also keeps what it loaded: <code>A_KEEP</code> and{" "}
-              <code>B_KEEP</code> skip reloading an operand, and since the NPU tags each buffer with
-              its address, stride, rows and K, a wrong hint costs time, never correctness.
-            </p>
-          </article>
-          <article>
-            <h3>Clock over CPI</h3>
-            <p>
-              The first version closed timing at 25 MHz: every critical path started at a block RAM
-              output. Forwarding load data put the RAM&apos;s clock-to-out, bank steering, alignment
-              and an adder in one cycle, so loads now reach their consumers through the register
-              file instead. That costs 15% CPI on CoreMark and buys a 1.6 times faster clock: a net
-              1.39 times faster on CoreMark and 1.59 times on MNIST.
-            </p>
-          </article>
-        </div>
-        <Source file="README.md">Design decisions; docs/core.md, section 10</Source>
       </Section>
 
       <Section id="limits" title="Limits">
@@ -251,7 +292,9 @@ export default function Page() {
             not a valid submission under CoreMark&apos;s run rules.
           </li>
         </ul>
-        <Source file="README.md">Limitations and next steps</Source>
+        <p className="pulse-source">
+          Source: <SourceLink file="README.md" anchor="limitations-and-next-steps" />.
+        </p>
       </Section>
     </div>
   );

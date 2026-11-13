@@ -1,6 +1,6 @@
 import { useEffect, useId, useMemo, useState } from "react";
 import { ArrayGrid, type PeStatus } from "./ArrayGrid";
-import { CommandTrace } from "./CommandTrace";
+import { CommandLanes, PhaseBar } from "./CommandTrace";
 import { MatrixTable } from "./MatrixTable";
 import {
   commandTiming,
@@ -233,11 +233,11 @@ export function SystolicStepper() {
           onChange={(e) => go(Number(e.target.value))}
           aria-valuetext={`Cycle ${cycle} of ${timing.total}: ${phaseText}`}
         />
-        <CommandTrace shape={op} timing={timing} at={at} />
+        <PhaseBar timing={timing} at={at} />
       </div>
 
       <div className="stepper__main">
-        <figure className="stepper__array">
+        <div className="stepper__array">
           <ArrayGrid
             op={op}
             snapshot={snapshot}
@@ -260,7 +260,7 @@ export function SystolicStepper() {
             </li>
           </ul>
           <p className="stepper__inspector">{inspector}</p>
-        </figure>
+        </div>
 
         <div className="stepper__side">
           <p className="stepper__check">{summary}</p>
@@ -288,6 +288,8 @@ export function SystolicStepper() {
           />
         </div>
       </div>
+
+      <CommandLanes shape={op} timing={timing} at={at} />
     </div>
   );
 }
