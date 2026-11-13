@@ -146,10 +146,28 @@ function personJsonLd(): string {
   return `<script type="application/ld+json">${JSON.stringify(data).replaceAll("<", "\\u003c")}</script>`;
 }
 
+/**
+ * The share image of a route and its text alternative: a project page's own card (drawn by
+ * scripts/share-assets.ts), and the home page's for every other route.
+ */
+function shareImage(path: string | null): { url: string; alt: string } {
+  const project = server.projects.find((p) => path === `/projects/${p.slug}/`);
+  if (!project) {
+    return {
+      url: server.absoluteUrl("/og.png"),
+      alt: `${server.profile.name}: ${server.profile.pitch}`,
+    };
+  }
+  const stats = project.stats.map((s) => `${s.value} ${s.label}`).join("; ");
+  return {
+    url: server.absoluteUrl(`/og/${project.slug}.png`),
+    alt: `${project.name}: ${project.tagline} ${stats}.`,
+  };
+}
+
 function headTags(meta: RouteMeta, path: string | null): string {
   const url = meta.path ? server.absoluteUrl(meta.path) : null;
-  const image = server.absoluteUrl("/og.png");
-  const imageAlt = `${server.profile.name}: ${server.profile.pitch}`;
+  const { url: image, alt: imageAlt } = shareImage(path);
   const title = escapeHtml(meta.title);
   const description = escapeHtml(meta.description);
   return [

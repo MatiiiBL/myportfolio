@@ -1,7 +1,9 @@
-// Draws the share image (public/og.png, 1200×630) and the PNG icons (public/favicon-32.png,
-// public/apple-touch-icon.png) with headless Chromium, in the site's style: the dark palette,
-// Inter and JetBrains Mono, and the same HNSW graph and search route as the home page. The PNGs
-// are committed; run this again after changing the profile text or the icon.
+// Draws the share images and the PNG icons with headless Chromium, in the site's style: the dark
+// palette, Inter and JetBrains Mono. public/og.png (1200×630) is the home page's, with the same
+// HNSW graph and search route as its hero; public/og/<slug>.png is each project page's, with its
+// kicker, name, tagline and three headline numbers. The icons are public/favicon-32.png and
+// public/apple-touch-icon.png. The PNGs are committed; run this again after changing the
+// profile, a project's headline text or the icon.
 //
 // Usage: node scripts/share-assets.ts   (needs `npx playwright install chromium` once)
 
@@ -11,6 +13,8 @@ import { pathToFileURL } from "node:url";
 import { chromium } from "@playwright/test";
 import { createServer } from "vite";
 import { profile } from "../src/content/profile.ts";
+import { projects } from "../src/content/projects.ts";
+import type { Project } from "../src/content/types.ts";
 
 const root = resolve(import.meta.dirname, "..");
 
@@ -120,11 +124,14 @@ function graphSvg(): string {
 
 const escape = (s: string) => s.replaceAll("&", "&amp;").replaceAll("<", "&lt;");
 
-const shareHtml = `<!doctype html>
-<html><head><meta charset="utf-8"><style>
+const fontFaces = `
 @font-face { font-family: "Inter"; src: url("${fonts("@fontsource-variable/inter/files/inter-latin-wght-normal.woff2")}") format("woff2"); font-weight: 100 900; }
 @font-face { font-family: "JetBrains Mono"; src: url("${fonts("@fontsource/jetbrains-mono/files/jetbrains-mono-latin-400-normal.woff2")}") format("woff2"); font-weight: 400; }
-@font-face { font-family: "JetBrains Mono"; src: url("${fonts("@fontsource/jetbrains-mono/files/jetbrains-mono-latin-500-normal.woff2")}") format("woff2"); font-weight: 500; }
+@font-face { font-family: "JetBrains Mono"; src: url("${fonts("@fontsource/jetbrains-mono/files/jetbrains-mono-latin-500-normal.woff2")}") format("woff2"); font-weight: 500; }`;
+
+const shareHtml = `<!doctype html>
+<html><head><meta charset="utf-8"><style>
+${fontFaces}
 * { box-sizing: border-box; margin: 0; }
 body { width: 1200px; height: 630px; overflow: hidden; background: ${C.bg};
   background-image: radial-gradient(900px 420px at 88% 0%, #e3b34122, transparent 70%);
@@ -145,6 +152,43 @@ svg { width: 100%; height: auto; }
 <div>${graphSvg()}</div>
 </body></html>`;
 
+/** The share image of a project page: its kicker, name, tagline and three headline numbers. */
+function projectHtml(p: Project): string {
+  const url = `${profile.siteUrl.replace(/^https:\/\//, "")}projects/${p.slug}/`;
+  return `<!doctype html>
+<html><head><meta charset="utf-8"><style>
+${fontFaces}
+* { box-sizing: border-box; margin: 0; }
+body { width: 1200px; height: 630px; overflow: hidden; background: ${C.bg};
+  background-image: radial-gradient(900px 420px at 92% 0%, #e3b3411c, transparent 70%);
+  font-family: Inter; color: ${C.text2}; padding: 64px 76px 56px;
+  display: flex; flex-direction: column; }
+.top { display: flex; justify-content: space-between; font-family: "JetBrains Mono"; font-size: 20px;
+  letter-spacing: 0.08em; text-transform: uppercase; }
+.kicker { color: ${C.accent}; }
+.who { color: ${C.text3}; letter-spacing: 0.02em; text-transform: none; }
+h1 { margin-top: 26px; font-size: 104px; line-height: 1; letter-spacing: -0.035em; color: ${C.text};
+  font-weight: 700; }
+.tagline { margin-top: 22px; max-width: 1000px; font-size: 34px; line-height: 1.3; color: ${C.text}; }
+.stats { margin-top: auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; }
+.stat { padding-left: 22px; border-left: 3px solid ${C.accent}; }
+.value { font-size: 50px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.1; color: ${C.text}; }
+.label { margin-top: 8px; font-size: 21px; line-height: 1.35; }
+.url { margin-top: 34px; font-family: "JetBrains Mono"; font-size: 19px; color: ${C.text3}; }
+</style></head><body>
+<div class="top"><span class="kicker">${escape(p.kicker)}</span><span class="who">${escape(profile.name)}</span></div>
+<h1>${escape(p.name)}</h1>
+<p class="tagline">${escape(p.tagline)}</p>
+<div class="stats">${p.stats
+    .map(
+      (s) =>
+        `<div class="stat"><p class="value">${escape(s.value)}</p><p class="label">${escape(s.label)}</p></div>`,
+    )
+    .join("")}</div>
+<p class="url">${escape(url)}</p>
+</body></html>`;
+}
+
 const icon = await readFile(join(pub, "favicon.svg"), "utf8");
 // The touch icon is full-bleed: iOS rounds the corners itself.
 const touchIcon = icon.replace('rx="7"', 'rx="0"');
@@ -154,6 +198,7 @@ const iconHtml = (svg: string, size: number) =>
   `</body></html>`;
 
 await mkdir(work, { recursive: true });
+await mkdir(join(pub, "og"), { recursive: true });
 const browser = await chromium.launch();
 try {
   const shots: {
@@ -164,6 +209,13 @@ try {
     omitBackground: boolean;
   }[] = [
     { html: shareHtml, width: 1200, height: 630, out: "og.png", omitBackground: false },
+    ...projects.map((p) => ({
+      html: projectHtml(p),
+      width: 1200,
+      height: 630,
+      out: `og/${p.slug}.png`,
+      omitBackground: false,
+    })),
     {
       html: iconHtml(icon, 32),
       width: 32,
@@ -180,7 +232,7 @@ try {
     },
   ];
   for (const shot of shots) {
-    const file = join(work, `${shot.out}.html`);
+    const file = join(work, `${shot.out.replaceAll("/", "-")}.html`);
     await writeFile(file, shot.html);
     const page = await browser.newPage({ viewport: { width: shot.width, height: shot.height } });
     await page.goto(pathToFileURL(file).href);

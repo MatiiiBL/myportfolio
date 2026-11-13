@@ -126,12 +126,18 @@ test("the static HTML carries the content, the metadata and the lazy page bodies
   expect(home).toContain(`<h1 id="hero-name" class="hero-name">${profile.name}</h1>`);
   expect(home).toContain('"@type":"Person"');
   expect(home).toContain(`<link rel="canonical" href="${profile.siteUrl}">`);
-  expect(home).toContain('<meta property="og:image" content="');
+  expect(home).toContain(`<meta property="og:image" content="${profile.siteUrl}og.png">`);
   for (const p of projects) {
     const html = await (await request.get(`./projects/${p.slug}/`)).text();
     expect(html).toContain(`<h1 class="project-name">${p.name}</h1>`);
     expect(html).toMatch(/<section[^>]+class="section"/);
     expect(html).toContain(`href="${profile.siteUrl}projects/${p.slug}/"`);
+    // Each project page shares its own card, which must exist.
+    const image = `${profile.siteUrl}og/${p.slug}.png`;
+    expect(html).toContain(`<meta property="og:image" content="${image}">`);
+    expect(html).toContain(`<meta name="twitter:image" content="${image}">`);
+    const png = await request.get(`./og/${p.slug}.png`);
+    expect(png.headers()["content-type"]).toBe("image/png");
   }
   const notFound = await request.get("./no-such-page/");
   expect(notFound.status()).toBe(404);
