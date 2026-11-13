@@ -1,0 +1,105 @@
+/*
+ * Design tokens. The palette matches the GitHub profile cards (github.com/MatiiiBL), so the
+ * site and the profile read as one identity: GitHub-dark neutrals, one gold accent, and three
+ * categorical series colors checked for color-vision deficiency and contrast against each
+ * surface. Components use these variables only, never raw colors.
+ *
+ * Dark is the default look; light follows the system preference unless the visitor picks a
+ * theme (data-theme on <html>).
+ */
+
+:root {
+  color-scheme: dark;
+
+  --bg: #0d1117;
+  --surface: #111721; /* cards, panels */
+  --surface-2: #161b22; /* chips, inputs, hover */
+  --border: #30363d;
+  --grid: #21262d; /* chart grid lines, hairlines */
+
+  --text: #e6edf3;
+  --text-2: #9da7b3; /* body copy */
+  --text-3: #7d8590; /* captions, axis labels */
+
+  --accent: #e3b341;
+  --accent-soft: #e3b34126;
+  --accent-contrast: #0d1117; /* text on an accent fill */
+
+  --series-1: #b98a1e;
+  --series-2: #4a86d6;
+  --series-3: #22a07f;
+
+  --focus: #58a6ff;
+
+  --font-sans: "Inter Variable", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* type scale (rem) */
+  --step--1: 0.8125rem;
+  --step-0: 1rem;
+  --step-1: 1.125rem;
+  --step-2: 1.375rem;
+  --step-3: 1.75rem;
+  --step-4: 2.5rem;
+  --step-5: clamp(2.75rem, 6vw, 4.25rem);
+
+  /* spacing */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4.5rem;
+  --space-9: 7rem;
+
+  --radius-1: 6px;
+  --radius-2: 10px;
+  --radius-3: 14px;
+
+  --content-width: 1120px;
+  --prose-width: 68ch;
+
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #ffffff;
+  --surface: #f6f8fa;
+  --surface-2: #eef1f4;
+  --border: #d1d9e0;
+  --grid: #eaeef2;
+  --text: #1f2328;
+  --text-2: #59636e;
+  --text-3: #6e7781;
+  --accent: #9a6700;
+  --accent-soft: #bf870024;
+  --accent-contrast: #ffffff;
+  --series-1: #b07d0e;
+  --series-2: #2a78d6;
+  --series-3: #1a8f6e;
+  --focus: #0969da;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    color-scheme: light;
+    --bg: #ffffff;
+    --surface: #f6f8fa;
+    --surface-2: #eef1f4;
+    --border: #d1d9e0;
+    --grid: #eaeef2;
+    --text: #1f2328;
+    --text-2: #59636e;
+    --text-3: #6e7781;
+    --accent: #9a6700;
+    --accent-soft: #bf870024;
+    --accent-contrast: #ffffff;
+    --series-1: #b07d0e;
+    --series-2: #2a78d6;
+    --series-3: #1a8f6e;
+    --focus: #0969da;
+  }
+}

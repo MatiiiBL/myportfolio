@@ -1,0 +1,21 @@
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.stat-value {
+  color: var(--text);
+  font-size: var(--step-3);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+}
+
+.stat-label {
+  margin: 0;
+  font-size: var(--step--1);
+  color: var(--text-2);
+  line-height: 1.4;
+}
