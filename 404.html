@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="theme-color" content="#0d1117" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <script>
+      // Apply a saved theme choice before the first paint, so the page never flashes the other
+      // theme. src/components/theme.ts reads and writes the same key.
+      try {
+        var theme = localStorage.getItem("theme");
+        if (theme === "dark" || theme === "light") {
+          document.documentElement.dataset.theme = theme;
+          document.querySelectorAll('meta[name="theme-color"]').forEach(function (meta) {
+            meta.content = theme === "dark" ? "#0d1117" : "#ffffff";
+          });
+        }
+      } catch (error) {}
+    </script>
+    <title>Page not found · Matías Blanco</title>
+    <meta name="description" content="There is no page at this address." />
+    <link rel="icon" href="/myportfolio/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/myportfolio/favicon-32.png" sizes="32x32" type="image/png" />
+    <link rel="apple-touch-icon" href="/myportfolio/apple-touch-icon.png" />
+    <meta name="robots" content="noindex">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Matías Blanco">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:title" content="Page not found · Matías Blanco">
+    <meta property="og:description" content="There is no page at this address.">
+    <meta property="og:image" content="https://matiiibl.github.io/myportfolio/og.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Matías Blanco: I build fast, verified systems from scratch.">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Page not found · Matías Blanco">
+    <meta name="twitter:description" content="There is no page at this address.">
+    <meta name="twitter:image" content="https://matiiibl.github.io/myportfolio/og.png">
+    <meta name="twitter:image:alt" content="Matías Blanco: I build fast, verified systems from scratch.">
+    <link rel="preload" href="/myportfolio/assets/inter-latin-wght-normal-Dx4kXJAl.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/myportfolio/assets/jetbrains-mono-latin-400-normal-V6pRDFza.woff2" as="font" type="font/woff2" crossorigin>
+    <script type="module" crossorigin src="/myportfolio/assets/index-CZAbi-lg.js"></script>
+    <link rel="stylesheet" crossorigin href="/myportfolio/assets/index-NsLan7xt.css">
+  </head>
+  <body>
+    <div id="root"><a class="skip-link" href="#main">Skip to content</a><header class="site-header"><div class="container site-header-inner"><a class="site-name" href="/myportfolio/" data-discover="true">Matías Blanco</a><nav class="site-nav" aria-label="Sections"><ul><li class="site-nav-work"><a href="/myportfolio/#work" data-discover="true">Work</a></li><li class="site-nav-experience"><a href="/myportfolio/#experience" data-discover="true">Experience</a></li><li class="site-nav-toolbox"><a href="/myportfolio/#toolbox" data-discover="true">Toolbox</a></li><li class="site-nav-about"><a href="/myportfolio/#about" data-discover="true">About</a></li><li class="site-nav-contact"><a href="/myportfolio/#contact" data-discover="true">Contact</a></li></ul></nav><button type="button" class="theme-toggle" aria-label="Theme: system. Switch to dark." title="Theme: system"><svg class="theme-icon is-system" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6"></circle><path d="M8 2a6 6 0 0 1 0 12z" class="fill"></path></svg><svg class="theme-icon is-dark" viewBox="0 0 16 16" aria-hidden="true"><path d="M13.5 9.6A5.6 5.6 0 0 1 6.4 2.5a5.6 5.6 0 1 0 7.1 7.1z" class="fill"></path></svg><svg class="theme-icon is-light" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="3" class="fill"></circle><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3 3l1.4 1.4M11.6 11.6 13 13M3 13l1.4-1.4M11.6 4.4 13 3"></path></svg></button></div></header><main id="main" tabindex="-1"><div class="container not-found"><p class="not-found-code">404</p><h1>Page not found</h1><p class="not-found-lead">There is no page at this address. It may have moved when the site was rebuilt.</p><p><a class="not-found-home" href="/myportfolio/" data-discover="true">Go to the home page</a></p><h2>Projects</h2><ul class="not-found-list"><li><a href="/myportfolio/projects/pulse/" data-discover="true">Pulse</a><span>A RISC-V SoC with an INT8 systolic-array NPU.</span></li><li><a href="/myportfolio/projects/apex/" data-discover="true">Apex</a><span>An autonomous Formula Student Driverless stack, and the simulator it races in.</span></li><li><a href="/myportfolio/projects/vecdex/" data-discover="true">vecdex</a><span>Approximate nearest-neighbor search on HNSW graphs.</span></li><li><a href="/myportfolio/projects/minillm/" data-discover="true">minillm</a><span>A Llama-architecture inference engine, from scratch.</span></li><li><a href="/myportfolio/projects/tessera/" data-discover="true">Tessera</a><span>A tensor compiler for Apple silicon.</span></li><li><a href="/myportfolio/projects/precis/" data-discover="true">Précis</a><span>Parallel LLM agents that read and verify research papers.</span></li></ul></div></main><footer class="site-footer"><div class="container site-footer-inner"><div><p class="site-footer-name">Matías Blanco</p><p>Computer Engineering · Columbia University</p></div><ul class="site-footer-links"><li><a href="mailto:matias.blancobalaguer@columbia.edu">matias.blancobalaguer@columbia.edu</a></li><li><a href="https://github.com/MatiiiBL">GitHub</a></li><li><a href="https://www.linkedin.com/in/matias-blanco-uy/">LinkedIn</a></li></ul><p class="site-footer-note"><a href="https://github.com/MatiiiBL/myportfolio">Source on GitHub</a>.</p></div></footer></div>
+  </body>
+</html>
