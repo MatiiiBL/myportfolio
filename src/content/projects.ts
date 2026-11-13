@@ -12,11 +12,11 @@ export const projects: Project[] = [
     tagline: "A RISC-V SoC with an INT8 systolic-array NPU.",
     summary:
       "A 5-stage pipelined RV32IM CPU driving an 8×8 INT8 systolic-array NPU with its own DMA, " +
-      "checked instruction by instruction against a C++ reference simulator and closed at 40 MHz " +
-      "on an ECP5 FPGA.",
+      "checked instruction by instruction against a C++ reference simulator. It meets timing at " +
+      "40 MHz on an ECP5 FPGA (place and route; not yet run on a board).",
     stats: [
-      { value: "115×", label: "faster MNIST on the NPU than the CPU" },
-      { value: "58.9", label: "of 64 MACs per cycle on a full tile" },
+      { value: "115×", label: "faster MNIST on the NPU than the CPU, in RTL simulation" },
+      { value: "58.9", label: "of 64 MACs per cycle on a full tile, operands already loaded" },
       { value: "2.86", label: "CoreMark/MHz, 114 iterations/s at 40 MHz" },
     ],
     tags: ["SystemVerilog", "Verilator", "cocotb", "RISC-V", "ECP5", "C++"],
@@ -33,11 +33,12 @@ export const projects: Project[] = [
     kicker: "Robotics · C++20",
     tagline: "An autonomous Formula Student Driverless stack, and the simulator it races in.",
     summary:
-      "On a track it has never seen, lap 1 maps the cones with LiDAR, camera and EKF-SLAM; laps " +
+      "In simulation, on a track it has never seen, lap 1 maps the cones with LiDAR, camera and " +
+      "EKF-SLAM; laps " +
       "2–10 race a minimum-curvature raceline with model predictive control. Every algorithm is " +
       "written from scratch, down to the QP solvers.",
     stats: [
-      { value: "33/33", label: "ten-lap runs on unseen tracks, no cone hit" },
+      { value: "33/33", label: "simulated ten-lap runs on unseen tracks, no cone hit" },
       { value: "1.4 cm", label: "median cone-map error after lap 1" },
       { value: "341 µs", label: "MPC p99 on one core (budget 2 ms)" },
     ],
@@ -62,7 +63,7 @@ export const projects: Project[] = [
       "save/load and zero-copy NumPy bindings, benchmarked against FAISS and hnswlib on the same " +
       "harness.",
     stats: [
-      { value: "18.0K", label: "queries/s at 96.4% recall@10 on SIFT1M" },
+      { value: "18,000", label: "queries/s at 96.4% recall@10 on SIFT1M" },
       { value: "1.78×", label: "FAISS HNSW with the same parameters" },
       { value: "28 s", label: "to build a 1M-vector index on 10 threads" },
     ],
@@ -90,7 +91,7 @@ export const projects: Project[] = [
       "against PyTorch, and a fast one checked against the reference.",
     stats: [
       { value: "Exact", label: "greedy-token match with PyTorch" },
-      { value: "3.8×", label: "smaller weights with Q8_0 (538 → 143 MB)" },
+      { value: "3.8×", label: "smaller weights than f32 with Q8_0 (538 → 143 MB)" },
       { value: "3", label: "sanitizers in CI: ASan, UBSan, TSan" },
     ],
     tags: ["C++20", "safetensors", "bf16", "Q8_0", "doctest"],
@@ -158,7 +159,7 @@ export const minorProjects: MinorProject[] = [
     kicker: "Robotics · assistive hardware",
     award: "AI category winner · makeCU",
     summary:
-      "A tendon-driven glove (5 servos) that helps stroke patients open their hand, with a " +
+      "A tendon-driven glove (5 servos) designed to help stroke patients open their hand, with a " +
       "virtual target hand, a voice coach and a doctor view.",
     role: "I owned the webcam hand tracking: MediaPipe finger-flexion measurement, calibration and temporal filtering.",
     tags: ["ESP32", "MediaPipe", "TypeScript", "Python"],
@@ -166,11 +167,12 @@ export const minorProjects: MinorProject[] = [
   },
   {
     name: "WattsGood",
-    kicker: "Multi-agent LLM app",
+    kicker: "LLM app · React",
     award: "1st place · 8-hour hackathon",
     summary:
-      "Three orchestrated Claude agents (eligibility parsing, program matching, plain-language " +
-      "explanation) connect low-income households to unclaimed energy assistance.",
+      "A bilingual web app that turns a household's short intake into matching NYC " +
+      "energy-assistance programs, rough benefit estimates and links, with Claude and web " +
+      "search doing the eligibility reasoning.",
     role: "Built with a 4-person team.",
     tags: ["JavaScript", "React", "Claude API"],
     repo: gh("MatiiiBL/housing-energy-assistance"),
