@@ -1,0 +1,374 @@
+.explorer {
+  display: grid;
+  gap: var(--space-5);
+}
+
+/* Code is quoted as Tessera prints it: no ligatures turning -> into an arrow. */
+.explorer code,
+.trace-step,
+.ir {
+  font-variant-ligatures: none;
+}
+
+/* Knobs */
+
+.explorer-controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: var(--space-4) var(--space-5);
+}
+
+.knob {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.knob-name {
+  padding: 0;
+  margin-bottom: var(--space-2);
+  color: var(--text-3);
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+}
+
+.knob-hint {
+  color: var(--text-3);
+}
+
+.segmented {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.segment {
+  position: relative;
+}
+
+.segment input,
+.check input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+}
+
+.segment span {
+  display: inline-block;
+  min-width: 2.25rem;
+  padding: 0.3rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-1);
+  background: var(--surface-2);
+  color: var(--text-2);
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  text-align: center;
+  cursor: pointer;
+}
+
+.segment input:checked + span {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--text);
+}
+
+.segment input:focus-visible + span,
+.check input:focus-visible + span {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.check {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.check > span::before {
+  content: "";
+  display: inline-block;
+  width: 0.85rem;
+  height: 0.85rem;
+  margin-right: var(--space-2);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  background: var(--surface-2);
+  vertical-align: -0.1rem;
+}
+
+.check input:checked + span::before {
+  border-color: var(--accent);
+  background: var(--accent);
+  box-shadow: inset 0 0 0 2px var(--surface-2);
+}
+
+.text-button,
+.step-button {
+  padding: 0.3rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-1);
+  background: var(--surface-2);
+  color: var(--text);
+  font: inherit;
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  cursor: pointer;
+}
+
+.text-button:disabled,
+.step-button:disabled {
+  color: var(--text-3);
+  cursor: default;
+}
+
+.text-button:not(:disabled):hover,
+.step-button:not(:disabled):hover {
+  border-color: var(--text-3);
+}
+
+/* Access view and the IR side by side */
+
+.explorer-main {
+  display: grid;
+  gap: var(--space-6);
+  align-items: start;
+}
+
+@media (min-width: 960px) {
+  .explorer-main {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  }
+}
+
+.access-view svg {
+  display: block;
+  max-width: 560px;
+  overflow: visible;
+}
+
+.access-matrix rect {
+  fill: var(--surface-2);
+  stroke: var(--border);
+  stroke-width: 1;
+}
+
+.access-grid line {
+  stroke: var(--grid);
+  stroke-width: 1;
+  shape-rendering: crispEdges;
+}
+
+.access-done {
+  fill: var(--text-3);
+  opacity: 0.3;
+}
+
+.access-read {
+  fill: var(--series-2);
+  opacity: 0.45;
+}
+
+.access-source {
+  fill: none;
+  stroke: var(--series-3);
+  stroke-width: 2;
+}
+
+.access-source.is-copying {
+  fill: var(--series-3);
+  fill-opacity: 0.35;
+}
+
+.access-tile {
+  fill: var(--accent);
+}
+
+.access-label {
+  fill: var(--text-3);
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+.access-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-4);
+  margin: var(--space-3) 0 0;
+  padding: 0;
+  list-style: none;
+  color: var(--text-2);
+  font-size: var(--step--1);
+}
+
+.access-legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.key {
+  display: inline-block;
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 2px;
+}
+
+.key-tile {
+  background: var(--accent);
+}
+
+.key-read {
+  background: color-mix(in srgb, var(--series-2) 45%, var(--surface));
+}
+
+.key-source {
+  border: 2px solid var(--series-3);
+}
+
+.key-done {
+  background: color-mix(in srgb, var(--text-3) 30%, var(--surface));
+}
+
+.stepper {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+}
+
+.step-range {
+  flex: 1;
+  min-width: 0;
+  accent-color: var(--accent);
+}
+
+.step-label {
+  margin-top: var(--space-2);
+  color: var(--text-2);
+  font-size: var(--step--1);
+  font-variant-numeric: tabular-nums;
+}
+
+.step-where {
+  font-family: var(--font-mono);
+  color: var(--text-3);
+}
+
+.facts {
+  display: grid;
+  gap: var(--space-2);
+  margin: var(--space-4) 0 0;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--grid);
+  font-size: var(--step--1);
+}
+
+.facts div {
+  display: grid;
+  grid-template-columns: 8.5rem 1fr;
+  gap: var(--space-3);
+}
+
+.facts dt {
+  color: var(--text-3);
+  font-family: var(--font-mono);
+}
+
+.facts dd {
+  margin: 0;
+  color: var(--text-2);
+}
+
+/* Trace and loop IR */
+
+.ir-heading {
+  margin-bottom: var(--space-2);
+  color: var(--text-3);
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.trace {
+  margin: 0 0 var(--space-4);
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+}
+
+.trace li {
+  counter-increment: step;
+}
+
+.trace-step {
+  display: block;
+  width: 100%;
+  padding: 0.15rem 0.5rem;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text-2);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: left;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+}
+
+.trace-step::before {
+  content: counter(step) " ";
+  color: var(--text-3);
+}
+
+.trace-step.is-active {
+  background: var(--accent-soft);
+  color: var(--text);
+}
+
+.ir {
+  margin: 0;
+  padding: var(--space-3) 0;
+  border: 1px solid var(--grid);
+  border-radius: var(--radius-2);
+  background: var(--bg);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.ir code {
+  font-size: inherit;
+}
+
+.ir-line {
+  display: block;
+  padding-right: var(--space-3);
+  color: var(--text-2);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  text-indent: -2ch;
+}
+
+.ir-line.is-marked {
+  background: var(--accent-soft);
+  box-shadow: inset 2px 0 0 var(--accent);
+  color: var(--text);
+}
+
+@media (max-width: 480px) {
+  .facts div {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+}

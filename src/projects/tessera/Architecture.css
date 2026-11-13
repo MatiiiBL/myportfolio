@@ -1,0 +1,43 @@
+.arch svg {
+  display: block;
+  height: auto;
+  margin-inline: auto;
+  overflow: visible;
+}
+
+.arch-node rect {
+  fill: var(--bg);
+  stroke: var(--border);
+  stroke-width: 1;
+}
+
+.arch-node.is-emphasis rect {
+  stroke: var(--accent);
+}
+
+.arch-title {
+  fill: var(--text);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.arch-detail {
+  fill: var(--text-3);
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+.arch-edge {
+  fill: none;
+  stroke: var(--text-3);
+  stroke-width: 1.5;
+}
+
+.arch-edge.is-dashed {
+  stroke-dasharray: 4 3;
+}
+
+.arch-arrowhead {
+  fill: var(--text-3);
+}
