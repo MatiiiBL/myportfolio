@@ -91,7 +91,8 @@ function useScrollOnNavigate() {
     }
     if (navigation === "POP") return;
     if (!hash) {
-      window.scrollTo(0, 0);
+      // A new page starts at its top; smooth scrolling is for moving within a page.
+      window.scrollTo({ top: 0, left: 0, behavior: "instant" });
       document.getElementById("main")?.focus({ preventScroll: true });
       return;
     }
