@@ -73,7 +73,8 @@
   --grid: #eaeef2;
   --text: #1f2328;
   --text-2: #59636e;
-  --text-3: #6e7781;
+  /* 5.25:1 on --bg, 4.93:1 on --surface, 4.63:1 on --surface-2 (WCAG AA for small text). */
+  --text-3: #656d76;
   --accent: #9a6700;
   --accent-soft: #bf870024;
   --accent-contrast: #ffffff;
@@ -93,7 +94,8 @@
     --grid: #eaeef2;
     --text: #1f2328;
     --text-2: #59636e;
-    --text-3: #6e7781;
+    /* Same as above: 5.25:1 on --bg, 4.93:1 on --surface, 4.63:1 on --surface-2. */
+    --text-3: #656d76;
     --accent: #9a6700;
     --accent-soft: #bf870024;
     --accent-contrast: #ffffff;
