@@ -14,10 +14,10 @@ export default function Page() {
       <Section id="overview" title="Overview">
         <div className="project-prose">
           <p>
-            Précis reads thousands of research papers in parallel with LLM agents and turns them
-            into verified, structured summaries and a map of the field. A reader agent moves through
-            each paper&apos;s sections with tools instead of receiving the whole text. A critic
-            checks every claim of the summary against the paper and has to quote its evidence
+            I built Précis to read thousands of research papers in parallel with LLM agents and turn
+            them into verified, structured summaries and a map of the field. A reader agent moves
+            through each paper&apos;s sections with tools instead of receiving the whole text. A
+            critic checks every claim of the summary against the paper and has to quote its evidence
             verbatim, and summaries with unsupported or contradicted claims are rewritten and
             checked again. The corpus is then clustered into topics, and Précis writes a report and
             a searchable static site.
