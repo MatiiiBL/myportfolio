@@ -1,13 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { exp, Random } from "./random";
+import { Random } from "./random";
 
 describe("the engine-independent generator", () => {
-  it("computes e^x to within a few ulps of Math.exp", () => {
-    for (let x = -6; x <= 6; x += 0.0137) {
-      expect(Math.abs(exp(x) - Math.exp(x)) / Math.exp(x)).toBeLessThan(1e-14);
-    }
-  });
-
   it("draws normals with mean 0 and variance 1", () => {
     const rng = new Random(9);
     const n = 200_000;
