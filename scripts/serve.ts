@@ -1,7 +1,7 @@
 // Serves dist/ the way GitHub Pages serves the gh-pages branch, so the end-to-end tests and
 // Lighthouse see what visitors get: the site under /myportfolio/, a directory's index.html at
-// its path with a trailing slash (a 301 adds the slash), and 404.html with status 404 for
-// anything else. `vite preview` would answer unknown paths with index.html and status 200.
+// its path with a trailing slash (a 301 adds the slash), 404.html with status 404 for anything
+// else, and gzip for text. `vite preview` would answer unknown paths with index.html and 200.
 //
 // Usage: node scripts/serve.ts [--port 4173]
 
@@ -9,6 +9,7 @@ import { createReadStream } from "node:fs";
 import { stat } from "node:fs/promises";
 import { createServer } from "node:http";
 import { extname, join, normalize, resolve } from "node:path";
+import { createGzip } from "node:zlib";
 
 const BASE = "/myportfolio/";
 const dist = resolve(import.meta.dirname, "..", "dist");
@@ -38,11 +39,23 @@ async function fileAt(path: string): Promise<"file" | "dir" | null> {
   }
 }
 
+/** Text types GitHub Pages compresses. */
+const COMPRESSIBLE = new Set([".html", ".js", ".css", ".json", ".svg", ".xml", ".txt"]);
+
 createServer((req, res) => {
   const url = new URL(req.url ?? "/", "http://localhost");
   const send = (status: number, file: string) => {
-    res.writeHead(status, { "Content-Type": TYPES[extname(file)] ?? "application/octet-stream" });
-    createReadStream(file).pipe(res);
+    const gzip =
+      COMPRESSIBLE.has(extname(file)) && /\bgzip\b/.test(req.headers["accept-encoding"] ?? "");
+    res.writeHead(status, {
+      "Content-Type": TYPES[extname(file)] ?? "application/octet-stream",
+      // GitHub Pages caches everything for ten minutes.
+      "Cache-Control": "max-age=600",
+      ...(gzip && { "Content-Encoding": "gzip", Vary: "Accept-Encoding" }),
+    });
+    const stream = createReadStream(file);
+    if (gzip) stream.pipe(createGzip()).pipe(res);
+    else stream.pipe(res);
   };
   const notFound = () => send(404, join(dist, "404.html"));
 
