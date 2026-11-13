@@ -76,11 +76,11 @@ export default function Page() {
           </p>
           <p>
             The algorithm fits on a page of the paper; the work is in making it fast and measuring
-            it fairly. A search is a chain of cache misses: every node it expands points to about 21
-            vectors scattered across 512 MB. I profiled before optimizing, and I benchmarked vecdex
-            against hnswlib and FAISS on one machine, through one harness, with the same build
-            parameters, and even with vecdex&apos;s own distance kernel plugged into hnswlib, so the
-            remaining gap measures graph code alone.
+            it fairly. A search is a chain of cache misses: every node it expands leads to about 21
+            unvisited vectors, scattered across 512 MB. I profiled before optimizing, and I
+            benchmarked vecdex against hnswlib and FAISS on one machine, through one harness, with
+            the same build parameters, and even with vecdex&apos;s own distance kernel plugged into
+            hnswlib, so the remaining gap measures graph code alone.
           </p>
         </div>
       </Section>
