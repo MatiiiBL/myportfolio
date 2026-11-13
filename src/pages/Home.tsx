@@ -3,13 +3,16 @@ import { Section } from "../components/Section";
 import { experience, focus, profile, toolbox } from "../content/profile";
 import { minorProjects, projects } from "../content/projects";
 import { HnswSearch } from "./home/HnswSearch";
+import { Intro } from "./home/intro/Intro";
 import { MinorCard, ProjectCard } from "./home/ProjectCard";
 import "./Home.css";
 
 export default function Home() {
   return (
     <>
-      <Hero />
+      <Intro>
+        <Hero />
+      </Intro>
       <div className="container">
         <Section id="work" title="Selected work">
           <div className="work-grid">

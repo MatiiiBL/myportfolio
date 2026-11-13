@@ -216,7 +216,13 @@ test("the HNSW search follows the query and says how much work it saved", async 
   const route = () => page.locator(".hnsw-hop").evaluateAll((lines) => lines.length);
   await expect.poll(route).toBeGreaterThan(0);
 
+  // The scroll intro, when it runs, shows the search only at its end; focusing the search goes
+  // there, so wait for the intro to be running first.
+  if ((await page.locator("html[data-intro]").count()) > 0) {
+    await expect(page.locator(".intro")).toHaveAttribute("data-stage", /\w/);
+  }
   await demo.focus();
+  await expect(page.locator(".hero-figure")).toHaveCSS("opacity", "1");
   for (let i = 0; i < 12; i++) await page.keyboard.press("ArrowRight");
   for (let i = 0; i < 10; i++) await page.keyboard.press("ArrowUp");
   await expect(readout).not.toHaveText(before ?? "");

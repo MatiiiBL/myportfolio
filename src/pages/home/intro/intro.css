@@ -1,0 +1,130 @@
+/*
+ * The scroll intro (Intro.tsx). Everything here applies only under :root[data-intro], which the
+ * head script in index.html sets before the first paint when scripts run and the visitor has not
+ * asked for reduced motion. Without it, .intro and .intro-pin are plain blocks around the hero.
+ */
+
+.intro {
+  /* The sticky site header's height (Shell.css: .site-header-inner). */
+  --intro-header: 3.5rem;
+}
+
+:root[data-intro] .intro {
+  position: relative;
+  /* The pinned screen plus four screens of scroll. */
+  height: calc(500vh - var(--intro-header));
+  height: calc(500svh - var(--intro-header));
+}
+
+:root[data-intro] .intro-pin {
+  position: sticky;
+  top: var(--intro-header);
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - var(--intro-header));
+  min-height: calc(100svh - var(--intro-header));
+  /* The hero's background (Home.css) moves here, so the particles sit between it and the text. */
+  background:
+    radial-gradient(60rem 28rem at 85% 0%, var(--accent-soft), transparent 70%),
+    linear-gradient(var(--bg), var(--bg));
+}
+
+:root[data-intro] .intro .hero {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  background: none;
+}
+
+:root[data-intro] .intro .hero-inner {
+  width: 100%;
+}
+
+/* The hero's search fades in at the end of the intro (the engine sets its opacity). */
+:root[data-intro] .intro .hero-figure {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.intro-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 600ms var(--ease-out);
+}
+
+.intro-canvas.is-ready {
+  opacity: 1;
+}
+
+.intro-skip {
+  position: absolute;
+  top: var(--space-3);
+  left: 50%;
+  z-index: 3;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-1);
+  background: var(--accent);
+  color: var(--accent-contrast);
+  font-weight: 600;
+  text-decoration: none;
+  transform: translate(-50%, -300%);
+}
+
+.intro-skip:focus {
+  transform: translate(-50%, 0);
+}
+
+.intro-labels {
+  position: absolute;
+  top: var(--intro-art-top, 0);
+  left: var(--intro-art-left, 0);
+  z-index: 2;
+  width: var(--intro-art-width, 0);
+}
+
+.intro-label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  margin: 0;
+  font-size: var(--step--1);
+  line-height: 1.5;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 300ms var(--ease-out),
+    visibility 0s linear 300ms;
+}
+
+.intro-label.is-active {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 300ms var(--ease-out);
+}
+
+.intro-label-link {
+  color: var(--accent);
+  font-family: var(--font-mono);
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.intro-label-link:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.intro-label-text {
+  display: block;
+  margin-top: var(--space-1);
+  color: var(--text-2);
+}

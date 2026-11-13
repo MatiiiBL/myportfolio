@@ -57,6 +57,7 @@ src/
     charts/         chart primitives: LineChart, BarChart, ChartFrame, axes, marks, scales
   pages/            Home, NotFound, per-route metadata (meta.ts)
     home/           the HNSW search demo and the project cards
+      intro/        the scroll intro over the hero (see below)
   projects/         one folder per flagship project: its page, visualizations, data and tests
   entry-server.tsx  renders a route to HTML for the prerender
 scripts/
@@ -67,6 +68,41 @@ public/             favicon, icons, share image, robots.txt
 e2e/                Playwright tests against the production build
 docs/site.md        the design contract: structure, content rules, visual language, quality bar
 ```
+
+## The scroll intro
+
+The top of the home page is a scroll-driven intro. The hero stays pinned for four screens of
+scroll while a field of particles (Canvas 2D, 1,200 on desktop and 500 on phones) on its right
+becomes four of the projects in turn, then settles exactly onto the hero's HNSW graph and hands
+over to it:
+
+1. Silicon (Pulse): the 8 × 8 systolic array, with the compute wavefront sweeping it diagonally.
+2. Robots (Apex): the cones of a simulated track, with the car lapping it.
+3. Models (minillm): the causal attention triangle of one head.
+4. Search (vecdex): the nodes and links of the hero's own graph, read from its SVG.
+
+The motion is a pure function of the scroll position, so scrolling back up replays it in
+reverse. It runs only when JavaScript runs and the visitor has not asked for reduced motion;
+otherwise, and in the prerendered HTML, the hero is the plain one.
+
+It is isolated so it can go as easily as it came:
+
+- all of its code, styles, data and unit tests are in `src/pages/home/intro/` (the canvas engine
+  is loaded on demand, in its own chunk);
+- `src/pages/Home.tsx` mounts it once, as `<Intro>` around `<Hero />`;
+- the head script in `index.html` sets `data-intro` on `<html>` before the first paint, so the
+  pinned height is there from the start and nothing shifts;
+- `e2e/intro.spec.ts` tests it, and one test in `e2e/site.spec.ts` waits for it.
+
+**How to remove the intro:** `git revert <commit>`, where `<commit>` is the one that added it.
+This finds it:
+
+```sh
+git log --diff-filter=A --format='%h %s' -- src/pages/home/intro/Intro.tsx
+```
+
+If later commits changed the intro, revert those too, newest first:
+`git log --format='%h %s' -- src/pages/home/intro` lists them.
 
 ## Deploy
 

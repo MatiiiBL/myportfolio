@@ -18,6 +18,14 @@
           });
         }
       } catch (error) {}
+      // The home page's scroll intro (src/pages/home/intro) pins the hero for four screens of
+      // scroll; marking it here applies that height before the first paint. Only when scripts
+      // run and the visitor has not asked for reduced motion.
+      try {
+        if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
+          document.documentElement.setAttribute("data-intro", "");
+        }
+      } catch (error) {}
     </script>
     <title>Matías Blanco</title>
     <meta
