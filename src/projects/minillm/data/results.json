@@ -53,6 +53,12 @@
       "tolerance": "2e-4 + 1e-4 |x|"
     },
     {
+      "stage": "hidden states, 30 layers",
+      "shape": "3 prompts",
+      "maxAbs": "2.0e-2 (on an element of 3212)",
+      "tolerance": "6e-3 + 1e-4 |x|"
+    },
+    {
       "stage": "final logits, after 30 layers",
       "shape": "[49152], 3 prompts",
       "maxAbs": "4.6e-5",

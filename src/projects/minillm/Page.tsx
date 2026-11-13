@@ -33,7 +33,7 @@ export default function Page() {
       <Section id="overview" title="Overview">
         <div className="project-prose">
           <p>
-            minillm is an inference engine for Llama-architecture language models, written in C++20
+            I wrote minillm: an inference engine for Llama-architecture language models in C++20,
             with no dependencies beyond a test framework and a JSON parser. It loads SmolLM2-135M
             (30 layers, 576 wide, 9 query heads sharing 3 key-value heads) from its safetensors
             checkpoint, tokenizes the prompt, runs the forward pass over a preallocated KV cache and
@@ -46,8 +46,9 @@ export default function Page() {
             model just gets a little worse. So correctness comes first. Every kernel exists twice: a
             naive scalar reference checked against PyTorch, and an optimized version (NEON, threads,
             an online softmax) checked against the reference. Weights can be held as f32, bf16 or
-            Q8_0, an 8-bit format with one f16 scale per 32 weights that shrinks them from 538 MB to
-            143 MB.
+            Q8_0, an 8-bit format with one f16 scale per 32 weights. Q8_0 takes 143 MB: 3.8× smaller
+            than f32 (538 MB), and 1.9× smaller than the bf16 checkpoint (269 MB) that the engine
+            loads by default.
           </p>
         </div>
       </Section>
@@ -196,8 +197,11 @@ export default function Page() {
           </table>
         </div>
         <p className="project-source">
-          Token ids are compared exactly: one divergent token fails the test, whatever the logits
-          say. Source: <SourceLink file="tests/common/tolerances.h" />.
+          The hidden-state error comes from the first token&apos;s row, where SmolLM2 parks
+          attention-sink activations of up to about 2e4 and one float32 ulp is about 1e-3; the worst
+          element of each prompt uses 12% to 34% of its bound. Token ids are compared exactly: one
+          divergent token fails the test, whatever the logits say. Source:{" "}
+          <SourceLink file="tests/common/tolerances.h" />.
         </p>
       </Section>
 
