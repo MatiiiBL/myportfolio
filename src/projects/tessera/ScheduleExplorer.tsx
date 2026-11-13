@@ -11,7 +11,8 @@ import {
   type Order,
 } from "./schedule/matmul";
 import { tileFacts, tileSteps, type TileStep } from "./schedule/tiles";
-import { SourceLink } from "./SourceLink";
+import { SourceLink } from "../../components/SourceLink";
+import { SOURCE } from "./source";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import "./ScheduleExplorer.css";
 
@@ -126,8 +127,9 @@ export function ScheduleExplorer() {
           steps through the loop above the reduction: the register tile of the output it
           accumulates, the rows of A and the strip of W it reads. The trace and the loop IR are
           checked against Tessera&apos;s own output at all 224 points of the knob space. Source:{" "}
-          <SourceLink file="src/tessera/backend/c/templates/matmul.py" />; this is the kernel{" "}
-          <SourceLink file="docs/cpu.md" anchor="generated-code" /> prints as generated C.
+          <SourceLink {...SOURCE} file="src/tessera/backend/c/templates/matmul.py" />; this is the
+          kernel <SourceLink {...SOURCE} file="docs/cpu.md" anchor="generated-code" /> prints as
+          generated C.
         </>
       }
     >

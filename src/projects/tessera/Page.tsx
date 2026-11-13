@@ -4,7 +4,8 @@ import { Architecture } from "./Architecture";
 import { FusionView } from "./FusionView";
 import { FusionResults, KernelResults, LatencyResults, TuningResults } from "./Results";
 import { ScheduleExplorer } from "./ScheduleExplorer";
-import { SourceLink } from "./SourceLink";
+import { SourceLink } from "../../components/SourceLink";
+import { SOURCE } from "./source";
 import "../../components/ProjectPage.css";
 
 // The tessera page body, inside ProjectLayout (docs/site.md, "Project pages").
@@ -118,7 +119,7 @@ export default function Page() {
               <>
                 A template schedules each group&apos;s loop IR with the configuration the tuning
                 logs hold for its task, or with its defaults, and a backend prints the result.
-                Source: <SourceLink file="docs/design.md" />.
+                Source: <SourceLink {...SOURCE} file="docs/design.md" />.
               </>
             }
           >
@@ -196,8 +197,8 @@ export default function Page() {
           </li>
         </ul>
         <p className="project-source">
-          Source: <SourceLink file="README.md" anchor="limitations" />; the method and the full
-          tables are in <SourceLink file="docs/evaluation.md" />.
+          Source: <SourceLink {...SOURCE} file="README.md" anchor="limitations" />; the method and
+          the full tables are in <SourceLink {...SOURCE} file="docs/evaluation.md" />.
         </p>
       </Section>
     </div>

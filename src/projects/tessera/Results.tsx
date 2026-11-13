@@ -1,9 +1,10 @@
-import type { ReactNode } from "react";
 import { BarChart, LineChart } from "../../components/charts";
+import { SourceLink } from "../../components/SourceLink";
+import { TableRegion } from "../../components/TableRegion";
 import models from "./data/models.json";
 import tuning from "./data/tuning.json";
 import gemm from "./data/gemm.json";
-import { SourceLink } from "./SourceLink";
+import { SOURCE } from "./source";
 
 const MIB = 1024 * 1024;
 
@@ -38,14 +39,6 @@ const LATENCY_COLUMNS: [SystemName, string][] = [
   ["tessera-metal", "Tessera GPU"],
 ];
 
-function TableWrap({ label, children }: { label: string; children: ReactNode }) {
-  return (
-    <div className="project-table-wrap" role="region" aria-label={label} tabIndex={0}>
-      {children}
-    </div>
-  );
-}
-
 export function LatencyResults() {
   return (
     <>
@@ -76,11 +69,11 @@ export function LatencyResults() {
             ONNX Runtime&apos;s median latency divided by each system&apos;s, so 2× is twice as
             fast. Medians of at least 50 runs, Tessera with its committed tuning logs;
             Tessera&apos;s CPU runs are pooled from five fresh processes. Source:{" "}
-            <SourceLink file="results/models.md" />.
+            <SourceLink {...SOURCE} file="results/models.md" />.
           </>
         }
       />
-      <TableWrap label="Median latency of each model and system">
+      <TableRegion label="Median latency of each model and system">
         <table className="project-table">
           <caption>Median latency, ms (lower is better; the fastest in bold)</caption>
           <thead>
@@ -108,10 +101,10 @@ export function LatencyResults() {
             })}
           </tbody>
         </table>
-      </TableWrap>
+      </TableRegion>
       <p className="project-source">
         Measured 2026-11-12 at commit <code>{models.commit}</code>. Source:{" "}
-        <SourceLink file="results/models.md" />.
+        <SourceLink {...SOURCE} file="results/models.md" />.
       </p>
     </>
   );
@@ -135,7 +128,6 @@ export function TuningResults() {
           type: "linear",
           label: "measurements",
           domain: [1, 256],
-          ticks: [1, 64, 128, 192, 256],
         }}
         y={{
           type: "linear",
@@ -152,18 +144,17 @@ export function TuningResults() {
             color: "muted",
           },
         ]}
-        endLabels
         caption={
           <>
             The best throughput found after each measurement, relative to the space&apos;s optimum
             (found exhaustively, since the synthetic task&apos;s costs are analytic). After 64
             measurements the model-guided search is at {at(task.curves.model, 64).toFixed(2)} of the
             optimum and random search at {at(task.curves.random, 64).toFixed(2)}. Source:{" "}
-            <SourceLink file="results/tuning.md" />.
+            <SourceLink {...SOURCE} file="results/tuning.md" />.
           </>
         }
       />
-      <TableWrap label="Latency with the template defaults and tuned">
+      <TableRegion label="Latency with the template defaults and tuned">
         <table className="project-table">
           <caption>Median latency, ms: template defaults and tuned</caption>
           <thead>
@@ -187,10 +178,10 @@ export function TuningResults() {
             ))}
           </tbody>
         </table>
-      </TableWrap>
+      </TableRegion>
       <p className="project-source">
-        Source: <SourceLink file="results/models.md" />; the tuning logs are in{" "}
-        <SourceLink file="results/tuning" />.
+        Source: <SourceLink {...SOURCE} file="results/models.md" />; the tuning logs are in{" "}
+        <SourceLink {...SOURCE} file="results/tuning" dir />.
       </p>
     </>
   );
@@ -200,7 +191,7 @@ export function FusionResults() {
   const mib = (b: number) => (b / MIB).toFixed(1);
   return (
     <div>
-      <TableWrap label="Fusion on whole models">
+      <TableRegion label="Fusion on whole models">
         <table className="project-table">
           <caption>Fusion on whole models</caption>
           <thead>
@@ -228,10 +219,10 @@ export function FusionResults() {
             })}
           </tbody>
         </table>
-      </TableWrap>
+      </TableRegion>
       <p className="project-source">
         Bytes moved: the sum over kernel launches of every argument&apos;s bytes, a lower bound on
-        memory traffic. Source: <SourceLink file="results/models.md" />.
+        memory traffic. Source: <SourceLink {...SOURCE} file="results/models.md" />.
       </p>
     </div>
   );
@@ -253,7 +244,7 @@ export function KernelResults() {
   };
   return (
     <div>
-      <TableWrap label="GEMM throughput">
+      <TableRegion label="GEMM throughput">
         <table className="project-table">
           <caption>Float32 GEMM, GFLOP/s (M×N×K)</caption>
           <thead>
@@ -280,10 +271,10 @@ export function KernelResults() {
             })}
           </tbody>
         </table>
-      </TableWrap>
+      </TableRegion>
       <p className="project-source">
         C = A × B with B constant; Accelerate through NumPy, MPS through PyTorch. Source:{" "}
-        <SourceLink file="results/ops.md" />.
+        <SourceLink {...SOURCE} file="results/ops.md" />.
       </p>
     </div>
   );

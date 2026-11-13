@@ -3,7 +3,8 @@ import { Section } from "../../components/Section";
 import { Architecture } from "./Architecture";
 import { PipelineSim } from "./PipelineSim";
 import { CorpusResults, FaultResults, StrategyResults, ThroughputResults } from "./Results";
-import { SourceLink } from "./SourceLink";
+import { SourceLink } from "../../components/SourceLink";
+import { SOURCE } from "./source";
 import "../../components/ProjectPage.css";
 
 // The precis page body, inside ProjectLayout (docs/site.md, "Project pages").
@@ -102,7 +103,7 @@ export default function Page() {
               <>
                 Every model request, from the agents and from the corpus stages, goes through the
                 one gateway, which records each call and its reply in the store. Source:{" "}
-                <SourceLink file="docs/design.md" />.
+                <SourceLink {...SOURCE} file="docs/design.md" />.
               </>
             }
           >
@@ -180,8 +181,8 @@ export default function Page() {
           </li>
         </ul>
         <p className="project-source">
-          Source: <SourceLink file="README.md" anchor="limitations" />; the method and every
-          measurement are in <SourceLink file="docs/evaluation.md" />.
+          Source: <SourceLink {...SOURCE} file="README.md" anchor="limitations" />; the method and
+          every measurement are in <SourceLink {...SOURCE} file="docs/evaluation.md" />.
         </p>
       </Section>
     </div>

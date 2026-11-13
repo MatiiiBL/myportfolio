@@ -13,7 +13,8 @@ import {
   type Scenario,
 } from "./sim/pipeline";
 import { STATE_TOKENS } from "./stateTokens";
-import { SourceLink } from "./SourceLink";
+import { SourceLink } from "../../components/SourceLink";
+import { SOURCE } from "./source";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import "./PipelineSim.css";
 
@@ -186,8 +187,8 @@ export function PipelineSim() {
           replayed from the cache, and only requests in flight at the kill are sent again. The
           finished papers then go to the topic stage, which runs once on the whole corpus. Rules and
           constants come from the repository; the workload is calibrated to{" "}
-          <SourceLink file="results/bench-throughput.md" />, and the tests check the simulation
-          against it at every ceiling.
+          <SourceLink {...SOURCE} file="results/bench-throughput.md" />, and the tests check the
+          simulation against it at every ceiling.
         </>
       }
     >

@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Figure } from "../../components/Figure";
 import block from "./data/fusion-block.json";
-import { SourceLink } from "./SourceLink";
+import { SourceLink } from "../../components/SourceLink";
+import { SOURCE } from "./source";
 import "./FusionView.css";
 
 interface Arg {
@@ -89,7 +90,7 @@ export function FusionView() {
           <code>plan_memory</code>) on the block rebuilt with the model&apos;s shapes and node
           names; the weights do not matter to fusion. Over the whole model, fusion takes ResNet-50
           from 123 kernels to 56 and from 322.3 to 205.7 MiB moved (
-          <SourceLink file="results/models.md" />
+          <SourceLink {...SOURCE} file="results/models.md" />
           ).
         </>
       }

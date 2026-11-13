@@ -1,19 +1,12 @@
-import type { ReactNode } from "react";
 import { LineChart } from "../../components/charts";
+import { SourceLink } from "../../components/SourceLink";
+import { TableRegion } from "../../components/TableRegion";
 import bench from "./data/bench-throughput.json";
 import faults from "./data/bench-faults.json";
-import { SourceLink } from "./SourceLink";
+import { SOURCE } from "./source";
 
 const pct = (x: number) => `${Math.round(x * 100)}%`;
 const n = (x: number) => x.toLocaleString("en-US");
-
-function TableWrap({ label, children }: { label: string; children: ReactNode }) {
-  return (
-    <div className="project-table-wrap" role="region" aria-label={label} tabIndex={0}>
-      {children}
-    </div>
-  );
-}
 
 export function ThroughputResults() {
   const at128 = bench.points.find((p) => p.concurrency === 128);
@@ -53,11 +46,11 @@ export function ThroughputResults() {
             ms per output token. Up to a ceiling of 64, throughput grows with concurrency (about 1.9
             papers per minute per slot); from 128 the input-token limit holds it at 165 to 166,
             using {pct((at128?.input_tokens_per_minute ?? 0) / bench.itpm_limit)} of it with no
-            429s. Source: <SourceLink file="results/bench-throughput.md" />.
+            429s. Source: <SourceLink {...SOURCE} file="results/bench-throughput.md" />.
           </>
         }
       />
-      <TableWrap label="Throughput benchmark at every ceiling">
+      <TableRegion label="Throughput benchmark at every ceiling">
         <table className="project-table">
           <caption>The same runs: rates against the limits, and paper latency</caption>
           <thead>
@@ -86,9 +79,9 @@ export function ThroughputResults() {
             ))}
           </tbody>
         </table>
-      </TableWrap>
+      </TableRegion>
       <p className="project-source">
-        Source: <SourceLink file="results/bench-throughput.md" />.
+        Source: <SourceLink {...SOURCE} file="results/bench-throughput.md" />.
       </p>
     </>
   );
@@ -112,7 +105,7 @@ export function FaultResults() {
   ];
   return (
     <div>
-      <TableWrap label="Crash recovery benchmark">
+      <TableRegion label="Crash recovery benchmark">
         <table className="project-table">
           <caption>SIGKILL mid-run with 9% of requests failing, then a resume</caption>
           <tbody>
@@ -124,10 +117,10 @@ export function FaultResults() {
             ))}
           </tbody>
         </table>
-      </TableWrap>
+      </TableRegion>
       <p className="project-source">
         Injected per request: 4% 429, 2% 529, 2% 500, 1% timeouts. Offline. Source:{" "}
-        <SourceLink file="results/bench-faults.md" />.
+        <SourceLink {...SOURCE} file="results/bench-faults.md" />.
       </p>
     </div>
   );
@@ -144,7 +137,7 @@ export function CorpusResults() {
   ];
   return (
     <div>
-      <TableWrap label="The real corpus">
+      <TableRegion label="The real corpus">
         <table className="project-table">
           <caption>arXiv cs.AR, July 2025 to October 2026</caption>
           <tbody>
@@ -156,11 +149,11 @@ export function CorpusResults() {
             ))}
           </tbody>
         </table>
-      </TableWrap>
+      </TableRegion>
       <p className="project-source">
         Downloaded from arXiv itself. Source:{" "}
-        <SourceLink file="docs/ingest.md" anchor="the-full-corpus" /> and the{" "}
-        <SourceLink file="README.md" anchor="results" />.
+        <SourceLink {...SOURCE} file="docs/ingest.md" anchor="the-full-corpus" /> and the{" "}
+        <SourceLink {...SOURCE} file="README.md" anchor="results" />.
       </p>
     </div>
   );
@@ -174,7 +167,7 @@ export function StrategyResults() {
   ];
   return (
     <>
-      <TableWrap label="Reading strategies">
+      <TableRegion label="Reading strategies">
         <table className="project-table">
           <caption>Three ways to read a paper (read stage, 200 synthetic papers, offline)</caption>
           <thead>
@@ -198,10 +191,10 @@ export function StrategyResults() {
             ))}
           </tbody>
         </table>
-      </TableWrap>
+      </TableRegion>
       <p className="project-source">
         Costs are what the simulated usage would cost at Claude Opus 5.5 prices; nothing was paid.
-        Source: <SourceLink file="docs/agents.md" anchor="7-measurements-offline" />.
+        Source: <SourceLink {...SOURCE} file="docs/agents.md" anchor="7-measurements-offline" />.
       </p>
     </>
   );
