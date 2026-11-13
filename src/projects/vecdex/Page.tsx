@@ -1,6 +1,7 @@
-import type { ReactNode } from "react";
 import { Figure } from "../../components/Figure";
 import { Section } from "../../components/Section";
+import { SourceLink } from "../../components/SourceLink";
+import { TableRegion } from "../../components/TableRegion";
 import { BarChart, LineChart, formatNumber, type LineSeries } from "../../components/charts";
 import "../../components/ProjectPage.css";
 import { ArchitectureDiagram } from "./ArchitectureDiagram";
@@ -14,8 +15,10 @@ import threads from "./data/threads.json";
 
 // The vecdex page body, inside ProjectLayout (docs/site.md, "Project pages"). Every number is
 // from the repository at the commit in data/SOURCE.md.
-const REPO = "https://github.com/MatiiiBL/HNSW_vector_search";
-const COMMIT = "0f5f719d6d36819883665bdb75c120234da1fc3e";
+const SRC = {
+  repo: "https://github.com/MatiiiBL/HNSW_vector_search",
+  commit: "0f5f719d6d36819883665bdb75c120234da1fc3e",
+} as const;
 
 interface Curve {
   lib: string;
@@ -35,27 +38,6 @@ function curves(libs: Curve[]): LineSeries[] {
 function at(libs: Curve[], name: string, ef: number) {
   const point = libs.find((l) => l.lib === name)?.points.find((p) => p.ef === ef);
   return point ?? { ef, recall: 0, qps: 0 };
-}
-
-/** A link to a file of the repository at the page's commit; `dir` links a folder instead. */
-function SourceLink({ file, anchor, dir }: { file: string; anchor?: string; dir?: boolean }) {
-  return (
-    <a
-      className="project-file"
-      href={`${REPO}/${dir ? "tree" : "blob"}/${COMMIT}/${file}${anchor ? `#${anchor}` : ""}`}
-    >
-      {file}
-    </a>
-  );
-}
-
-/** A table that scrolls sideways on a phone; focusable so the keyboard can scroll it too. */
-function TableScroll({ label, children }: { label: string; children: ReactNode }) {
-  return (
-    <div className="project-table-wrap" role="region" aria-label={label} tabIndex={0}>
-      {children}
-    </div>
-  );
 }
 
 export default function Page() {
@@ -100,7 +82,7 @@ export default function Page() {
               checks it link for link against the graph vecdex itself builds for these points. M is
               4 here, not vecdex&apos;s default of 16, so that 300 points get five layers. Recall
               counts the returned points no farther than the true 10th nearest, as vecdex measures
-              it. Source: <SourceLink file="src/hnsw.cpp" />.
+              it. Source: <SourceLink {...SRC} file="src/hnsw.cpp" />.
             </>
           }
         >
@@ -138,7 +120,7 @@ export default function Page() {
               <>
                 Up and to the right is better. Each point is one ef setting; FAISS HNSW 1.15 and
                 hnswlib 0.8.0 run from pip, each in its own process. Source:{" "}
-                <SourceLink file="bench/results/sift1m" dir />.
+                <SourceLink {...SRC} file="bench/results/sift1m" dir />.
               </>
             }
           />
@@ -160,7 +142,7 @@ export default function Page() {
             caption={
               <>
                 A harder dataset: every library needs ef ≈ 1,000 to reach 0.95, and none reaches
-                0.99. Source: <SourceLink file="bench/results/glove100" dir />.
+                0.99. Source: <SourceLink {...SRC} file="bench/results/glove100" dir />.
               </>
             }
           />
@@ -176,7 +158,7 @@ export default function Page() {
             0.005.
           </p>
         </div>
-        <TableScroll label="vecdex and hnswlib, C++ harness">
+        <TableRegion label="vecdex and hnswlib, C++ harness">
           <table className="project-table">
             <caption>SIFT1M, C++ harness, one thread: queries per second at each ef</caption>
             <thead>
@@ -221,10 +203,10 @@ export default function Page() {
               </tr>
             </tbody>
           </table>
-        </TableScroll>
+        </TableRegion>
         <p className="project-source">
           Recall is vecdex&apos;s; hnswlib&apos;s is within 0.002 of it at every ef shown. Source:{" "}
-          <SourceLink file="bench/results/sift1m" dir />.
+          <SourceLink {...SRC} file="bench/results/sift1m" dir />.
         </p>
 
         <div className="project-grid">
@@ -240,7 +222,7 @@ export default function Page() {
               <>
                 Each version ran twice, in the order A B C D D C B A so slow thermal drift cancels;
                 the bars are the means. Prefetching cut the build from 242 s to 142 s as well.
-                Source: <SourceLink file="README.md" anchor="where-the-speed-came-from" />.
+                Source: <SourceLink {...SRC} file="README.md" anchor="where-the-speed-came-from" />.
               </>
             }
           />
@@ -282,14 +264,14 @@ export default function Page() {
                 Past 4 threads each added thread is a slower efficiency core sharing the same memory
                 system. Threads claim nodes from a shared counter, so slow cores take fewer instead
                 of holding up the end. Recall stays at 0.964 at every thread count. Source:{" "}
-                <SourceLink file="bench/results/sift1m" dir />.
+                <SourceLink {...SRC} file="bench/results/sift1m" dir />.
               </>
             }
           />
         </div>
 
         <h3>Saving and loading</h3>
-        <TableScroll label="Saving and loading">
+        <TableRegion label="Saving and loading">
           <table className="project-table">
             <caption>The SIFT1M index, 650 MB</caption>
             <thead>
@@ -318,14 +300,14 @@ export default function Page() {
               </tr>
             </tbody>
           </table>
-        </TableScroll>
+        </TableRegion>
         <p className="project-source">
           Loading the saved index and saving it again gives a byte-identical file, from C++ and from
-          Python. Source: <SourceLink file="README.md" anchor="save-and-load" />.
+          Python. Source: <SourceLink {...SRC} file="README.md" anchor="save-and-load" />.
         </p>
 
         <h3>Retrieval for RAG</h3>
-        <TableScroll label="Retrieval for RAG">
+        <TableRegion label="Retrieval for RAG">
           <table className="project-table">
             <caption>
               10,570 SQuAD v1.1 questions over its 2,067 paragraphs, embedded with all-MiniLM-L6-v2
@@ -366,10 +348,10 @@ export default function Page() {
               </tr>
             </tbody>
           </table>
-        </TableScroll>
+        </TableRegion>
         <p className="project-source">
           An approximate index costs almost nothing in answer quality here. Source:{" "}
-          <SourceLink file="README.md" anchor="the-rag-demo" />.
+          <SourceLink {...SRC} file="README.md" anchor="the-rag-demo" />.
         </p>
       </Section>
 
@@ -394,7 +376,7 @@ export default function Page() {
               caption={
                 <>
                   Memory from the size formula of the index file format, which stores exactly what
-                  the index holds. Source: <SourceLink file="docs/FORMAT.md" />.
+                  the index holds. Source: <SourceLink {...SRC} file="docs/FORMAT.md" />.
                 </>
               }
             >
@@ -478,7 +460,7 @@ export default function Page() {
         <p className="project-source">
           Next, from the repository&apos;s list: an interleaved layer-0 layout (links next to
           vectors), PQ, and x86 benchmarks. Source:{" "}
-          <SourceLink file="README.md" anchor="limitations-and-next-steps" />.
+          <SourceLink {...SRC} file="README.md" anchor="limitations-and-next-steps" />.
         </p>
       </Section>
     </div>

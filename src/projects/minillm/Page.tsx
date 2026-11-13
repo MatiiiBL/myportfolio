@@ -1,5 +1,7 @@
 import { Figure } from "../../components/Figure";
 import { Section } from "../../components/Section";
+import { SourceLink } from "../../components/SourceLink";
+import { TableRegion } from "../../components/TableRegion";
 import { BarChart } from "../../components/charts";
 import "../../components/ProjectPage.css";
 import { DecodeStep } from "./DecodeStep";
@@ -10,21 +12,11 @@ import results from "./data/results.json";
 
 // The minillm page body, inside ProjectLayout (docs/site.md, "Project pages"). Every number is
 // from the repository at the commit in data/SOURCE.md.
-const REPO = "https://github.com/MatiiiBL/LLM-inference-engine";
-const COMMIT = "bb175958c4718f47f9609d5fa4c933b3a26eb255";
+const SRC = {
+  repo: "https://github.com/MatiiiBL/LLM-inference-engine",
+  commit: "bb175958c4718f47f9609d5fa4c933b3a26eb255",
+} as const;
 const MIB = 1024 * 1024;
-
-/** A link to a file of the repository at the page's commit. */
-function SourceLink({ file, anchor }: { file: string; anchor?: string }) {
-  return (
-    <a
-      className="project-file"
-      href={`${REPO}/blob/${COMMIT}/${file}${anchor ? `#${anchor}` : ""}`}
-    >
-      {file}
-    </a>
-  );
-}
 
 export default function Page() {
   const fullContext = (SMOLLM2.maxPositions * kvBytesPerToken(SMOLLM2)) / MIB;
@@ -69,7 +61,7 @@ export default function Page() {
               on the first token, averaged over positions 1 to 12; layer 0 spreads it out. minillm
               checks that a prefill followed by one decode step gives the same logits as a single
               prefill of the same tokens, within 5.5e-5. Source:{" "}
-              <SourceLink file="oracle/generate.py" />.
+              <SourceLink {...SRC} file="oracle/generate.py" />.
             </>
           }
         >
@@ -88,7 +80,7 @@ export default function Page() {
               repository&apos;s reference implementation for every one of them. The top plot is the
               weights, the bottom one the error each keeps after rounding. Pick a weight and drag
               its slider to make it an outlier: the scale grows with it, and so does every other
-              weight&apos;s error. Source: <SourceLink file="src/loader/quantize.cpp" />.
+              weight&apos;s error. Source: <SourceLink {...SRC} file="src/loader/quantize.cpp" />.
             </>
           }
         >
@@ -119,7 +111,7 @@ export default function Page() {
               <>
                 The arithmetic is f32 in every format. The default picks bf16 for this checkpoint
                 because it is stored in bf16, so the conversion is exact. Source:{" "}
-                <SourceLink file="README.md" anchor="running" />.
+                <SourceLink {...SRC} file="README.md" anchor="running" />.
               </>
             }
           />
@@ -150,7 +142,8 @@ export default function Page() {
               <>
                 A test enforces the budget; the measured KL moves only when the format or the
                 quantizer changes. A quantizer that truncates instead of rounding is 2.8 to 3.4
-                times over it on every set. Source: <SourceLink file="tests/common/tolerances.h" />.
+                times over it on every set. Source:{" "}
+                <SourceLink {...SRC} file="tests/common/tolerances.h" />.
               </>
             }
           />
@@ -164,12 +157,7 @@ export default function Page() {
             with every tolerance at zero, and all of them live in one file.
           </p>
         </div>
-        <div
-          className="project-table-wrap"
-          role="region"
-          aria-label="Measured error against PyTorch"
-          tabIndex={0}
-        >
+        <TableRegion label="Measured error against PyTorch">
           <table className="project-table">
             <caption>Largest absolute error of each stage, and the bound its test enforces</caption>
             <thead>
@@ -195,13 +183,13 @@ export default function Page() {
               ))}
             </tbody>
           </table>
-        </div>
+        </TableRegion>
         <p className="project-source">
           The hidden-state error comes from the first token&apos;s row, where SmolLM2 parks
           attention-sink activations of up to about 2e4 and one float32 ulp is about 1e-3; the worst
           element of each prompt uses 12% to 34% of its bound. Token ids are compared exactly: one
           divergent token fails the test, whatever the logits say. Source:{" "}
-          <SourceLink file="tests/common/tolerances.h" />.
+          <SourceLink {...SRC} file="tests/common/tolerances.h" />.
         </p>
       </Section>
 
@@ -213,7 +201,7 @@ export default function Page() {
             caption={
               <>
                 Prefill and decode are the same code path; only the number of rows differs. Source:{" "}
-                <SourceLink file="src/model/model.cpp" />.
+                <SourceLink {...SRC} file="src/model/model.cpp" />.
               </>
             }
           >
@@ -290,8 +278,9 @@ export default function Page() {
         </ul>
         <p className="project-source">
           The README has no limitations section; these are from the engine&apos;s own headers and
-          kernel notes. Source: <SourceLink file="include/minillm/model.h" />,{" "}
-          <SourceLink file="include/minillm/config.h" />, <SourceLink file="src/ops/q8_0.cpp" />.
+          kernel notes. Source: <SourceLink {...SRC} file="include/minillm/model.h" />,{" "}
+          <SourceLink {...SRC} file="include/minillm/config.h" />,{" "}
+          <SourceLink {...SRC} file="src/ops/q8_0.cpp" />.
         </p>
       </Section>
     </div>
