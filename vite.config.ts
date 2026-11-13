@@ -5,7 +5,7 @@ import react from "@vitejs/plugin-react";
 export default defineConfig({
   base: "/myportfolio/",
   plugins: [react()],
-  // scripts/prerender.ts reads the manifest to preload each project page's lazy chunk.
+  // scripts/prerender.ts reads the manifest to find each route's lazy chunk and its stylesheets.
   build: { manifest: true },
   test: {
     environment: "jsdom",
