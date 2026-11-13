@@ -285,6 +285,8 @@ export function ScheduleExplorer() {
                     onClick={() => setPinned((p) => (p === i ? null : i))}
                     onPointerEnter={() => setHovered(i)}
                     onPointerLeave={() => setHovered(null)}
+                    onFocus={() => setHovered(i)}
+                    onBlur={() => setHovered(null)}
                   >
                     {line}
                   </button>

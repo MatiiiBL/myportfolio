@@ -122,7 +122,10 @@ export const projects: Project[] = [
     ],
     tags: ["Python", "C", "NEON · SME", "Metal", "ONNX", "1,374 tests"],
     repo: gh("MatiiiBL/tessera"),
-    links: [],
+    links: [
+      { label: "Design", href: `${gh("MatiiiBL/tessera")}/blob/main/docs/design.md` },
+      { label: "Evaluation", href: `${gh("MatiiiBL/tessera")}/blob/main/docs/evaluation.md` },
+    ],
     date: "Nov 2026",
   },
   {
@@ -141,7 +144,10 @@ export const projects: Project[] = [
     ],
     tags: ["Python", "asyncio", "SQLite", "mypy --strict", "486 tests"],
     repo: gh("MatiiiBL/precis"),
-    links: [],
+    links: [
+      { label: "Design", href: `${gh("MatiiiBL/precis")}/blob/main/docs/design.md` },
+      { label: "Evaluation", href: `${gh("MatiiiBL/precis")}/blob/main/docs/evaluation.md` },
+    ],
     date: "Nov 2026",
   },
 ];

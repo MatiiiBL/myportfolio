@@ -124,7 +124,7 @@ export function FusionView() {
                             className={i === 0 && k.pattern !== "injective" ? "op op-anchor" : "op"}
                             aria-pressed={active === n}
                             aria-label={`${label(n)}: ${where(variant, n)} here, ${where(other, n)} in the other column`}
-                            onClick={() => setActive((a) => (a === n ? null : n))}
+                            onClick={() => setActive(n)}
                             onPointerEnter={() => setActive(n)}
                             onFocus={() => setActive(n)}
                           >
