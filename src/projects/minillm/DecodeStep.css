@@ -315,20 +315,20 @@ tr.is-new .ds-rowhead {
     padding-left: var(--space-2);
   }
 
-  /* Room for nine 24 px columns: the selected head keeps its values, not its bars, and row
-     labels keep their tokens; the positions stay in the accessible text. */
+  /* Room for nine 24 px columns: the selected head keeps its values, not its bars, and a row
+     label keeps its position (the same token can appear twice) while long token text is
+     shortened; the full token stays in the accessible text. */
   .ds-weight,
   .ds-wide {
     display: none;
   }
 
-  .ds-rowhead .ds-pos {
-    position: absolute;
-    width: 1px;
-    height: 1px;
+  .ds-rowhead .ds-tok {
+    display: inline-block;
+    max-width: 4ch;
     overflow: hidden;
-    clip: rect(0 0 0 0);
-    white-space: nowrap;
+    text-overflow: ellipsis;
+    vertical-align: bottom;
   }
 
   .ds-rowhead {

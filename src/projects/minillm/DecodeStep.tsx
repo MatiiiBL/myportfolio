@@ -79,6 +79,11 @@ export function DecodeStep() {
   const selected = weights[head] ?? [];
   const slot = kvBytesPerSlot(SMOLLM2);
   const used = (t + 1) * kvBytesPerToken(SMOLLM2);
+  const top = selected.reduce((best, w, s) => (w > (selected[best] ?? 0) ? s : best), 0);
+  const summary =
+    `Position ${t}, "${shown(TOKENS[t] ?? "")}", layer ${layer}: query head ${head} puts ` +
+    `${Math.round((selected[top] ?? 0) * 100)}% of its attention on position ${top}, ` +
+    `"${shown(TOKENS[top] ?? "")}". The KV cache holds ${t + 1} positions, ${kib(used)}.`;
 
   return (
     <div className="ds">
@@ -170,7 +175,8 @@ export function DecodeStep() {
                 {(weights[0] ?? []).map((_, s) => (
                   <tr key={s} className={s === t ? "is-new" : undefined}>
                     <th scope="row" className="ds-rowhead">
-                      <span className="ds-pos">{s}</span> {shown(TOKENS[s] ?? "")}
+                      <span className="ds-pos">{s}</span>{" "}
+                      <span className="ds-tok">{shown(TOKENS[s] ?? "")}</span>
                     </th>
                     {HEADS.map((h) => {
                       const w = weights[h]?.[s] ?? 0;
@@ -278,6 +284,10 @@ export function DecodeStep() {
           </p>
         </div>
       </div>
+      {/* Quiet while playing, so a screen reader hears where playback stops, not every step. */}
+      <p className="visually-hidden" aria-live="polite">
+        {animating ? "" : summary}
+      </p>
     </div>
   );
 }
