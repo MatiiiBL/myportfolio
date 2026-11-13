@@ -31,12 +31,15 @@ search engines and link previews see the content without running JavaScript.
 src/
   content/        typed content: types.ts, profile.ts, projects.ts  (the single source of truth)
   styles/         tokens.css (design tokens), global.css (base)
-  components/     shared components: Shell, ProjectLayout, Section, Stat, Chip, charts/, ...
-  pages/          Home, NotFound
+  components/     shared components: Shell, ProjectLayout, Section, Stat, Chip, Figure, charts/, ...
+  pages/          Home (and home/), NotFound, meta.ts (per-route title, description, canonical)
   projects/
     registry.ts   slug -> lazy page module
     <slug>/       Page.tsx (default export: the page body) + that project's visualizations,
                   data (data/*.json with a SOURCE note) and tests
+  entry-server.tsx  renders a route to HTML for the prerender
+scripts/          prerender.ts, serve.ts (dist/ served like GitHub Pages), share-assets.ts
+public/           favicon, icons, share image (og.png), robots.txt
 e2e/              Playwright tests against the production build
 docs/site.md      this document
 ```
@@ -142,3 +145,9 @@ same:
 `npm run build` = typecheck + Vite build + prerender. The deploy workflow runs the checks and the
 end-to-end tests, then publishes `dist/` to `gh-pages` on every push to `Main`. Work happens on
 branches; `Main` is pushed only when the site is ready.
+
+The end-to-end tests run against `dist/` served by `scripts/serve.ts`, which behaves like GitHub
+Pages (404.html with status 404, trailing-slash redirects, gzip). `E2E_PORT` picks another port
+when several checkouts test at once. Every route must render and hydrate without console errors,
+pass axe in both themes, fit a 412 px phone without horizontal scrolling and link only to pages
+and anchors that exist.
