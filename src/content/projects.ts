@@ -68,7 +68,16 @@ export const projects: Project[] = [
     ],
     tags: ["C++20", "NEON", "pybind11", "libFuzzer", "TSan"],
     repo: gh("MatiiiBL/HNSW_vector_search"),
-    links: [],
+    links: [
+      {
+        label: "Benchmark results",
+        href: `${gh("MatiiiBL/HNSW_vector_search")}/tree/main/bench/results`,
+      },
+      {
+        label: "Index file format",
+        href: `${gh("MatiiiBL/HNSW_vector_search")}/blob/main/docs/FORMAT.md`,
+      },
+    ],
     date: "Oct 2026",
   },
   {
@@ -86,7 +95,16 @@ export const projects: Project[] = [
     ],
     tags: ["C++20", "safetensors", "bf16", "Q8_0", "doctest"],
     repo: gh("MatiiiBL/LLM-inference-engine"),
-    links: [],
+    links: [
+      {
+        label: "Measured errors",
+        href: `${gh("MatiiiBL/LLM-inference-engine")}/blob/main/tests/common/tolerances.h`,
+      },
+      {
+        label: "Oracle generator",
+        href: `${gh("MatiiiBL/LLM-inference-engine")}/blob/main/oracle/generate.py`,
+      },
+    ],
     date: "Oct 2026",
   },
   {
