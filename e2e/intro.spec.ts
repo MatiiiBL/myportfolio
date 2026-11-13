@@ -1,10 +1,11 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
+import { INTRO_MIN_HEIGHT, INTRO_MIN_WIDTH } from "../src/pages/home/intro/screen";
 
 // The home page's scroll intro (src/pages/home/intro): a pinned hero whose particle field moves
 // through four formations as the page scrolls, then hands over to the hero's search. It plays
-// once per session: at its end, or when the visitor skips past it, it "arrives" and the hero
-// stays as it left it.
+// only in large windows, and once per session: at its end, or when the visitor skips past it, it
+// "arrives" and the hero stays as it left it.
 
 /** Scrolls so the intro is at progress p (0 at its top, 1 where the hero unpins), plus `past` px. */
 async function scrollIntroTo(page: Page, p: number, past = 0): Promise<void> {
@@ -31,6 +32,24 @@ function collectErrors(page: Page): string[] {
   return errors;
 }
 
+/** Sums the layout shifts the page reports, from before its first paint. */
+async function watchLayoutShifts(page: Page): Promise<() => Promise<number>> {
+  await page.addInitScript(() => {
+    const shifts = { total: 0 };
+    Object.assign(window, { __shifts: shifts });
+    new PerformanceObserver((list) => {
+      for (const entry of list.getEntries() as (PerformanceEntry & {
+        value: number;
+        hadRecentInput: boolean;
+      })[]) {
+        if (!entry.hadRecentInput) shifts.total += entry.value;
+      }
+    }).observe({ type: "layout-shift", buffered: true });
+  });
+  return () =>
+    page.evaluate(() => (window as unknown as { __shifts: { total: number } }).__shifts.total);
+}
+
 /** The intro has arrived: no animation, no pinned scroll space, the hero's search shown. */
 async function expectArrived(page: Page): Promise<void> {
   await expect(page.locator(".intro")).toHaveAttribute("data-stage", "arrived");
@@ -48,6 +67,9 @@ async function expectArrived(page: Page): Promise<void> {
 }
 
 test.describe("the scroll intro", () => {
+  test.skip(({ isMobile }) => isMobile, "the intro plays only in large windows");
+  test.use({ viewport: { width: 1280, height: 900 } });
+
   test("advances as the page scrolls and reverses until it reaches its end", async ({ page }) => {
     const errors = collectErrors(page);
     await page.goto("./");
@@ -151,11 +173,16 @@ test.describe("the scroll intro", () => {
     }
   });
 
-  test("fits 320, 390 and 1280 px without sideways scrolling", async ({ page }) => {
-    // Every load plays the intro here, so each width goes through it.
+  test("fits the smallest window it plays in and 1280 px without sideways scrolling", async ({
+    page,
+  }) => {
+    // Every load plays the intro here, so each window goes through it.
     await page.addInitScript(() => sessionStorage.removeItem("intro"));
-    for (const width of [320, 390, 1280]) {
-      await page.setViewportSize({ width, height: 800 });
+    for (const [width, height] of [
+      [INTRO_MIN_WIDTH, INTRO_MIN_HEIGHT],
+      [1280, 900],
+    ] as const) {
+      await page.setViewportSize({ width, height });
       await page.goto("./");
       await expect(page.locator(".intro")).toHaveAttribute("data-stage", "silicon");
       for (const p of [0, 0.2, 0.5, 0.8, 1]) {
@@ -167,6 +194,26 @@ test.describe("the scroll intro", () => {
         expect(overflow, `${width} px at ${p}`).toBeLessThanOrEqual(0);
       }
     }
+  });
+
+  test("arrives when the window becomes too small for it, and does not come back", async ({
+    page,
+  }) => {
+    const errors = collectErrors(page);
+    await page.goto("./");
+    await expect(page.locator(".intro")).toHaveAttribute("data-stage", "silicon");
+    await scrollIntroTo(page, 0.45);
+    await expect(page.locator(".intro")).toHaveAttribute("data-stage", /robots|models/);
+    const pinned = await page.locator(".intro-pin").boundingBox();
+    await page.setViewportSize({ width: 800, height: 900 });
+    await expectArrived(page);
+    // The stage stays where it was pinned, at the top, under the header.
+    const stage = await page.locator(".intro-pin").boundingBox();
+    expect(stage?.y).toBeCloseTo(pinned?.y ?? NaN, 0);
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.waitForTimeout(300);
+    await expectArrived(page);
+    expect(errors).toEqual([]);
   });
 
   test("can be skipped from the keyboard", async ({ page }) => {
@@ -284,6 +331,43 @@ test.describe("the scroll intro", () => {
     await page.getByRole("link", { name: "Matías Blanco" }).first().click();
     await expect(page.locator("html")).toHaveAttribute("data-intro", "play");
     await expect(page.locator(".intro")).toHaveAttribute("data-stage", "silicon");
+  });
+});
+
+test.describe("in smaller windows", () => {
+  const windows = [
+    { width: 390, height: 844 },
+    { width: 768, height: 1024 },
+    // A short laptop window.
+    { width: 1280, height: INTRO_MIN_HEIGHT - 40 },
+  ];
+
+  test("the home page is the plain hero from the first paint", async ({ page, isMobile }) => {
+    const errors = collectErrors(page);
+    const shifts = await watchLayoutShifts(page);
+    // On the phone, its own screen first; and an arrival earlier in the session changes nothing.
+    await page.addInitScript(() => sessionStorage.setItem("intro", "arrived"));
+    for (const size of isMobile ? [null, ...windows.slice(0, 2)] : windows) {
+      if (size) await page.setViewportSize(size);
+      await page.goto("./");
+      const label = size ? `${size.width} × ${size.height}` : "Pixel 7";
+      await expect(page.locator("html"), label).not.toHaveAttribute("data-intro");
+      await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+      await page.waitForLoadState("networkidle");
+      await expect(page.locator(".intro-canvas"), label).toHaveCount(0);
+      await expect(page.locator(".intro-skip"), label).toHaveCount(0);
+      await expect(page.locator(".intro"), label).not.toHaveAttribute("data-stage");
+      const layout = await page.evaluate(() => ({
+        intro: document.querySelector<HTMLElement>(".intro")?.offsetHeight,
+        hero: document.querySelector<HTMLElement>(".hero")?.offsetHeight,
+        overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+      }));
+      expect(layout.intro, label).toBe(layout.hero);
+      expect(layout.overflow, label).toBeLessThanOrEqual(0);
+      await expect(page.locator(".hero-figure"), label).toHaveCSS("opacity", "1");
+      expect(await shifts(), label).toBe(0);
+    }
+    expect(errors).toEqual([]);
   });
 });
 

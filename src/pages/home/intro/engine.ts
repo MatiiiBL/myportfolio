@@ -48,6 +48,9 @@ const TOKENS = [
   "--border",
   "--text",
 ];
+/** The particles in the field (the intro only plays in large windows: screen.ts), and their radius. */
+const PARTICLES = 1200;
+const RADIUS = 1.6;
 /** Color blend steps and opacity levels particles are drawn in: the batches of a frame. */
 const MIX_STEPS = 4;
 const ALPHA_LEVELS = 10;
@@ -91,7 +94,7 @@ export function startIntro(root: HTMLElement): () => void {
   const ctx: CanvasRenderingContext2D = context;
   const labels = [...root.querySelectorAll<HTMLElement>("[data-intro-label]")];
 
-  const count = window.innerWidth < 720 ? 500 : 1200;
+  const count = PARTICLES;
   const silicon = siliconFormation(count);
   const track = trackFormation(count, { cones: apexTrack.cones, lap: apexTrack.lap8 });
   const formations: Formation[] = [
@@ -127,7 +130,6 @@ export function startIntro(root: HTMLElement): () => void {
   let width = 0;
   let height = 0;
   let dpr = 1;
-  let radius = 1.6;
   let centerX = 0;
   let centerY = 0;
   let dirty = true;
@@ -204,7 +206,6 @@ export function startIntro(root: HTMLElement): () => void {
     dpr = Math.min(2, window.devicePixelRatio || 1);
     canvas.width = Math.round(width * dpr);
     canvas.height = Math.round(height * dpr);
-    radius = width < 720 ? 1.35 : 1.6;
 
     // The formations take the place of the hero's drawing, kept inside the visible stage.
     const art = svg.getBoundingClientRect();
@@ -400,7 +401,7 @@ export function startIntro(root: HTMLElement): () => void {
       look(phase.to, b, seconds, lookB);
       const sizeA = formA.size[a] ?? 1;
       const sizeB = formB.size[b] ?? 1;
-      const r = radius * (sizeA + (sizeB - sizeA) * e) * (0.65 + 0.7 * z) * (1 + bump(e) * 0.5);
+      const r = RADIUS * (sizeA + (sizeB - sizeA) * e) * (0.65 + 0.7 * z) * (1 + bump(e) * 0.5);
       pr[i] = r;
       const alpha = (lookA.alpha + (lookB.alpha - lookA.alpha) * e) * (0.55 + 0.45 * z) * fade;
       const level = Math.min(ALPHA_LEVELS, Math.round(alpha * ALPHA_LEVELS)) - 1;
@@ -430,7 +431,7 @@ export function startIntro(root: HTMLElement): () => void {
     ctx.clearRect(0, 0, width, height);
     ctx.globalCompositeOperation = additive ? "lighter" : "source-over";
     ctx.lineCap = "round";
-    ctx.lineWidth = radius * 1.2;
+    ctx.lineWidth = RADIUS * 1.2;
     streaked = false;
     for (let k = 0; k < BATCHES; k++) {
       const begin = starts[k] ?? 0;

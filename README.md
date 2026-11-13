@@ -72,8 +72,7 @@ docs/site.md        the design contract: structure, content rules, visual langua
 ## The scroll intro
 
 The top of the home page is a scroll-driven intro. The hero stays pinned for four screens of
-scroll while a field of particles (Canvas 2D, 1,200 on desktop and 500 on phones) on its right
-becomes four of the projects in turn, then settles exactly onto the hero's HNSW graph and hands
+scroll while a field of 1,200 particles (Canvas 2D) on its right becomes four of the projects in turn, then settles exactly onto the hero's HNSW graph and hands
 over to it:
 
 1. Silicon (Pulse): the 8 × 8 systolic array, with the compute wavefront sweeping it diagonally.
@@ -93,8 +92,13 @@ into the hero's search or below the intro. The arrival is remembered for the bro
 (`sessionStorage`), so coming back to the home page, by a link, back and forward or a reload, shows
 the arrived hero; a new session plays it again.
 
-It runs only when JavaScript runs and the visitor has not asked for reduced motion; otherwise,
-and in the prerendered HTML, the hero is the plain one.
+It runs only in a window at least 1024 px wide and 600 px tall (`src/pages/home/intro/screen.ts`),
+when JavaScript runs and the visitor has not asked for reduced motion. In a smaller window the
+formations would be too small to read (a phone) or the stage too squeezed (a short laptop window,
+a phone on its side), so there, as with reduced motion, without JavaScript and in the prerendered
+HTML, the home page is the plain hero from the first paint. A window that becomes smaller while
+the intro plays (a resize, a rotation, split screen) arrives at once, the same way; growing it
+again does not bring the intro back.
 
 It is isolated so it can go as easily as it came:
 
@@ -103,6 +107,8 @@ It is isolated so it can go as easily as it came:
 - `src/pages/Home.tsx` mounts it once, as `<Intro>` around `<Hero />`;
 - the head script in `index.html` sets `data-intro` on `<html>` to `play` or `arrived` before the
   first paint, so the page has its final height from the start and nothing shifts;
+- a small plugin in `vite.config.ts` writes the window condition from `screen.ts` into that head
+  script, so the script and the intro's code cannot disagree on it;
 - `e2e/intro.spec.ts` tests it, and one test in `e2e/site.spec.ts` waits for it.
 
 **How to remove the intro:** revert the commits that added and changed it, newest first. Every
@@ -113,8 +119,9 @@ script, the mount point, the tests and this section:
 git revert --no-edit $(git log --format=%h -- src/pages/home/intro)
 ```
 
-Today those are two commits: "Open the home page with a scroll intro through four projects"
-(`9f6e85b`) and "Play the home page's scroll intro once per session", which made it one-way.
+Today those are three commits: "Open the home page with a scroll intro through four projects"
+(`9f6e85b`), "Play the home page's scroll intro once per session" (`8805daf`), which made it
+one-way, and "Play the scroll intro only in large windows".
 
 ## Deploy
 

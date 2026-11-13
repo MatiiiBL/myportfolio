@@ -2,6 +2,7 @@ import { useEffect, useLayoutEffect, useRef, useSyncExternalStore, type ReactNod
 import { Link } from "react-router-dom";
 import { arrive, introMode, isAfter, rememberArrival } from "./arrive";
 import type { Stage } from "./morph";
+import { INTRO_SCREEN } from "./screen";
 import "./intro.css";
 
 // The home page's scroll intro. While the visitor scrolls the first four screens, the hero stays
@@ -9,11 +10,11 @@ import "./intro.css";
 // the hero's HNSW graph and hands over to it. It plays once: at its end, or as soon as the
 // visitor skips past it, it arrives (arrive.ts), and the hero stays as it left it.
 //
-// It only runs when index.html's head script has set data-intro on <html>: scripts run and the
-// visitor has not asked for reduced motion. That script also picks "play" or "arrived" and so
-// sizes the stage before the first paint: nothing shifts. Otherwise (and in the prerendered HTML)
-// these wrappers are plain blocks around today's hero. To remove the intro, revert the commits
-// that added and changed this folder; README.md says how.
+// It only runs when index.html's head script has set data-intro on <html>: scripts run, the
+// visitor has not asked for reduced motion and the window is large (screen.ts). That script also
+// picks "play" or "arrived" and so sizes the stage before the first paint: nothing shifts.
+// Otherwise (and in the prerendered HTML) these wrappers are plain blocks around today's hero. To
+// remove the intro, revert the commits that added and changed this folder; README.md says how.
 
 const LABELS: { stage: Stage; kicker: string; to: string; text: string }[] = [
   {
@@ -115,6 +116,14 @@ export function Intro({ children }: { children: ReactNode }) {
     document.addEventListener("focusin", onFocus);
     // Focus may have got there before this ran.
     focusMoved(document.activeElement);
+    // A window that becomes too small for the stage (a resize, a rotation, split screen) arrives
+    // at once, rather than leave a squeezed stage; growing it again does not bring the intro back.
+    const large = window.matchMedia(INTRO_SCREEN);
+    const onResize = () => {
+      if (!large.matches) arrive(element);
+    };
+    large.addEventListener("change", onResize);
+    onResize();
 
     let stop: (() => void) | undefined;
     let cancelled = false;
@@ -127,6 +136,7 @@ export function Intro({ children }: { children: ReactNode }) {
       document.removeEventListener("click", onClick, true);
       window.removeEventListener("keydown", onKey);
       document.removeEventListener("focusin", onFocus);
+      large.removeEventListener("change", onResize);
     };
   }, [mode]);
 
