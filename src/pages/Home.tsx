@@ -7,7 +7,6 @@ import { MinorCard, ProjectCard } from "./home/ProjectCard";
 import "./Home.css";
 
 export default function Home() {
-  const current = experience[0];
   return (
     <>
       <Hero />
@@ -81,16 +80,14 @@ export default function Home() {
                   Graduating {profile.education.graduation}
                 </dd>
               </div>
-              {current && (
-                <div>
-                  <dt>Now</dt>
-                  <dd>
-                    {current.role}, {current.org}
-                    <br />
-                    {profile.activities.join(", ")}
-                  </dd>
-                </div>
-              )}
+              <div>
+                <dt>Now</dt>
+                <dd>
+                  {profile.status}
+                  <br />
+                  {profile.activities.join(", ")}
+                </dd>
+              </div>
               <div>
                 <dt>Languages</dt>
                 <dd>
@@ -132,7 +129,6 @@ export default function Home() {
 }
 
 function Hero() {
-  const current = experience[0];
   return (
     <section className="hero" aria-labelledby="hero-name">
       <div className="container hero-inner">
@@ -143,11 +139,9 @@ function Hero() {
           </h1>
           <p className="hero-pitch">{profile.pitch}</p>
           <p className="hero-focus">{focus}</p>
-          {current && (
-            <p className="hero-meta">
-              {current.role} at {current.org} · {profile.location}
-            </p>
-          )}
+          <p className="hero-meta">
+            {profile.status} · {profile.location}
+          </p>
           <ul className="hero-links">
             <li>
               <a href={profile.links.github}>GitHub ↗</a>

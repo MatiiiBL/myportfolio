@@ -122,8 +122,7 @@ const fontPreloads = [
   );
 
 function personJsonLd(): string {
-  const { profile, experience } = server;
-  const job = experience[0];
+  const { profile } = server;
   const data = {
     "@context": "https://schema.org",
     "@type": "Person",
@@ -131,10 +130,7 @@ function personJsonLd(): string {
     url: profile.siteUrl,
     email: `mailto:${profile.email}`,
     description: profile.pitch,
-    ...(job && {
-      jobTitle: job.role,
-      worksFor: { "@type": "Organization", name: job.org },
-    }),
+    jobTitle: profile.status,
     affiliation: {
       "@type": "CollegeOrUniversity",
       name: profile.education.school.split(",")[0],

@@ -4,6 +4,7 @@ export const profile: Profile = {
   name: "Matías Blanco",
   headline: "Computer Engineering · Columbia University",
   pitch: "I build fast, verified systems from scratch.",
+  status: "Computer Engineering student at Columbia University",
   // The home page shows the hero's focus line (below) and the experience timeline right above
   // the About section, so the intro and the personal note do not repeat them.
   intro:
@@ -46,7 +47,7 @@ export const experience: Experience[] = [
     org: "Forva Systems",
     role: "AI Engineer",
     place: "New York",
-    period: "Dec 2025 – present",
+    period: "Dec 2025 – Oct 2026",
     summary:
       "AI backend of an EMS platform for EMTs and paramedics. I designed the anti-hallucination " +
       "guardrails for clinical LLM extraction (schema-constrained outputs, verbatim-quote " +

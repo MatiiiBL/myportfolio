@@ -52,7 +52,7 @@ export interface Experience {
   org: string;
   role: string;
   place: string;
-  /** "Dec 2025 – present". */
+  /** "Dec 2025 – Oct 2026". */
   period: string;
   summary: string;
   link?: string;
@@ -69,6 +69,8 @@ export interface Profile {
   headline: string;
   /** The one-line pitch under the name. */
   pitch: string;
+  /** What I do now, in one line: the hero and the About section show it. */
+  status: string;
   /** A short first-person introduction (two or three sentences). */
   intro: string;
   /** A personal note for the about section. */
