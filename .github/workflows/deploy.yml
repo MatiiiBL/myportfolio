@@ -3,9 +3,7 @@ name: Deploy
 on:
   push:
     branches: [Main]
-
-permissions:
-  contents: write
+  workflow_dispatch:
 
 concurrency:
   group: deploy
@@ -13,40 +11,64 @@ concurrency:
 
 jobs:
   build:
-    name: Check and build
+    name: Check, build and test
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
           cache: npm
 
       - run: npm ci
+
+      # Prettier, ESLint, TypeScript, Vitest and the production build, which prerenders every
+      # route into dist/ (index.html, projects/<slug>/index.html, 404.html, sitemap.xml).
       - run: npm run check
 
+      - name: Install Chromium for Playwright
+        run: npx playwright install --with-deps chromium
+
       - name: End-to-end tests
-        run: |
-          npx playwright install --with-deps chromium
-          npm run e2e
+        run: npm run e2e
+
+      - name: Keep the Playwright report of a failed run
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            playwright-report
+            test-results
+          retention-days: 7
 
       - uses: actions/upload-artifact@v4
         with:
           name: site
           path: ./dist
+          if-no-files-found: error
 
   deploy:
     name: Publish to GitHub Pages
     needs: build
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/download-artifact@v4
         with:
           name: site
           path: ./dist
 
-      - uses: peaceiris/actions-gh-pages@v3
+      # Pushes dist/ to the gh-pages branch, which GitHub Pages serves at
+      # https://matiiibl.github.io/myportfolio/. It adds .nojekyll, so Pages serves the files
+      # as they are.
+      - uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
+          publish_branch: gh-pages
+          commit_message: Deploy ${{ github.sha }}
