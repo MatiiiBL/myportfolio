@@ -21,7 +21,10 @@ export const projects: Project[] = [
     ],
     tags: ["SystemVerilog", "Verilator", "cocotb", "RISC-V", "ECP5", "C++"],
     repo: gh("MatiiiBL/riscv-npu-soc"),
-    links: [],
+    links: [
+      { label: "Design spec", href: `${gh("MatiiiBL/riscv-npu-soc")}/blob/main/docs/spec.md` },
+      { label: "NPU notes", href: `${gh("MatiiiBL/riscv-npu-soc")}/blob/main/docs/npu.md` },
+    ],
     date: "Nov 2026",
   },
   {
@@ -40,7 +43,13 @@ export const projects: Project[] = [
     ],
     tags: ["C++20", "EKF-SLAM", "MPC", "Eigen", "CMake", "507 tests"],
     repo: gh("MatiiiBL/apex-driverless"),
-    links: [],
+    links: [
+      { label: "Design", href: `${gh("MatiiiBL/apex-driverless")}/blob/main/docs/design.md` },
+      {
+        label: "Evaluation",
+        href: `${gh("MatiiiBL/apex-driverless")}/blob/main/docs/evaluation.md`,
+      },
+    ],
     date: "Nov 2026",
   },
   {
