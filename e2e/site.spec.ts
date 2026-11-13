@@ -54,13 +54,27 @@ for (const route of routes) {
       }
     });
 
-    test("fits the viewport width", async ({ page }) => {
-      await page.goto(route.path);
-      await page.waitForLoadState("networkidle");
-      const overflow = await page.evaluate(
-        () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
-      );
-      expect(overflow).toBeLessThanOrEqual(0);
+    test("fits the viewport width, down to 320 px", async ({ page }) => {
+      // The project's own viewport first, then the narrowest phone the quality bar names.
+      const height = page.viewportSize()?.height ?? 800;
+      for (const width of [null, 320]) {
+        if (width) await page.setViewportSize({ width, height });
+        await page.goto(route.path);
+        await page.waitForLoadState("networkidle");
+        const overflow = await page.evaluate(() => {
+          const limit = document.documentElement.clientWidth;
+          const wide = [...document.querySelectorAll("body *")]
+            .filter((el) => el.getBoundingClientRect().right > limit + 0.5)
+            .filter((el) => !el.closest(".visually-hidden, .project-table-wrap, [hidden]"))
+            .slice(0, 3)
+            .map((el) => `${el.tagName.toLowerCase()}.${[...el.classList].join(".")}`);
+          return { by: document.documentElement.scrollWidth - limit, wide };
+        });
+        expect(
+          overflow.by,
+          `${width ?? "default"} px: ${overflow.wide.join(", ")}`,
+        ).toBeLessThanOrEqual(0);
+      }
     });
   });
 }

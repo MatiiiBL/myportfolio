@@ -58,6 +58,8 @@
 .project-file {
   font-family: var(--font-mono);
   font-size: 0.95em;
+  /* A long path has no spaces to break at; let it wrap anywhere rather than widen a phone page. */
+  overflow-wrap: anywhere;
 }
 
 .project-table-wrap {
