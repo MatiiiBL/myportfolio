@@ -5,7 +5,7 @@
 // Input: dist/ (the client build, with its manifest) and dist-ssr/entry-server.js (the server
 // build of src/entry-server.tsx). Output: dist/index.html, dist/projects/<slug>/index.html,
 // dist/404.html and dist/sitemap.xml, each page with its own title, description, canonical
-// link, Open Graph and Twitter tags, plus the scripts and styles its lazy page needs.
+// link, Open Graph and Twitter tags, plus the styles its lazy page needs.
 
 import { mkdir, readdir, readFile, rm, writeFile } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
@@ -51,36 +51,27 @@ function escapeHtml(value: string): string {
     .replaceAll(">", "&gt;");
 }
 
-/** Every file a manifest chunk needs: the chunk, its static imports, and their styles. */
-function chunkFiles(key: string, seen = new Set<string>()): { js: string[]; css: string[] } {
+/** The styles a manifest chunk needs: its own and those of its static imports. */
+function chunkStyles(key: string, seen = new Set<string>()): string[] {
   const chunk = manifest[key];
-  if (!chunk || seen.has(key)) return { js: [], css: [] };
+  if (!chunk || seen.has(key)) return [];
   seen.add(key);
-  const js = [chunk.file];
-  const css = [...(chunk.css ?? [])];
-  for (const dep of chunk.imports ?? []) {
-    const sub = chunkFiles(dep, seen);
-    js.push(...sub.js);
-    css.push(...sub.css);
-  }
-  return { js, css };
+  return [...(chunk.css ?? []), ...(chunk.imports ?? []).flatMap((dep) => chunkStyles(dep, seen))];
 }
 
-const entry = chunkFiles("index.html");
+const entryStyles = chunkStyles("index.html");
 
-/** Preloads and styles for a project page's lazy chunk, minus what index.html already loads. */
+/**
+ * The stylesheets of a project page's lazy chunk, which its prerendered body needs from the
+ * first paint. Its scripts are not preloaded: the body is already in the HTML, and on a phone
+ * network preloading them delays the largest paint (Lighthouse measured 2.8 s against 2.4 s).
+ */
 function routeAssets(path: string): string[] {
   const slug = /^\/projects\/([^/]+)\/$/.exec(path)?.[1];
   if (!slug) return [];
-  const { js, css } = chunkFiles(`src/projects/${slug}/Page.tsx`);
-  return [
-    ...css
-      .filter((f) => !entry.css.includes(f))
-      .map((f) => `<link rel="stylesheet" crossorigin href="${BASE}${f}">`),
-    ...js
-      .filter((f) => !entry.js.includes(f))
-      .map((f) => `<link rel="modulepreload" crossorigin href="${BASE}${f}">`),
-  ];
+  return chunkStyles(`src/projects/${slug}/Page.tsx`)
+    .filter((file) => !entryStyles.includes(file))
+    .map((file) => `<link rel="stylesheet" crossorigin href="${BASE}${file}">`);
 }
 
 /** The text faces used above the fold, preloaded so the first paint uses them. */
