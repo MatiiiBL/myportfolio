@@ -1,12 +1,21 @@
 import AxeBuilder from "@axe-core/playwright";
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 
-const PAGE = "projects/pulse";
+const PAGE = "projects/pulse/";
+
+/**
+ * Opens the page and waits until the network is idle: the prerendered markup is interactive only
+ * once the page's lazy chunk has loaded and hydrated it.
+ */
+async function open(page: Page) {
+  await page.goto(PAGE);
+  await page.waitForLoadState("networkidle");
+}
 
 for (const colorScheme of ["dark", "light"] as const) {
   test(`renders in the ${colorScheme} theme with no accessibility violations`, async ({ page }) => {
     await page.emulateMedia({ colorScheme });
-    await page.goto(PAGE);
+    await open(page);
     await expect(page.getByRole("heading", { level: 1, name: "Pulse" })).toBeVisible();
     for (const title of ["Overview", "The array, cycle by cycle", "Results", "How it works"]) {
       await expect(page.getByRole("heading", { level: 2, name: title })).toBeVisible();
@@ -18,7 +27,7 @@ for (const colorScheme of ["dark", "light"] as const) {
 }
 
 test("the stepper follows the mouse and the keyboard", async ({ page }) => {
-  await page.goto(PAGE);
+  await open(page);
   const slider = page.getByRole("slider");
   const cycles = page.locator(".stepper__cycles");
   const start = Number(await slider.inputValue());
@@ -49,7 +58,7 @@ test("the stepper follows the mouse and the keyboard", async ({ page }) => {
 });
 
 test("a smaller tile leaves the other PEs out", async ({ page }) => {
-  await page.goto(PAGE);
+  await open(page);
   await page
     .getByRole("combobox", { name: "Tile" })
     .selectOption({ label: "5 × 3 × 6, a partial tile" });
@@ -58,17 +67,16 @@ test("a smaller tile leaves the other PEs out", async ({ page }) => {
 
 test("reduced motion opens on the finished command", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.goto(PAGE);
+  await open(page);
   await expect(page.locator(".stepper__phase")).toHaveText("Done");
 });
 
 test("nothing scrolls sideways on a 390 px screen", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto(PAGE);
+  await open(page);
   await expect(page.locator(".array-grid")).toBeVisible();
-  // A string expression: the e2e TypeScript project has no DOM types.
   const overflow = await page.evaluate(
-    "document.documentElement.scrollWidth - document.documentElement.clientWidth",
+    () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
   );
   expect(overflow).toBe(0);
 });

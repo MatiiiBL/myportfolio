@@ -1,12 +1,21 @@
 import AxeBuilder from "@axe-core/playwright";
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 
-const PAGE = "projects/apex";
+const PAGE = "projects/apex/";
+
+/**
+ * Opens the page and waits until the network is idle: the prerendered markup is interactive only
+ * once the page's lazy chunk has loaded and hydrated it.
+ */
+async function open(page: Page) {
+  await page.goto(PAGE);
+  await page.waitForLoadState("networkidle");
+}
 
 for (const colorScheme of ["dark", "light"] as const) {
   test(`renders in the ${colorScheme} theme with no accessibility violations`, async ({ page }) => {
     await page.emulateMedia({ colorScheme });
-    await page.goto(PAGE);
+    await open(page);
     await expect(page.getByRole("heading", { level: 1, name: "Apex" })).toBeVisible();
     for (const title of [
       "Overview",
@@ -24,7 +33,7 @@ for (const colorScheme of ["dark", "light"] as const) {
 }
 
 test("the replay follows the keyboard", async ({ page }) => {
-  await page.goto(PAGE);
+  await open(page);
   const slider = page.getByRole("slider");
   const status = page.locator(".replay__status");
   await slider.focus();
@@ -47,7 +56,7 @@ test("the replay follows the keyboard", async ({ page }) => {
 });
 
 test("the replay follows the mouse", async ({ page }) => {
-  await page.goto(PAGE);
+  await open(page);
   const slider = page.getByRole("slider");
   await page.getByRole("button", { name: /^Lap 3/ }).click();
   await expect(page.getByRole("button", { name: /^Lap 3/ })).toHaveAttribute(
@@ -63,7 +72,7 @@ test("the replay follows the mouse", async ({ page }) => {
 
 test("reduced motion shows a chosen lap complete instead of playing it", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.goto(PAGE);
+  await open(page);
   await page.getByRole("button", { name: /^Lap 5/ }).click();
   await expect(page.locator(".replay__status")).toHaveText("Racing, lap 5 of 10");
   await expect(page.getByRole("button", { name: "Play" })).toBeVisible();
@@ -71,11 +80,10 @@ test("reduced motion shows a chosen lap complete instead of playing it", async (
 
 test("nothing scrolls sideways on a 390 px screen", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto(PAGE);
+  await open(page);
   await expect(page.locator(".track-map")).toBeVisible();
-  // A string expression: the e2e TypeScript project has no DOM types.
   const overflow = await page.evaluate(
-    "document.documentElement.scrollWidth - document.documentElement.clientWidth",
+    () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
   );
   expect(overflow).toBe(0);
 });
