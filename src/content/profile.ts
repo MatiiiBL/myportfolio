@@ -4,14 +4,13 @@ export const profile: Profile = {
   name: "Matías Blanco",
   headline: "Computer Engineering · Columbia University",
   pitch: "I build fast, verified systems from scratch.",
+  // The home page shows the hero's focus line (below) and the experience timeline right above
+  // the About section, so the intro and the personal note do not repeat them.
   intro:
     "I'm a Computer Engineering student at Columbia (AI minor, class of 2029), originally from " +
     "Montevideo. I like problems where the system has to be fast and right, from RTL and " +
-    "robotics to ML compilers and LLM pipelines. I profile before I optimize, check every fast " +
-    "path against a slow reference, and benchmark against the libraries people already use.",
+    "robotics to ML compilers and LLM pipelines.",
   about: [
-    "Right now I'm an AI engineer at Forva Systems, building the AI backend of an EMS platform " +
-      "for ambulance crews, and I'm on Columbia Formula Racing.",
     "I grew up in Montevideo, Uruguay. Away from a keyboard you'll find me swimming, playing " +
       "soccer with friends, or sharing mate, Uruguay's national drink.",
   ],
@@ -37,10 +36,10 @@ export const profile: Profile = {
   siteUrl: "https://matiiibl.github.io/myportfolio/",
 };
 
-/** The one-line focus statement under the pitch on the home page. */
+/** The one-line focus statement under the pitch on the home page: how I work. */
 export const focus =
-  "From RTL to LLM pipelines: I profile before I optimize and check every fast path against a " +
-  "slow reference.";
+  "I profile before I optimize, check every fast path against a slow reference, and benchmark " +
+  "against the libraries people already use.";
 
 export const experience: Experience[] = [
   {
