@@ -100,6 +100,8 @@ export function PipelineSim() {
   );
   const end = run.samples.length - 1;
   const rates = useMemo(() => papersPerMinute(run.samples), [run]);
+  // The benchmark's measure: papers finished over the minutes elapsed.
+  const average = useMemo(() => run.samples.map((s) => (s.t > 0 ? (s.done * 60) / s.t : 0)), [run]);
   const speed = Math.max(30, Math.round(end / PLAY_SECONDS));
   // With reduced motion the run is shown complete; the slider still moves through it.
   const now = Math.min(t ?? (reduced ? end : 0), end);
@@ -160,11 +162,14 @@ export function PipelineSim() {
   const killed = run.kill;
   const benchPoint = bench.points.find((p) => p.concurrency === ceiling);
   const finished = now >= end;
-  const buckets: [string, number][] = [
-    ["requests", sample.buckets[0]],
-    ["input tokens", sample.buckets[1]],
-    ["output tokens", sample.buckets[2]],
+  const buckets: [string, number, string][] = [
+    ["requests", sample.buckets[0], "request"],
+    ["input tokens", sample.buckets[1], "input-token"],
+    ["output tokens", sample.buckets[2], "output-token"],
   ];
+  // A bucket close to empty while requests hold slots without being sent is the binding limit.
+  const waiting = sample.holding > sample.sending;
+  const binding = waiting ? buckets.find(([, fill]) => fill >= 0 && fill < 0.1)?.[2] : undefined;
 
   return (
     <Figure
@@ -337,7 +342,10 @@ export function PipelineSim() {
                   </span>
                 </div>
               ))}
-              <p className="bucket-note">Bucket levels: what may be sent now, of a 10 s burst.</p>
+              <p className="bucket-note">
+                What each bucket lets through now, of a 10-second burst.
+                {binding && ` Requests are waiting for the ${binding} bucket: it sets the pace.`}
+              </p>
             </div>
           </div>
           <div className="sim-charts">
@@ -355,12 +363,15 @@ export function PipelineSim() {
               marker={killed ? { at: killed.at, label: "SIGKILL" } : null}
             />
             <LiveChart
-              title="Papers finished per minute, over the last minute"
+              title="Papers finished per minute"
               yLabel="papers/min"
               upTo={now}
               duration={end}
-              yMax={preset === "limits" ? 200 : preset === "overload" ? 60 : 100}
-              series={[{ label: "papers/min", color: 1, values: rates }]}
+              yMax={preset === "limits" ? 220 : preset === "overload" ? 60 : 100}
+              series={[
+                { label: "since the start", color: 1, values: average },
+                { label: "over the last minute", color: "muted", values: rates },
+              ]}
               references={
                 preset === "limits" && benchPoint
                   ? [
