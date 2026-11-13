@@ -20,10 +20,18 @@
       } catch (error) {}
       // The home page's scroll intro (src/pages/home/intro) pins the hero for four screens of
       // scroll; marking it here applies that height before the first paint. Only when scripts
-      // run and the visitor has not asked for reduced motion.
+      // run and the visitor has not asked for reduced motion. It plays once per session: after
+      // that (src/pages/home/intro/arrive.ts keeps the key), or when the visit starts at a
+      // section of the home page, the hero is laid out as the intro leaves it.
       try {
         if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
-          document.documentElement.setAttribute("data-intro", "");
+          var path = location.pathname;
+          var home = path === "/myportfolio/" || path === "/myportfolio/index.html";
+          var intro = home && location.hash.length > 1 ? "arrived" : "play";
+          try {
+            if (sessionStorage.getItem("intro") === "arrived") intro = "arrived";
+          } catch (error) {}
+          document.documentElement.setAttribute("data-intro", intro);
         }
       } catch (error) {}
     </script>
@@ -49,7 +57,7 @@
     <meta name="twitter:image:alt" content="Matías Blanco: I build fast, verified systems from scratch.">
     <link rel="preload" href="/myportfolio/assets/inter-latin-wght-normal-Dx4kXJAl.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="/myportfolio/assets/jetbrains-mono-latin-400-normal-V6pRDFza.woff2" as="font" type="font/woff2" crossorigin>
-    <script type="module" crossorigin src="/myportfolio/assets/index-BcWuvz8k.js"></script>
+    <script type="module" crossorigin src="/myportfolio/assets/index-CS-tTE_Z.js"></script>
     <link rel="stylesheet" crossorigin href="/myportfolio/assets/index-NsLan7xt.css">
   </head>
   <body>
