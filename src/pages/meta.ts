@@ -52,6 +52,17 @@ export const notFoundMeta: RouteMeta = {
   type: "website",
 };
 
+/**
+ * A sentence made to follow a colon: no final period, and a lowercase first letter unless the
+ * first word is an acronym or a name in capitals ("A tensor compiler." → "a tensor compiler",
+ * "HNSW search." stays "HNSW search").
+ */
+export function sentenceTail(sentence: string): string {
+  const trimmed = sentence.replace(/\.$/, "");
+  const [first = "", second = ""] = trimmed;
+  return second === second.toLowerCase() ? first.toLowerCase() + trimmed.slice(1) : trimmed;
+}
+
 /** Metadata for a router pathname (without the site's base path). */
 export function metaFor(pathname: string): RouteMeta {
   const clean = pathname.replace(/\/+$/, "") || "/";
@@ -60,7 +71,7 @@ export function metaFor(pathname: string): RouteMeta {
   const project = match?.[1] ? projectBySlug(match[1]) : undefined;
   if (!project) return notFoundMeta;
   return {
-    title: `${project.name}: ${project.tagline.replace(/\.$/, "")} · ${profile.name}`,
+    title: `${project.name}: ${sentenceTail(project.tagline)} · ${profile.name}`,
     description: project.summary,
     path: projectPath(project.slug),
     type: "article",

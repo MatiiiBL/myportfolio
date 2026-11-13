@@ -5,6 +5,8 @@ import react from "@vitejs/plugin-react";
 export default defineConfig({
   base: "/myportfolio/",
   plugins: [react()],
+  // scripts/prerender.ts reads the manifest to preload each project page's lazy chunk.
+  build: { manifest: true },
   test: {
     environment: "jsdom",
     // Testing Library unmounts rendered components after each test only when afterEach is global.
