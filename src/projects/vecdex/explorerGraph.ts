@@ -1,9 +1,10 @@
-import { buildHnsw, type HnswGraph } from "./hnsw";
-import { makePoints } from "./points";
+import { buildHnsw, type HnswGraph } from "../../lib/hnsw/hnsw";
+import { makePoints } from "../../lib/hnsw/points";
 
-// The explorer's index. vecdex defaults to M = 16 and efConstruction = 200, sized for
-// 128-dimensional vectors; on 300 points in 2-D, M = 4 gives the graph five layers to descend
-// instead of two, which is the part worth watching.
+// The explorer's index: the graph src/lib/hnsw's reference test checks against vecdex's C++.
+// vecdex defaults to M = 16 and efConstruction = 200, sized for 128-dimensional vectors; on 300
+// points in 2-D, M = 4 gives the graph five layers to descend instead of two, which is the part
+// worth watching.
 export const EXPLORER_GRAPH = {
   pointCount: 300,
   pointSeed: 7,

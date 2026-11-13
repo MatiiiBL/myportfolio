@@ -7,10 +7,16 @@ import {
   type PointerEvent,
   type ReactNode,
 } from "react";
-import { bruteForceKnn, recallAtK, searchHnsw, type HnswGraph, type Point } from "./hnsw";
+import {
+  bruteForceKnn,
+  recallAtK,
+  searchHnsw,
+  type HnswGraph,
+  type Point,
+} from "../../lib/hnsw/hnsw";
 import { EXPLORER_GRAPH, explorerGraph } from "./explorerGraph";
 import { frameAt } from "./explorerState";
-import { GRID } from "./points";
+import { GRID } from "../../lib/hnsw/points";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import "./HnswExplorer.css";
 
@@ -18,7 +24,7 @@ const K = EXPLORER_GRAPH.k;
 const EF_MIN = 10;
 const EF_MAX = 100;
 // Far from the entry point, so the default search has a descent worth watching.
-const DEFAULT_QUERY: Point = { x: 400, y: 850 };
+const DEFAULT_QUERY: Point = { x: 400, y: 450 };
 const END = Number.POSITIVE_INFINITY;
 const PAD = 24;
 

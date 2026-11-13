@@ -1,7 +1,10 @@
-// The 2-D point set the HNSW explorer indexes: a seeded mixture of clusters and background
-// noise on a 1000 × 1000 integer grid. Clustered data is where HNSW's neighbor heuristic earns
-// its keep, so the toy set has clusters too. The same seed gives the same points everywhere,
-// which the reference graph in hnsw.test.ts depends on.
+// Seeded 2-D point sets for the HNSW graphs: a mixture of clusters and background noise on a
+// 1000 × 1000 integer grid. Clustered data is where HNSW's neighbor heuristic earns its keep, so
+// the toy set has clusters too. Only operations every JavaScript engine rounds identically are
+// used (integer arithmetic, + - * /, Math.sqrt and detmath's log), so the prerender and every
+// browser place the same points, and the reference graph in hnsw.test.ts stays valid.
+
+import { log } from "../detmath";
 
 export const GRID = 1000;
 
@@ -21,8 +24,8 @@ const CLUSTERS: readonly Cluster[] = [
   { x: 470, y: 860, spread: 45, share: 0.08 },
 ];
 
-/** mulberry32: a small, fast 32-bit generator; plenty for placing toy points. */
-function mulberry32(seed: number): () => number {
+/** mulberry32: a small, fast 32-bit generator of floats in [0, 1); plenty for toy points. */
+export function mulberry32(seed: number): () => number {
   let a = seed >>> 0;
   return () => {
     a = (a + 0x6d2b79f5) >>> 0;
@@ -33,14 +36,19 @@ function mulberry32(seed: number): () => number {
   };
 }
 
+/** A standard normal draw by Marsaglia's polar method, which needs no sine or cosine. */
+function gaussian(random: () => number): number {
+  for (;;) {
+    const u = 2 * random() - 1;
+    const v = 2 * random() - 1;
+    const s = u * u + v * v;
+    if (s > 0 && s < 1) return u * Math.sqrt((-2 * log(s)) / s);
+  }
+}
+
 /** `count` distinct integer points in [16, GRID - 16], the same for the same seed. */
 export function makePoints(count: number, seed: number): { x: number; y: number }[] {
   const random = mulberry32(seed);
-  const gaussian = () => {
-    const u = 1 - random();
-    const v = random();
-    return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
-  };
   const clamp = (v: number) => Math.min(GRID - 16, Math.max(16, Math.round(v)));
   const seen = new Set<number>();
   const points: { x: number; y: number }[] = [];
@@ -50,8 +58,8 @@ export function makePoints(count: number, seed: number): { x: number; y: number 
     let y = 16 + random() * (GRID - 32);
     for (const c of CLUSTERS) {
       if (pick < c.share) {
-        x = c.x + gaussian() * c.spread;
-        y = c.y + gaussian() * c.spread;
+        x = c.x + gaussian(random) * c.spread;
+        y = c.y + gaussian(random) * c.spread;
         break;
       }
       pick -= c.share;

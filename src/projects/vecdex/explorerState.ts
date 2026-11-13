@@ -1,4 +1,4 @@
-import type { SearchResult } from "./hnsw";
+import type { SearchResult } from "../../lib/hnsw/hnsw";
 
 /** What the explorer draws after a given number of search steps. */
 export interface Frame {

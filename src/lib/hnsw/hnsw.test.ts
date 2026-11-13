@@ -1,13 +1,12 @@
 import { describe, expect, it } from "vitest";
-import reference from "./data/reference-graph.json";
+import reference from "./reference-graph.json";
 import { bruteForceKnn, buildHnsw, recallAtK, searchHnsw, type HnswGraph } from "./hnsw";
 import { Mt19937_64 } from "./mt19937";
 import { makePoints } from "./points";
-import { EXPLORER_GRAPH } from "./explorerGraph";
 
-// data/reference-graph.json is the graph vecdex itself builds for the explorer's points
-// (data/SOURCE.md says how): its levels and links read back from the index file, and the results
-// of 360 searches.
+// reference-graph.json is the graph vecdex itself builds for makePoints(300, pointSeed)
+// (SOURCE.md says how): its levels and links read back from the index file, and the results of
+// 360 searches.
 
 const points = reference.points.map(([x, y]) => ({ x: x as number, y: y as number }));
 
@@ -27,8 +26,8 @@ describe("the HNSW port", () => {
     seed: BigInt(reference.params.seed),
   });
 
-  it("indexes the explorer's own seeded points", () => {
-    expect(makePoints(points.length, EXPLORER_GRAPH.pointSeed)).toEqual(points);
+  it("indexes the seeded points makePoints draws", () => {
+    expect(makePoints(points.length, reference.pointSeed)).toEqual(points);
   });
 
   it("builds vecdex's graph link for link", () => {

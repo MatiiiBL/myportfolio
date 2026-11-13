@@ -31,14 +31,14 @@ test("the explorer answers the pointer and the keyboard", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await open(page);
   const plot = page.getByRole("application", { name: /Query at/ });
-  await expect(plot).toHaveAccessibleName("Query at x 400, y 850");
+  await expect(plot).toHaveAccessibleName("Query at x 400, y 450");
 
   // A click places the query where it lands (the plot spans 1,048 units with its margin).
   const svg = plot.locator("svg");
   const box = await svg.boundingBox();
   if (!box) throw new Error("the plot has no box");
   await svg.click({ position: { x: box.width * (524 / 1048), y: box.height * (224 / 1048) } });
-  await expect(plot).not.toHaveAccessibleName("Query at x 400, y 850");
+  await expect(plot).not.toHaveAccessibleName("Query at x 400, y 450");
   const placed = (await plot.getAttribute("aria-label")) ?? "";
   const [, px, py] = /x (\d+), y (\d+)/.exec(placed) ?? [];
   expect(Math.abs(Number(px) - 500)).toBeLessThanOrEqual(6);

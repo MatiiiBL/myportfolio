@@ -1,11 +1,21 @@
 import { describe, expect, it } from "vitest";
-import { explorerGraph } from "./explorerGraph";
+import reference from "../../lib/hnsw/reference-graph.json";
+import { EXPLORER_GRAPH, explorerGraph } from "./explorerGraph";
 import { frameAt } from "./explorerState";
-import { searchHnsw } from "./hnsw";
+import { searchHnsw } from "../../lib/hnsw/hnsw";
+
+describe("the explorer's graph", () => {
+  it("is the graph checked against vecdex's C++ build", () => {
+    const graph = explorerGraph();
+    expect(EXPLORER_GRAPH.pointSeed).toBe(reference.pointSeed);
+    expect(graph.points.map((p) => [p.x, p.y])).toEqual(reference.points);
+    expect(graph.links).toEqual(reference.links);
+  });
+});
 
 describe("frameAt", () => {
   const graph = explorerGraph();
-  const query = { x: 400, y: 850 };
+  const query = { x: 400, y: 450 };
   const ef = 16;
   const result = searchHnsw(graph, query, 10, ef);
   const frame = (i: number) => frameAt(result, i, graph.entryPoint, graph.maxLevel, ef);

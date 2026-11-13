@@ -1,10 +1,12 @@
 // A line-for-line port of vecdex's HNSW build and search (src/hnsw.cpp at the commit named in
-// data/SOURCE.md), for 2-D points, so the page can show the graph vecdex would build and walk.
+// SOURCE.md), for 2-D points, so a page can show the graph vecdex would build and walk.
 // hnsw.test.ts checks it link for link against the graph the C++ code builds for the same points.
 //
 // Coordinates are integers, so every squared distance is an integer below 2^24: exact in float32
-// whatever the summation order, and therefore identical here and in vecdex's NEON kernel.
+// whatever the summation order, and therefore identical here and in vecdex's NEON kernel. Levels
+// are drawn with detmath's log, so the prerender and every browser build the same graph.
 
+import { log } from "../detmath";
 import { Mt19937_64 } from "./mt19937";
 
 export interface Point {
@@ -160,7 +162,7 @@ class Builder {
     readonly params: HnswParams,
   ) {
     this.rng = new Mt19937_64(params.seed);
-    this.levelMultiplier = 1 / Math.log(params.M);
+    this.levelMultiplier = 1 / log(params.M);
   }
 
   private point(id: number): Point {
@@ -174,7 +176,7 @@ class Builder {
   /** level = floor(-ln(U) * mL), U from the generator's top 53 bits, as vecdex draws it. */
   private randomLevel(): number {
     const u = 1 - Number(this.rng.next() >> 11n) * 2 ** -53;
-    return Math.max(0, Math.trunc(-Math.log(u) * this.levelMultiplier));
+    return Math.max(0, Math.trunc(-log(u) * this.levelMultiplier));
   }
 
   store(): void {
