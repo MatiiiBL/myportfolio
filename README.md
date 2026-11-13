@@ -81,28 +81,40 @@ over to it:
 3. Models (minillm): the causal attention triangle of one head.
 4. Search (vecdex): the nodes and links of the hero's own graph, read from its SVG.
 
-The motion is a pure function of the scroll position, so scrolling back up replays it in
-reverse. It runs only when JavaScript runs and the visitor has not asked for reduced motion;
-otherwise, and in the prerendered HTML, the hero is the plain one.
+The motion is a pure function of the scroll position, so until its end, scrolling back up
+replays it in reverse. It plays once: when the visitor reaches the end (the graph has formed and
+the hero's interactive search has taken over, where the stage unpins), it "arrives". The pinned
+scroll space collapses and the page scrolls by the same height in the same frame, so nothing on
+screen moves, and from then on the top of the page is the hero as the intro left it: no way back
+into the animation. It also arrives when the visitor skips past it: the "Skip intro" link, a link
+to a section below (the header's, or a project page's "All work"), a visit that starts at a
+section of the home page (`/#work`), End, a Page Down that would pass the end, or focus moving
+into the hero's search or below the intro. The arrival is remembered for the browser session
+(`sessionStorage`), so coming back to the home page, by a link, back and forward or a reload, shows
+the arrived hero; a new session plays it again.
+
+It runs only when JavaScript runs and the visitor has not asked for reduced motion; otherwise,
+and in the prerendered HTML, the hero is the plain one.
 
 It is isolated so it can go as easily as it came:
 
 - all of its code, styles, data and unit tests are in `src/pages/home/intro/` (the canvas engine
   is loaded on demand, in its own chunk);
 - `src/pages/Home.tsx` mounts it once, as `<Intro>` around `<Hero />`;
-- the head script in `index.html` sets `data-intro` on `<html>` before the first paint, so the
-  pinned height is there from the start and nothing shifts;
+- the head script in `index.html` sets `data-intro` on `<html>` to `play` or `arrived` before the
+  first paint, so the page has its final height from the start and nothing shifts;
 - `e2e/intro.spec.ts` tests it, and one test in `e2e/site.spec.ts` waits for it.
 
-**How to remove the intro:** `git revert <commit>`, where `<commit>` is the one that added it.
-This finds it:
+**How to remove the intro:** revert the commits that added and changed it, newest first. Every
+one of them touches `src/pages/home/intro/`, so this reverts them all, along with the head
+script, the mount point, the tests and this section:
 
 ```sh
-git log --diff-filter=A --format='%h %s' -- src/pages/home/intro/Intro.tsx
+git revert --no-edit $(git log --format=%h -- src/pages/home/intro)
 ```
 
-If later commits changed the intro, revert those too, newest first:
-`git log --format='%h %s' -- src/pages/home/intro` lists them.
+Today those are two commits: "Open the home page with a scroll intro through four projects"
+(`9f6e85b`) and "Play the home page's scroll intro once per session", which made it one-way.
 
 ## Deploy
 

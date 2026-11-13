@@ -1,7 +1,9 @@
 /*
  * The scroll intro (Intro.tsx). Everything here applies only under :root[data-intro], which the
  * head script in index.html sets before the first paint when scripts run and the visitor has not
- * asked for reduced motion. Without it, .intro and .intro-pin are plain blocks around the hero.
+ * asked for reduced motion: "play" while the intro plays, "arrived" once it has (arrive.ts). Both
+ * lay the hero out as the stage; only "play" pins it and adds the scroll space. Without the
+ * attribute, .intro and .intro-pin are plain blocks around the hero.
  */
 
 .intro {
@@ -9,16 +11,20 @@
   --intro-header: 3.5rem;
 }
 
-:root[data-intro] .intro {
+:root[data-intro="play"] .intro {
   position: relative;
   /* The pinned screen plus four screens of scroll. */
   height: calc(500vh - var(--intro-header));
   height: calc(500svh - var(--intro-header));
 }
 
-:root[data-intro] .intro-pin {
+:root[data-intro="play"] .intro-pin {
   position: sticky;
   top: var(--intro-header);
+}
+
+/* The stage, while playing and after: the same box, so arriving moves nothing. */
+:root[data-intro] .intro-pin {
   display: flex;
   flex-direction: column;
   min-height: calc(100vh - var(--intro-header));
@@ -43,9 +49,16 @@
 }
 
 /* The hero's search fades in at the end of the intro (the engine sets its opacity). */
-:root[data-intro] .intro .hero-figure {
+:root[data-intro="play"] .intro .hero-figure {
   opacity: 0;
   pointer-events: none;
+}
+
+/* Arrived: the animation's parts go at once, before React removes them. */
+:root[data-intro="arrived"] .intro-canvas,
+:root[data-intro="arrived"] .intro-labels,
+:root[data-intro="arrived"] .intro-skip {
+  display: none;
 }
 
 .intro-canvas {

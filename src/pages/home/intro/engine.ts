@@ -1,4 +1,5 @@
 import { mulberry32 } from "../../../lib/hnsw/points";
+import { arrive, introMode } from "./arrive";
 import apexTrack from "./data/apex-track.json";
 import attention from "./data/attention.json";
 import {
@@ -299,6 +300,9 @@ export function startIntro(root: HTMLElement): () => void {
   // whether the positions in px and py are last frame's (not after a resize or the first frame).
   let streaked = false;
   let fresh = true;
+  // Whether the visitor has scrolled to the end. From then on the intro only goes forward:
+  // scrolling back up while its last frames play does not rewind it.
+  let ended = false;
   const streakX = new Float32Array(count);
   const streakY = new Float32Array(count);
 
@@ -308,15 +312,30 @@ export function startIntro(root: HTMLElement): () => void {
     const range = rect.height - pin.offsetHeight;
     return range > 0 ? clamp01((top - rect.top) / range) : 0;
   };
+  /** Whether the page is scrolled to the end of the intro or beyond (to the pixel). */
+  const atEnd = (): boolean => {
+    const rect = root.getBoundingClientRect();
+    const top = parseFloat(getComputedStyle(pin).top) || 0;
+    return rect.top + rect.height - pin.offsetHeight <= top + 1;
+  };
 
   const draw = (now: number): void => {
+    // Arrived, here or by a skip (Intro.tsx): nothing more to draw, and the loop is being stopped.
+    if (introMode() !== "play") return;
     const seconds = now / 1000;
     const dt = last ? Math.min(0.1, (now - last) / 1000) : 1;
     last = now;
-    const target = scrollProgress();
+    if (atEnd()) ended = true;
+    const target = ended ? 1 : scrollProgress();
     progress =
       progress < 0 ? target : progress + (target - progress) * (1 - Math.exp(-FOLLOW * dt));
     if (Math.abs(target - progress) < 1e-4) progress = target;
+    // The graph has formed and the hero's search is fully shown (the particles faded out on the
+    // frame before): the intro has arrived.
+    if (ended && progress === 1) {
+      arrive(root);
+      return;
+    }
 
     const phase = phaseAt(progress);
     const h = handoverAt(progress);
@@ -485,9 +504,15 @@ export function startIntro(root: HTMLElement): () => void {
     running = false;
     cancelAnimationFrame(frame);
   };
-  const visibility = new IntersectionObserver(([entry]) =>
-    entry?.isIntersecting ? start() : stop(),
-  );
+  const visibility = new IntersectionObserver(([entry]) => {
+    if (entry?.isIntersecting) {
+      start();
+      return;
+    }
+    stop();
+    // The visitor jumped past the end (a scrollbar drag, find in page): arrive now, out of sight.
+    if (ended || atEnd()) arrive(root);
+  });
   visibility.observe(root);
 
   const resize = new ResizeObserver(() => layout());
@@ -498,23 +523,9 @@ export function startIntro(root: HTMLElement): () => void {
   const scheme = window.matchMedia("(prefers-color-scheme: dark)");
   scheme.addEventListener("change", readPalette);
 
-  // Keyboard users who tab into the hero's search while it is still hidden go straight to it.
-  const reveal = () => {
-    if (handover >= 1) return;
-    const rect = root.getBoundingClientRect();
-    const range = rect.height - pin.offsetHeight;
-    window.scrollTo({ top: window.scrollY + rect.top + range, behavior: "instant" });
-  };
-  figure.addEventListener("focusin", reveal);
-
   readPalette();
   layout();
   canvas.classList.add("is-ready");
-  // Focus may have reached the search before this code loaded.
-  if (document.activeElement && figure.contains(document.activeElement)) {
-    handover = 0;
-    reveal();
-  }
 
   return () => {
     stop();
@@ -522,11 +533,10 @@ export function startIntro(root: HTMLElement): () => void {
     resize.disconnect();
     theme.disconnect();
     scheme.removeEventListener("change", readPalette);
-    figure.removeEventListener("focusin", reveal);
     figure.style.opacity = "";
     figure.style.pointerEvents = "";
     canvas.classList.remove("is-ready");
-    delete root.dataset.stage;
+    if (root.dataset.stage !== "arrived") delete root.dataset.stage;
   };
 }
 
