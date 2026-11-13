@@ -1,0 +1,112 @@
+{
+  "baseline": [
+    {
+      "variant": "Full stack",
+      "completed": "33/33",
+      "lap1": 40.06,
+      "racingLap": 23.83,
+      "conesPerRun": 0,
+      "offCoursePerRun": 0,
+      "mapRmsCm": 2.0,
+      "trackingRmsCm": 2.6
+    },
+    {
+      "variant": "Perfect perception and state",
+      "completed": "33/33",
+      "lap1": 40.26,
+      "racingLap": 23.79,
+      "conesPerRun": 0,
+      "offCoursePerRun": 0,
+      "mapRmsCm": 0.2,
+      "trackingRmsCm": 2.7
+    }
+  ],
+  "compute": [
+    { "work": "MPC, one command", "p50Us": 252, "p99Us": 341, "budgetUs": 2000 },
+    { "work": "Perception, one LiDAR scan", "p50Us": 202, "p99Us": 269, "budgetUs": 10000 },
+    { "work": "Estimation, one cone update", "p50Us": 117, "p99Us": 567, "budgetUs": 5000 },
+    { "work": "Exploration plan", "p50Us": 54, "p99Us": 90, "budgetUs": 10000 },
+    { "work": "Estimation, one IMU prediction", "p50Us": 0.1, "p99Us": 0.2, "budgetUs": 50 }
+  ],
+  "noise": [
+    {
+      "scale": 0,
+      "completed": "12/12",
+      "mapRmsCm": 0.4,
+      "localizationRacingCm": 1.1,
+      "recall": 0.994
+    },
+    {
+      "scale": 0.5,
+      "completed": "12/12",
+      "mapRmsCm": 0.9,
+      "localizationRacingCm": 1.5,
+      "recall": 0.994
+    },
+    {
+      "scale": 1,
+      "completed": "12/12",
+      "mapRmsCm": 2.0,
+      "localizationRacingCm": 2.5,
+      "recall": 0.994
+    },
+    {
+      "scale": 2,
+      "completed": "12/12",
+      "mapRmsCm": 3.7,
+      "localizationRacingCm": 4.6,
+      "recall": 0.991
+    },
+    {
+      "scale": 4,
+      "completed": "12/12",
+      "mapRmsCm": 8.6,
+      "localizationRacingCm": 10.8,
+      "recall": 0.811
+    }
+  ],
+  "controllers": [
+    {
+      "controller": "Pure pursuit",
+      "completed": "12/12",
+      "racingLapVsMpc": "+0.22%",
+      "trackingRmsCm": 11.7,
+      "conesPerRun": 1.25
+    },
+    {
+      "controller": "Stanley",
+      "completed": "12/12",
+      "racingLapVsMpc": "−0.04%",
+      "trackingRmsCm": 10.6,
+      "conesPerRun": 0
+    },
+    {
+      "controller": "MPC",
+      "completed": "12/12",
+      "racingLapVsMpc": "",
+      "trackingRmsCm": 2.7,
+      "conesPerRun": 0
+    }
+  ],
+  "mpcQp": [
+    { "horizon": 20, "oursUs": 93, "osqpUs": 487 },
+    { "horizon": 30, "oursUs": 163, "osqpUs": 813 },
+    { "horizon": 40, "oursUs": 234, "osqpUs": 1138 },
+    { "horizon": 50, "oursUs": 318, "osqpUs": 1505 },
+    { "horizon": 60, "oursUs": 398, "osqpUs": 1855 }
+  ],
+  "racelineQp": { "oursMs": 10, "osqpMs": 129, "iterations": "12–14", "osqpIterations": "1,500" },
+  "tracks": [
+    { "track": "gen1", "lap1": 46.04, "racingLap": 27.99, "predicted": 27.87 },
+    { "track": "gen2", "lap1": 40.96, "racingLap": 24.84, "predicted": 24.74 },
+    { "track": "gen3", "lap1": 23.83, "racingLap": 14.62, "predicted": 14.54 },
+    { "track": "gen4", "lap1": 42.58, "racingLap": 26.41, "predicted": 26.26 },
+    { "track": "gen5", "lap1": 43.04, "racingLap": 24.57, "predicted": 24.43 },
+    { "track": "gen6", "lap1": 47.51, "racingLap": 27.98, "predicted": 27.83 },
+    { "track": "gen7", "lap1": 46.81, "racingLap": 28.09, "predicted": 27.9 },
+    { "track": "gen8", "lap1": 28.33, "racingLap": 16.74, "predicted": 16.65 },
+    { "track": "technical", "lap1": 36.36, "racingLap": 22.42, "predicted": 22.26 },
+    { "track": "flowing", "lap1": 43.35, "racingLap": 23.88, "predicted": 23.73 },
+    { "track": "mixed", "lap1": 41.83, "racingLap": 24.56, "predicted": 24.44 }
+  ]
+}
