@@ -27,6 +27,7 @@
 }
 
 .hnsw-edge {
+  fill: none;
   stroke: var(--border);
   stroke-width: 0.8;
 }

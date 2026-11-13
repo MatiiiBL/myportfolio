@@ -2,8 +2,9 @@ import { StrictMode } from "react";
 import { createRoot, hydrateRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import "@fontsource-variable/inter";
-import "@fontsource/jetbrains-mono/400.css";
-import "@fontsource/jetbrains-mono/500.css";
+// The mono face only sets Latin text (code, figures, labels), so only that subset is declared.
+import "@fontsource/jetbrains-mono/latin-400.css";
+import "@fontsource/jetbrains-mono/latin-500.css";
 import "./styles/tokens.css";
 import "./styles/global.css";
 import App from "./App";

@@ -21,17 +21,30 @@ function r2(v: number): number {
   return Math.round(v * 100) / 100;
 }
 
-/** Every point and link of every layer: drawn once, it never changes. */
+/**
+ * Every point and link of every layer: drawn once, it never changes. Each layer's links are one
+ * path and its points another, which keeps the page's DOM small.
+ */
 const Layers = memo(function Layers() {
   return (
     <g>
       {layout.planes.map((plane, layer) => {
-        const on = (i: number) => (graph.levels[i] ?? 0) >= layer;
         const at = (i: number) => project(graph.points[i] ?? START, plane);
-        const edges: [number, number][] = [];
+        let edges = "";
         graph.links[layer]?.forEach((neighbors, i) => {
-          for (const j of neighbors)
-            if (i < j || !graph.links[layer]?.[j]?.includes(i)) edges.push([i, j]);
+          for (const j of neighbors) {
+            if (j < i && graph.links[layer]?.[j]?.includes(i)) continue;
+            const a = at(i);
+            const b = at(j);
+            edges += `M${r2(a.x)} ${r2(a.y)}L${r2(b.x)} ${r2(b.y)}`;
+          }
+        });
+        const r = layer === 0 ? 2.2 : 3;
+        let nodes = "";
+        graph.points.forEach((_, i) => {
+          if ((graph.levels[i] ?? 0) < layer) return;
+          const p = at(i);
+          nodes += `M${r2(p.x - r)} ${r2(p.y)}a${r} ${r} 0 1 0 ${2 * r} 0a${r} ${r} 0 1 0 ${-2 * r} 0`;
         });
         return (
           <g key={layer}>
@@ -43,33 +56,8 @@ const Layers = memo(function Layers() {
             >
               L{layer}
             </text>
-            {edges.map(([i, j]) => {
-              const a = at(i);
-              const b = at(j);
-              return (
-                <line
-                  key={`${i}-${j}`}
-                  className="hnsw-edge"
-                  x1={r2(a.x)}
-                  y1={r2(a.y)}
-                  x2={r2(b.x)}
-                  y2={r2(b.y)}
-                />
-              );
-            })}
-            {graph.points.map((_, i) => {
-              if (!on(i)) return null;
-              const p = at(i);
-              return (
-                <circle
-                  key={i}
-                  className="hnsw-node"
-                  cx={r2(p.x)}
-                  cy={r2(p.y)}
-                  r={layer === 0 ? 2.2 : 3}
-                />
-              );
-            })}
+            <path className="hnsw-edge" d={edges} />
+            <path className="hnsw-node" d={nodes} />
           </g>
         );
       })}
