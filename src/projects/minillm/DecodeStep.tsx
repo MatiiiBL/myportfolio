@@ -7,7 +7,7 @@ import {
   type CSSProperties,
   type KeyboardEvent,
 } from "react";
-import { useReducedMotion } from "../vecdex/useReducedMotion";
+import { useMediaQuery } from "../../hooks/useMediaQuery";
 import attention from "./data/attention.json";
 import { SMOLLM2, kvBytesPerSlot, kvBytesPerToken, kvHeadOf, softmax } from "./model";
 import "./DecodeStep.css";
@@ -27,7 +27,7 @@ const kib = (bytes: number) =>
 
 /** One decoding step of SmolLM2-135M: the KV cache after position t, and t's attention over it. */
 export function DecodeStep() {
-  const reduced = useReducedMotion();
+  const reduced = useMediaQuery("(prefers-reduced-motion: reduce)");
   const [t, setT] = useState(LAST);
   const [layer, setLayer] = useState<Layer>("15");
   const [head, setHead] = useState(6);

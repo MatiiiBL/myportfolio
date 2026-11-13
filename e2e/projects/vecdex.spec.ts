@@ -1,7 +1,13 @@
 import AxeBuilder from "@axe-core/playwright";
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 
 const URL = "./projects/vecdex/";
+
+/** Opens the page and waits for the network to settle: the explorer hydrates from a lazy chunk. */
+async function open(page: Page) {
+  await page.goto(URL);
+  await page.waitForLoadState("networkidle");
+}
 const AXE_TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa", "best-practice"];
 
 for (const colorScheme of ["dark", "light"] as const) {
@@ -9,13 +15,12 @@ for (const colorScheme of ["dark", "light"] as const) {
     test.use({ colorScheme });
 
     test("renders every section and has no axe violations", async ({ page }) => {
-      await page.goto(URL);
+      await open(page);
       await expect(page.getByRole("heading", { level: 1 })).toHaveText("vecdex");
       for (const title of ["Overview", "Watch a search", "Results", "How it works", "Limits"]) {
         await expect(page.getByRole("heading", { level: 2, name: title })).toBeVisible();
       }
       await expect(page.locator(".hx-plot svg circle").first()).toBeVisible();
-      await page.waitForLoadState("networkidle");
       const results = await new AxeBuilder({ page }).withTags(AXE_TAGS).analyze();
       expect(results.violations).toEqual([]);
     });
@@ -24,7 +29,7 @@ for (const colorScheme of ["dark", "light"] as const) {
 
 test("the explorer answers the pointer and the keyboard", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.goto(URL);
+  await open(page);
   const plot = page.getByRole("application", { name: /Query at/ });
   await expect(plot).toHaveAccessibleName("Query at x 400, y 850");
 
@@ -67,7 +72,7 @@ test("the explorer answers the pointer and the keyboard", async ({ page }) => {
 });
 
 test("plays the search step by step when motion is allowed", async ({ page }) => {
-  await page.goto(URL);
+  await open(page);
   await page.getByRole("button", { name: "Replay" }).click();
   await expect(page.getByRole("button", { name: "Pause" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Replay" })).toBeVisible({ timeout: 15_000 });
@@ -76,7 +81,7 @@ test("plays the search step by step when motion is allowed", async ({ page }) =>
 
 test("has no horizontal scroll on a 390 px screen", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto(URL);
+  await open(page);
   await expect(page.locator(".hx-plot")).toBeVisible();
   const overflow = await page.evaluate(
     () => document.documentElement.scrollWidth - document.documentElement.clientWidth,

@@ -1,7 +1,13 @@
 import AxeBuilder from "@axe-core/playwright";
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 
 const URL = "./projects/minillm/";
+
+/** Opens the page and waits for the network to settle: the figures hydrate from a lazy chunk. */
+async function open(page: Page) {
+  await page.goto(URL);
+  await page.waitForLoadState("networkidle");
+}
 const AXE_TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa", "best-practice"];
 
 for (const colorScheme of ["dark", "light"] as const) {
@@ -9,7 +15,7 @@ for (const colorScheme of ["dark", "light"] as const) {
     test.use({ colorScheme });
 
     test("renders every section and has no axe violations", async ({ page }) => {
-      await page.goto(URL);
+      await open(page);
       await expect(page.getByRole("heading", { level: 1 })).toHaveText("minillm");
       for (const title of [
         "Overview",
@@ -21,7 +27,6 @@ for (const colorScheme of ["dark", "light"] as const) {
       ]) {
         await expect(page.getByRole("heading", { level: 2, name: title })).toBeVisible();
       }
-      await page.waitForLoadState("networkidle");
       const results = await new AxeBuilder({ page }).withTags(AXE_TAGS).analyze();
       expect(results.violations).toEqual([]);
     });
@@ -30,7 +35,7 @@ for (const colorScheme of ["dark", "light"] as const) {
 
 test("the decoding step answers the pointer and the keyboard", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.goto(URL);
+  await open(page);
   const decode = page.locator("#decode");
   const rows = decode.locator(".ds-attn tbody tr");
   await expect(rows).toHaveCount(13);
@@ -62,7 +67,7 @@ test("the decoding step answers the pointer and the keyboard", async ({ page }) 
 });
 
 test("the Q8_0 explorer answers the pointer and the keyboard", async ({ page }) => {
-  await page.goto(URL);
+  await open(page);
   const q8 = page.locator("#q8");
   const cells = q8.locator(".q8-cell");
   await expect(cells).toHaveCount(32);
@@ -93,7 +98,7 @@ test("the Q8_0 explorer answers the pointer and the keyboard", async ({ page }) 
 });
 
 test("plays the decoding steps when motion is allowed", async ({ page }) => {
-  await page.goto(URL);
+  await open(page);
   const decode = page.locator("#decode");
   await decode.getByRole("button", { name: "Replay" }).click();
   await expect(decode.locator(".ds-attn tbody tr")).toHaveCount(1);
@@ -103,8 +108,7 @@ test("plays the decoding steps when motion is allowed", async ({ page }) => {
 
 test("has no horizontal scroll on a 390 px screen", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto(URL);
-  await page.waitForLoadState("networkidle");
+  await open(page);
   const overflow = await page.evaluate(
     () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
   );

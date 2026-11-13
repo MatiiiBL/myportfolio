@@ -8,15 +8,30 @@
  *                         file name in it (mono)
  *   .project-table-wrap   a table that may scroll sideways on a phone: give it role="region",
  *                         an aria-label and tabIndex={0} so keyboards can scroll it
- *   .project-table        a small results table (a caption, row headers, numeric cells)
+ *   .project-table        a small results table (a caption, row headers, numeric cells);
+ *                         .project-text on the cells of a column of words
  *   .project-grid         side-by-side blocks that stack on narrow screens
- *   .project-how          a diagram Figure beside the design decisions, stacked below 52rem
+ *   .project-how          a diagram Figure beside the design decisions, stacked below 52rem;
+ *                         .project-figures for several figures in its first column
  *   .project-decisions    the design decisions, one <article> with an <h3> each
  *   .project-limits       the limits, a list with a <strong> lead per item
  */
 
 .project-page code {
   color: var(--text);
+}
+
+/*
+ * Space between a section's blocks. The base styles zero the margins of p and h3 with element
+ * selectors, which outrank Section.css's zero-specificity defaults; one class restores them here
+ * while still yielding to a component's own rule, such as the figure's.
+ */
+.project-page :where(.section-body > * + *) {
+  margin-top: var(--space-4);
+}
+
+.project-page :where(.section-body > h3) {
+  margin-top: var(--space-6);
 }
 
 .project-prose {
@@ -63,6 +78,10 @@
   white-space: nowrap;
 }
 
+.project-table thead th:first-child {
+  text-align: left;
+}
+
 .project-table th[scope="row"] {
   text-align: left;
   font-weight: 400;
@@ -81,6 +100,13 @@
 
 .project-table td {
   color: var(--text);
+}
+
+/* A column of words rather than numbers ("what it does", "inputs"): left-aligned, wrapping. */
+.project-table .project-text {
+  text-align: left;
+  white-space: normal;
+  min-width: 12rem;
 }
 
 .project-grid {
@@ -102,6 +128,14 @@
 
 .section-body > .project-how > .figure {
   margin: 0;
+}
+
+/* Two or more figures stacked in one column of .project-how. */
+.project-figures {
+  display: grid;
+  gap: var(--space-5);
+  align-content: start;
+  min-width: 0;
 }
 
 @media (max-width: 52rem) {
@@ -129,6 +163,10 @@
 .project-decisions p {
   font-size: var(--step--1);
   line-height: 1.65;
+}
+
+.project-decisions p + p {
+  margin-top: var(--space-3);
 }
 
 .project-limits {

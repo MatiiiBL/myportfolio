@@ -1,43 +1,37 @@
-import type { ReactNode } from "react";
 import { Figure } from "../../components/Figure";
 import { Section } from "../../components/Section";
 import { BarChart } from "../../components/charts";
+import "../../components/ProjectPage.css";
 import { DecodeStep } from "./DecodeStep";
 import { ForwardPassDiagram } from "./ForwardPassDiagram";
 import { Q8Explorer } from "./Q8Explorer";
 import { SMOLLM2, kvBytesPerToken } from "./model";
 import results from "./data/results.json";
-import "../vecdex/page.css";
 
 // The minillm page body, inside ProjectLayout (docs/site.md, "Project pages"). Every number is
 // from the repository at the commit in data/SOURCE.md.
 const REPO = "https://github.com/MatiiiBL/LLM-inference-engine";
-const AT = `${REPO}/blob/bb175958c4718f47f9609d5fa4c933b3a26eb255`;
+const COMMIT = "bb175958c4718f47f9609d5fa4c933b3a26eb255";
 const MIB = 1024 * 1024;
 
-function Source({ href, children }: { href: string; children: string }) {
+/** A link to a file of the repository at the page's commit. */
+function SourceLink({ file, anchor }: { file: string; anchor?: string }) {
   return (
-    <>
-      {" "}
-      Source: <a href={href}>{children}</a>.
-    </>
-  );
-}
-
-function TableScroll({ label, children }: { label: string; children: ReactNode }) {
-  return (
-    <div className="vx-table-wrap" role="region" aria-label={label} tabIndex={0}>
-      {children}
-    </div>
+    <a
+      className="project-file"
+      href={`${REPO}/blob/${COMMIT}/${file}${anchor ? `#${anchor}` : ""}`}
+    >
+      {file}
+    </a>
   );
 }
 
 export default function Page() {
   const fullContext = (SMOLLM2.maxPositions * kvBytesPerToken(SMOLLM2)) / MIB;
   return (
-    <>
+    <div className="project-page">
       <Section id="overview" title="Overview">
-        <div className="vx-prose">
+        <div className="project-prose">
           <p>
             minillm is an inference engine for Llama-architecture language models, written in C++20
             with no dependencies beyond a test framework and a JSON parser. It loads SmolLM2-135M
@@ -58,7 +52,7 @@ export default function Page() {
         </div>
       </Section>
 
-      <Section id="decode" title="One decoding step" kicker="Interactive">
+      <Section id="decode" title="One decoding step" kicker="Interactive" navLabel="Decoding">
         <Figure
           title="The KV cache and the attention of one token"
           subtitle="SmolLM2-135M · layers 0 and 15 · 9 query heads, 3 KV heads, head_dim 64"
@@ -73,7 +67,8 @@ export default function Page() {
               6–8 each read one shared KV head. In layer 15 every head puts 42% to 90% of its weight
               on the first token, averaged over positions 1 to 12; layer 0 spreads it out. minillm
               checks that a prefill followed by one decode step gives the same logits as a single
-              prefill of the same tokens, within 5.5e-5.
+              prefill of the same tokens, within 5.5e-5. Source:{" "}
+              <SourceLink file="oracle/generate.py" />.
             </>
           }
         >
@@ -81,7 +76,7 @@ export default function Page() {
         </Figure>
       </Section>
 
-      <Section id="q8" title="Q8_0, one block at a time" kicker="Interactive">
+      <Section id="q8" title="Q8_0, one block at a time" kicker="Interactive" navLabel="Q8_0">
         <Figure
           title="A block of 32 real weights, quantized"
           subtitle="SmolLM2-135M checkpoint · d = f16(max |x| / 127) · q = round(x / d)"
@@ -92,7 +87,7 @@ export default function Page() {
               repository&apos;s reference implementation for every one of them. The top plot is the
               weights, the bottom one the error each keeps after rounding. Pick a weight and drag
               its slider to make it an outlier: the scale grows with it, and so does every other
-              weight&apos;s error.
+              weight&apos;s error. Source: <SourceLink file="src/loader/quantize.cpp" />.
             </>
           }
         >
@@ -101,7 +96,7 @@ export default function Page() {
       </Section>
 
       <Section id="results" title="Results">
-        <div className="vx-prose">
+        <div className="project-prose">
           <p>
             The 64-token greedy generations for each of the oracle&apos;s three prompts match
             PyTorch&apos;s id for id, with f32 and with bf16 weights; with Q8_0 weights they match
@@ -110,7 +105,7 @@ export default function Page() {
           </p>
         </div>
 
-        <div className="vx-split">
+        <div className="project-grid">
           <BarChart
             title="Weight memory by format"
             subtitle="SmolLM2-135M · projections and embedding · norms stay f32"
@@ -122,8 +117,8 @@ export default function Page() {
             caption={
               <>
                 The arithmetic is f32 in every format. The default picks bf16 for this checkpoint
-                because it is stored in bf16, so the conversion is exact.
-                <Source href={`${AT}/README.md#running`}>README.md</Source>
+                because it is stored in bf16, so the conversion is exact. Source:{" "}
+                <SourceLink file="README.md" anchor="running" />.
               </>
             }
           />
@@ -154,28 +149,32 @@ export default function Page() {
               <>
                 A test enforces the budget; the measured KL moves only when the format or the
                 quantizer changes. A quantizer that truncates instead of rounding is 2.8 to 3.4
-                times over it on every set.
-                <Source href={`${AT}/tests/common/tolerances.h`}>tests/common/tolerances.h</Source>
+                times over it on every set. Source: <SourceLink file="tests/common/tolerances.h" />.
               </>
             }
           />
         </div>
 
-        <h3 className="vx-h3">Measured error against PyTorch</h3>
-        <div className="vx-prose">
+        <h3>Measured error against PyTorch</h3>
+        <div className="project-prose">
           <p>
             Floating-point addition is not associative, so a kernel that sums in a different order
-            differs from PyTorch in the last bits. Each tolerance is set from a measurement with
-            every tolerance at zero, and lives in one file.
+            differs from PyTorch in the last bits. Each tolerance is set from a measurement taken
+            with every tolerance at zero, and all of them live in one file.
           </p>
         </div>
-        <TableScroll label="Measured error against PyTorch">
-          <table className="vx-table">
+        <div
+          className="project-table-wrap"
+          role="region"
+          aria-label="Measured error against PyTorch"
+          tabIndex={0}
+        >
+          <table className="project-table">
             <caption>Largest absolute error of each stage, and the bound its test enforces</caption>
             <thead>
               <tr>
                 <th scope="col">Stage</th>
-                <th scope="col" className="vx-text">
+                <th scope="col" className="project-text">
                   Inputs
                 </th>
                 <th scope="col">Max abs error</th>
@@ -186,101 +185,111 @@ export default function Page() {
               {results.errors.map((e) => (
                 <tr key={e.stage}>
                   <th scope="row">{e.stage}</th>
-                  <td className="vx-text">{e.shape}</td>
-                  <td className="vx-strong">{e.maxAbs}</td>
+                  <td className="project-text">{e.shape}</td>
+                  <td>
+                    <strong>{e.maxAbs}</strong>
+                  </td>
                   <td>{e.tolerance}</td>
                 </tr>
               ))}
             </tbody>
           </table>
-        </TableScroll>
-        <p className="vx-source">
+        </div>
+        <p className="project-source">
           Token ids are compared exactly: one divergent token fails the test, whatever the logits
-          say.
-          <Source href={`${AT}/tests/common/tolerances.h`}>tests/common/tolerances.h</Source>
+          say. Source: <SourceLink file="tests/common/tolerances.h" />.
         </p>
       </Section>
 
       <Section id="how-it-works" title="How it works">
-        <div className="vx-split">
-          <ul className="vx-decisions">
-            <li>
+        <div className="project-how">
+          <Figure
+            title="One forward pass"
+            subtitle="prefill: n prompt tokens · decode: n = 1"
+            caption={
+              <>
+                Prefill and decode are the same code path; only the number of rows differs. Source:{" "}
+                <SourceLink file="src/model/model.cpp" />.
+              </>
+            }
+          >
+            <ForwardPassDiagram />
+          </Figure>
+          <div className="project-decisions">
+            <article>
               <h3>Two implementations of every op</h3>
-              <div className="vx-prose">
-                <p>
-                  <code>src/ops_ref/</code> holds naive scalar loops: no SIMD, no threads, no
-                  fast-math. They are checked against PyTorch&apos;s intermediate values and never
-                  optimized, because every tolerance in the repository is measured against them. The
-                  engine calls <code>src/ops/</code>, and each kernel there is checked against the
-                  reference on random inputs and against PyTorch on real ones. The interfaces
-                  between the ten modules are nine frozen headers, so the slow and the fast version
-                  of an op have the same signature and share one test.
-                </p>
-              </div>
-            </li>
-            <li>
+              <p>
+                <code>src/ops_ref/</code> holds naive scalar loops: no SIMD, no threads, no
+                fast-math. They are checked against PyTorch&apos;s intermediate values and never
+                optimized, because every tolerance in the repository is measured against them. The
+                engine calls <code>src/ops/</code>, and each kernel there is checked against the
+                reference on random inputs and against PyTorch on real ones. The interfaces between
+                the ten modules are nine frozen headers, so the slow and the fast version of an op
+                have the same signature and share one test.
+              </p>
+            </article>
+            <article>
               <h3>The cache is the attention kernel&apos;s input</h3>
-              <div className="vx-prose">
-                <p>
-                  The KV cache is allocated once, as [layer][position][kv_head][head_dim] floats,
-                  and never resized. The K and V projections write straight into their position and
-                  RoPE rotates the keys in place, so a layer&apos;s cached prefix is one contiguous
-                  [len, 3, 64] block that attention reads without a copy. Causality is a loop bound;
-                  there is no mask. Attention runs an online softmax over blocks of 128 keys (the
-                  flash-attention recurrence) and handles the three query heads of a group together,
-                  so every K and V vector it loads serves three heads.
-                </p>
-              </div>
-            </li>
-            <li>
+              <p>
+                The KV cache is allocated once, as [layer][position][kv_head][head_dim] floats, and
+                never resized. The K and V projections write straight into their position and RoPE
+                rotates the keys in place, so a layer&apos;s cached prefix is one contiguous [len,
+                3, 64] block that attention reads without a copy. Causality is a loop bound; there
+                is no mask. Attention runs an online softmax over blocks of 128 keys (the
+                flash-attention recurrence) and handles the three query heads of a group together,
+                so every K and V vector it loads serves three heads.
+              </p>
+            </article>
+            <article>
               <h3>Q8_0 without giving up exactness</h3>
-              <div className="vx-prose">
-                <p>
-                  A Q8_0 weight stands for exactly the f32 matrix q × d, so the references apply
-                  unchanged. To decode one token, the kernel widens a block&apos;s 32 int8 values to
-                  float, takes their dot product with the input unscaled, and folds the scale in
-                  with one fused multiply-add: d · Σ x·q. For a long prompt, converting per row
-                  would cost more with every row, so a panel of weight rows is dequantized once into
-                  scratch memory and a register tile runs every input row against it. Both kernels
-                  compute each output the same way however the work is split, so results are bitwise
-                  identical at every thread count.
-                </p>
-              </div>
-            </li>
-          </ul>
-          <ForwardPassDiagram />
+              <p>
+                A Q8_0 weight stands for exactly the f32 matrix q × d, so the references apply
+                unchanged. To decode one token, the kernel widens a block&apos;s 32 int8 values to
+                float, takes their dot product with the input unscaled, and folds the scale in with
+                one fused multiply-add: d · Σ x·q. For a long prompt, converting per row would cost
+                more with every row, so a panel of weight rows is dequantized once into scratch
+                memory and a register tile runs every input row against it. Both kernels compute
+                each output the same way however the work is split, so results are bitwise identical
+                at every thread count.
+              </p>
+            </article>
+          </div>
         </div>
       </Section>
 
       <Section id="limits" title="Limits">
-        <ul className="vx-limits">
-          <li>One sequence at a time: there is no batching.</li>
+        <ul className="project-limits">
           <li>
-            Compute is f32 throughout. bf16 and Q8_0 change how weights are stored, not the
-            arithmetic, and the KV cache stays f32: {Math.round(kvBytesPerToken(SMOLLM2) / 1024)}{" "}
-            KiB per token, {Math.round(fullContext)} MiB for SmolLM2&apos;s full{" "}
-            {SMOLLM2.maxPositions.toLocaleString("en-US")}-token context.
+            <strong>One sequence at a time.</strong> There is no batching.
           </li>
           <li>
-            Llama-family checkpoints only. The config loader rejects RoPE scaling, attention or MLP
-            biases and activations other than SiLU instead of computing something else.
+            <strong>f32 compute throughout.</strong> bf16 and Q8_0 change how weights are stored,
+            not the arithmetic, and the KV cache stays f32:{" "}
+            {Math.round(kvBytesPerToken(SMOLLM2) / 1024)} KiB per token, {Math.round(fullContext)}{" "}
+            MiB for SmolLM2&apos;s full {SMOLLM2.maxPositions.toLocaleString("en-US")}-token
+            context.
           </li>
           <li>
-            On x86 the Q8_0 kernels run a portable path meant for correctness: in CI&apos;s x86-64
-            build, Q8_0 decode runs at about half the speed of f32, because SSE2 has no cheap
-            int8-to-float conversion.
+            <strong>Llama-family checkpoints only.</strong> The config loader rejects RoPE scaling,
+            attention or MLP biases and activations other than SiLU instead of computing something
+            else.
           </li>
           <li>
-            The benchmark runs in CI on every push, but no speed results are committed to the
-            repository, so this page quotes none.
+            <strong>Q8_0 is slow on x86.</strong> There the kernels run a portable path meant for
+            correctness: in CI&apos;s x86-64 build, Q8_0 decode runs at about half the speed of f32,
+            because SSE2 has no cheap int8-to-float conversion.
+          </li>
+          <li>
+            <strong>No committed speed results.</strong> The benchmark runs in CI on every push, but
+            its results are not in the repository, so this page quotes none.
           </li>
         </ul>
-        <p className="vx-source">
+        <p className="project-source">
           The README has no limitations section; these are from the engine&apos;s own headers and
-          kernel notes.
-          <Source href={`${AT}/include/minillm/model.h`}>include/minillm/model.h</Source>
+          kernel notes. Source: <SourceLink file="include/minillm/model.h" />,{" "}
+          <SourceLink file="include/minillm/config.h" />, <SourceLink file="src/ops/q8_0.cpp" />.
         </p>
       </Section>
-    </>
+    </div>
   );
 }

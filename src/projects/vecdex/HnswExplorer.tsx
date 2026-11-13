@@ -11,7 +11,7 @@ import { bruteForceKnn, recallAtK, searchHnsw, type HnswGraph, type Point } from
 import { EXPLORER_GRAPH, explorerGraph } from "./explorerGraph";
 import { frameAt } from "./explorerState";
 import { GRID } from "./points";
-import { useReducedMotion } from "./useReducedMotion";
+import { useMediaQuery } from "../../hooks/useMediaQuery";
 import "./HnswExplorer.css";
 
 const K = EXPLORER_GRAPH.k;
@@ -46,7 +46,7 @@ function clampToGrid(v: number): number {
 export function HnswExplorer() {
   const graph = useMemo(() => explorerGraph(), []);
   const edges = useMemo(() => edgesByLayer(graph), [graph]);
-  const reduced = useReducedMotion();
+  const reduced = useMediaQuery("(prefers-reduced-motion: reduce)");
   const [query, setQuery] = useState<Point>(DEFAULT_QUERY);
   const [ef, setEf] = useState(16);
   const [step, setStep] = useState(END);

@@ -99,9 +99,11 @@ same:
 - `src/components/ProjectPage.css`: the body styles. Wrap the sections in `.project-page` and use
   `.project-prose` (reading width), `.project-source` with `.project-file` (the one-line source
   under a table or list), `.project-table-wrap` and `.project-table` (small results tables; a wrap
-  that can scroll sideways on a phone gets `role="region"`, an `aria-label` and `tabIndex={0}`),
-  `.project-grid`, `.project-how` (the architecture figure beside the design decisions),
-  `.project-decisions` (one `<article>` with an `<h3>` per decision) and `.project-limits`.
+  that can scroll sideways on a phone gets `role="region"`, an `aria-label` and `tabIndex={0}`;
+  `.project-text` on the cells of a column of words), `.project-grid`, `.project-how` (the
+  architecture figure beside the design decisions; `.project-figures` stacks several figures in
+  its first column), `.project-decisions` (one `<article>` with an `<h3>` per decision) and
+  `.project-limits`.
 - `src/components/BlockDiagram.tsx`: the architecture diagram. `<BlockDiagram>` takes a title and
   a prose description (its text alternative) and holds `<Block>` boxes or group frames, `<Arrow>`
   polylines with an optional label, and free `<Label>`s, all themed through the tokens. Draw it in
