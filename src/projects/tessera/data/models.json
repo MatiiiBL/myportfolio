@@ -1,0 +1,322 @@
+{
+  "commit": "e047e7f",
+  "measured": "2026-11-12T13:49:45Z",
+  "models": [
+    {
+      "model": "resnet50",
+      "name": "ResNet-50",
+      "systems": {
+        "onnxruntime-cpu": { "median": 12.14, "p10": 12.083, "p90": 12.237, "maxRel": 0.0 },
+        "pytorch-cpu": {
+          "median": 13.178,
+          "p10": 13.084,
+          "p90": 13.528,
+          "maxRel": 1.0295438945524671e-6
+        },
+        "pytorch-mps": {
+          "median": 12.281,
+          "p10": 12.19,
+          "p90": 12.38,
+          "maxRel": 1.020241877089235e-6
+        },
+        "tessera-c:sme": {
+          "median": 11.525,
+          "p10": 11.173,
+          "p90": 15.048,
+          "maxRel": 6.057130858255061e-7
+        },
+        "tessera-c:sme-untuned": {
+          "median": 12.023,
+          "p10": 11.805,
+          "p90": 16.341,
+          "maxRel": 6.532199945177028e-7
+        },
+        "tessera-c:neon-untuned": {
+          "median": 26.032,
+          "p10": 25.612,
+          "p90": 26.463,
+          "maxRel": 6.532199945177028e-7
+        },
+        "tessera-metal": {
+          "median": 10.715,
+          "p10": 10.657,
+          "p90": 10.79,
+          "maxRel": 6.057130858255061e-7
+        },
+        "tessera-metal-untuned": {
+          "median": 16.924,
+          "p10": 16.853,
+          "p90": 17.041,
+          "maxRel": 6.057130858255061e-7
+        }
+      },
+      "ablations": {
+        "c:sme": {
+          "full": {
+            "kernels": 56,
+            "bytesMoved": 215740736,
+            "arena": 10436608,
+            "intermediates": 45266944
+          },
+          "fusion off": {
+            "kernels": 123,
+            "bytesMoved": 337977472,
+            "arena": 12042240,
+            "intermediates": 106385312
+          }
+        },
+        "metal": {
+          "full": {
+            "kernels": 56,
+            "bytesMoved": 215740736,
+            "arena": 10436608,
+            "intermediates": 45266944
+          },
+          "fusion off": {
+            "kernels": 123,
+            "bytesMoved": 337977472,
+            "arena": 12042240,
+            "intermediates": 106385312
+          }
+        }
+      }
+    },
+    {
+      "model": "mobilenet_v2",
+      "name": "MobileNetV2",
+      "systems": {
+        "onnxruntime-cpu": { "median": 2.433, "p10": 2.354, "p90": 2.562, "maxRel": 0.0 },
+        "pytorch-cpu": {
+          "median": 15.248,
+          "p10": 14.823,
+          "p90": 15.368,
+          "maxRel": 3.987864241550163e-6
+        },
+        "pytorch-mps": {
+          "median": 6.621,
+          "p10": 6.491,
+          "p90": 6.728,
+          "maxRel": 2.826545901550841e-6
+        },
+        "tessera-c:sme": {
+          "median": 2.148,
+          "p10": 2.125,
+          "p90": 2.167,
+          "maxRel": 2.5085594876263712e-6
+        },
+        "tessera-c:sme-untuned": {
+          "median": 3.15,
+          "p10": 3.038,
+          "p90": 3.292,
+          "maxRel": 2.5058572765248454e-6
+        },
+        "tessera-c:neon-untuned": {
+          "median": 3.007,
+          "p10": 2.898,
+          "p90": 3.168,
+          "maxRel": 2.5058572765248454e-6
+        },
+        "tessera-metal": {
+          "median": 1.736,
+          "p10": 1.704,
+          "p90": 1.787,
+          "maxRel": 2.2420828263643354e-6
+        },
+        "tessera-metal-untuned": {
+          "median": 1.95,
+          "p10": 1.854,
+          "p90": 2.015,
+          "maxRel": 2.2420828263643354e-6
+        }
+      },
+      "ablations": {
+        "c:sme": {
+          "full": {
+            "kernels": 54,
+            "bytesMoved": 68858048,
+            "arena": 6823936,
+            "intermediates": 26717568
+          },
+          "fusion off": {
+            "kernels": 101,
+            "bytesMoved": 120647680,
+            "arena": 10436608,
+            "intermediates": 52612384
+          }
+        },
+        "metal": {
+          "full": {
+            "kernels": 54,
+            "bytesMoved": 68858048,
+            "arena": 6823936,
+            "intermediates": 26717568
+          },
+          "fusion off": {
+            "kernels": 101,
+            "bytesMoved": 120647680,
+            "arena": 10436608,
+            "intermediates": 52612384
+          }
+        }
+      }
+    },
+    {
+      "model": "bert",
+      "name": "BERT-base",
+      "systems": {
+        "onnxruntime-cpu": { "median": 21.966, "p10": 21.87, "p90": 22.232, "maxRel": 0.0 },
+        "pytorch-cpu": {
+          "median": 26.458,
+          "p10": 26.28,
+          "p90": 26.824,
+          "maxRel": 2.4427649200513234e-6
+        },
+        "pytorch-mps": {
+          "median": 14.847,
+          "p10": 14.612,
+          "p90": 15.293,
+          "maxRel": 9.949463859759603e-7
+        },
+        "tessera-c:sme": {
+          "median": 18.059,
+          "p10": 17.656,
+          "p90": 20.307,
+          "maxRel": 1.7703183971158467e-6
+        },
+        "tessera-c:sme-untuned": {
+          "median": 21.98,
+          "p10": 21.884,
+          "p90": 22.073,
+          "maxRel": 1.7703183971158467e-6
+        },
+        "tessera-c:neon-untuned": {
+          "median": 60.79,
+          "p10": 59.529,
+          "p90": 61.837,
+          "maxRel": 1.7703183971158467e-6
+        },
+        "tessera-metal": {
+          "median": 10.309,
+          "p10": 10.172,
+          "p90": 10.423,
+          "maxRel": 1.5095738269980088e-6
+        },
+        "tessera-metal-untuned": {
+          "median": 10.536,
+          "p10": 10.415,
+          "p90": 10.684,
+          "maxRel": 1.8938289829611383e-6
+        }
+      },
+      "ablations": {
+        "c:sme": {
+          "full": {
+            "kernels": 134,
+            "bytesMoved": 605891769,
+            "arena": 2424832,
+            "intermediates": 75563008
+          },
+          "fusion off": {
+            "kernels": 320,
+            "bytesMoved": 825339577,
+            "arena": 4014592,
+            "intermediates": 185286912
+          }
+        },
+        "metal": {
+          "full": {
+            "kernels": 134,
+            "bytesMoved": 605891769,
+            "arena": 2424832,
+            "intermediates": 75563008
+          },
+          "fusion off": {
+            "kernels": 320,
+            "bytesMoved": 825339577,
+            "arena": 4014592,
+            "intermediates": 185286912
+          }
+        }
+      }
+    },
+    {
+      "model": "gpt2",
+      "name": "GPT-2",
+      "systems": {
+        "onnxruntime-cpu": { "median": 30.538, "p10": 30.295, "p90": 31.557, "maxRel": 0.0 },
+        "pytorch-cpu": {
+          "median": 39.097,
+          "p10": 38.931,
+          "p90": 39.634,
+          "maxRel": 9.643681839733126e-7
+        },
+        "pytorch-mps": {
+          "median": 22.133,
+          "p10": 21.913,
+          "p90": 23.342,
+          "maxRel": 9.076406437395883e-7
+        },
+        "tessera-c:sme": {
+          "median": 32.679,
+          "p10": 31.897,
+          "p90": 33.437,
+          "maxRel": 1.0210957242070369e-6
+        },
+        "tessera-c:sme-untuned": {
+          "median": 32.357,
+          "p10": 32.173,
+          "p90": 34.553,
+          "maxRel": 1.0210957242070369e-6
+        },
+        "tessera-c:neon-untuned": {
+          "median": 94.433,
+          "p10": 89.059,
+          "p90": 133.968,
+          "maxRel": 1.0210957242070369e-6
+        },
+        "tessera-metal": {
+          "median": 14.182,
+          "p10": 13.651,
+          "p90": 14.923,
+          "maxRel": 1.474916046076831e-6
+        },
+        "tessera-metal-untuned": {
+          "median": 14.653,
+          "p10": 14.371,
+          "p90": 15.097,
+          "maxRel": 1.1345508046744855e-6
+        }
+      },
+      "ablations": {
+        "c:sme": {
+          "full": {
+            "kernels": 111,
+            "bytesMoved": 852076080,
+            "arena": 3538944,
+            "intermediates": 76283904
+          },
+          "fusion off": {
+            "kernels": 304,
+            "bytesMoved": 1112385072,
+            "arena": 3932160,
+            "intermediates": 199360512
+          }
+        },
+        "metal": {
+          "full": {
+            "kernels": 111,
+            "bytesMoved": 852076080,
+            "arena": 3538944,
+            "intermediates": 76283904
+          },
+          "fusion off": {
+            "kernels": 304,
+            "bytesMoved": 1112385072,
+            "arena": 3932160,
+            "intermediates": 199360512
+          }
+        }
+      }
+    }
+  ]
+}

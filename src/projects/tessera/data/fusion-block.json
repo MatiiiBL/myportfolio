@@ -1,0 +1,278 @@
+{
+  "fused": {
+    "kernels": [
+      {
+        "name": "layer1_layer1_1_conv1_Conv",
+        "pattern": "conv2d",
+        "nodes": ["Conv2d", "Relu"],
+        "anchor": "layer1_layer1_1_conv1_Conv",
+        "args": [
+          {
+            "name": "layer1_layer1_0_relu_2_Relu",
+            "shape": [1, 56, 56, 256],
+            "bytes": 3211264,
+            "kind": "INPUT"
+          },
+          {
+            "name": "layer1_layer1_1_conv1_weight",
+            "shape": [1, 1, 256, 64],
+            "bytes": 65536,
+            "kind": "CONSTANT"
+          },
+          { "name": "layer1_layer1_1_conv1_bias", "shape": [64], "bytes": 256, "kind": "CONSTANT" },
+          {
+            "name": "layer1_layer1_1_relu_Relu",
+            "shape": [1, 56, 56, 64],
+            "bytes": 802816,
+            "kind": "ARENA"
+          }
+        ]
+      },
+      {
+        "name": "layer1_layer1_1_conv2_Conv",
+        "pattern": "conv2d",
+        "nodes": ["Conv2d", "Relu"],
+        "anchor": "layer1_layer1_1_conv2_Conv",
+        "args": [
+          {
+            "name": "layer1_layer1_1_relu_Relu",
+            "shape": [1, 56, 56, 64],
+            "bytes": 802816,
+            "kind": "ARENA"
+          },
+          {
+            "name": "layer1_layer1_1_conv2_weight",
+            "shape": [3, 3, 64, 64],
+            "bytes": 147456,
+            "kind": "CONSTANT"
+          },
+          { "name": "layer1_layer1_1_conv2_bias", "shape": [64], "bytes": 256, "kind": "CONSTANT" },
+          {
+            "name": "layer1_layer1_1_relu_1_Relu",
+            "shape": [1, 56, 56, 64],
+            "bytes": 802816,
+            "kind": "ARENA"
+          }
+        ]
+      },
+      {
+        "name": "layer1_layer1_1_conv3_Conv",
+        "pattern": "conv2d",
+        "nodes": ["Conv2d", "Add", "Relu"],
+        "anchor": "layer1_layer1_1_conv3_Conv",
+        "args": [
+          {
+            "name": "layer1_layer1_1_relu_1_Relu",
+            "shape": [1, 56, 56, 64],
+            "bytes": 802816,
+            "kind": "ARENA"
+          },
+          {
+            "name": "layer1_layer1_1_conv3_weight",
+            "shape": [1, 1, 64, 256],
+            "bytes": 65536,
+            "kind": "CONSTANT"
+          },
+          {
+            "name": "layer1_layer1_1_conv3_bias",
+            "shape": [256],
+            "bytes": 1024,
+            "kind": "CONSTANT"
+          },
+          {
+            "name": "layer1_layer1_0_relu_2_Relu",
+            "shape": [1, 56, 56, 256],
+            "bytes": 3211264,
+            "kind": "INPUT"
+          },
+          {
+            "name": "layer1_layer1_1_relu_2_Relu",
+            "shape": [1, 56, 56, 256],
+            "bytes": 3211264,
+            "kind": "OUTPUT"
+          }
+        ]
+      }
+    ],
+    "bytes_moved": 13125120,
+    "arena_bytes": 1605632
+  },
+  "unfused": {
+    "kernels": [
+      {
+        "name": "layer1_layer1_1_conv1_Conv",
+        "pattern": "conv2d",
+        "nodes": ["Conv2d"],
+        "anchor": "layer1_layer1_1_conv1_Conv",
+        "args": [
+          {
+            "name": "layer1_layer1_0_relu_2_Relu",
+            "shape": [1, 56, 56, 256],
+            "bytes": 3211264,
+            "kind": "INPUT"
+          },
+          {
+            "name": "layer1_layer1_1_conv1_weight",
+            "shape": [1, 1, 256, 64],
+            "bytes": 65536,
+            "kind": "CONSTANT"
+          },
+          { "name": "layer1_layer1_1_conv1_bias", "shape": [64], "bytes": 256, "kind": "CONSTANT" },
+          {
+            "name": "layer1_layer1_1_conv1_Conv",
+            "shape": [1, 56, 56, 64],
+            "bytes": 802816,
+            "kind": "ARENA"
+          }
+        ]
+      },
+      {
+        "name": "layer1_layer1_1_relu_Relu",
+        "pattern": "injective",
+        "nodes": ["Relu"],
+        "anchor": null,
+        "args": [
+          {
+            "name": "layer1_layer1_1_conv1_Conv",
+            "shape": [1, 56, 56, 64],
+            "bytes": 802816,
+            "kind": "ARENA"
+          },
+          {
+            "name": "layer1_layer1_1_relu_Relu",
+            "shape": [1, 56, 56, 64],
+            "bytes": 802816,
+            "kind": "ARENA"
+          }
+        ]
+      },
+      {
+        "name": "layer1_layer1_1_conv2_Conv",
+        "pattern": "conv2d",
+        "nodes": ["Conv2d"],
+        "anchor": "layer1_layer1_1_conv2_Conv",
+        "args": [
+          {
+            "name": "layer1_layer1_1_relu_Relu",
+            "shape": [1, 56, 56, 64],
+            "bytes": 802816,
+            "kind": "ARENA"
+          },
+          {
+            "name": "layer1_layer1_1_conv2_weight",
+            "shape": [3, 3, 64, 64],
+            "bytes": 147456,
+            "kind": "CONSTANT"
+          },
+          { "name": "layer1_layer1_1_conv2_bias", "shape": [64], "bytes": 256, "kind": "CONSTANT" },
+          {
+            "name": "layer1_layer1_1_conv2_Conv",
+            "shape": [1, 56, 56, 64],
+            "bytes": 802816,
+            "kind": "ARENA"
+          }
+        ]
+      },
+      {
+        "name": "layer1_layer1_1_relu_1_Relu",
+        "pattern": "injective",
+        "nodes": ["Relu"],
+        "anchor": null,
+        "args": [
+          {
+            "name": "layer1_layer1_1_conv2_Conv",
+            "shape": [1, 56, 56, 64],
+            "bytes": 802816,
+            "kind": "ARENA"
+          },
+          {
+            "name": "layer1_layer1_1_relu_1_Relu",
+            "shape": [1, 56, 56, 64],
+            "bytes": 802816,
+            "kind": "ARENA"
+          }
+        ]
+      },
+      {
+        "name": "layer1_layer1_1_conv3_Conv",
+        "pattern": "conv2d",
+        "nodes": ["Conv2d"],
+        "anchor": "layer1_layer1_1_conv3_Conv",
+        "args": [
+          {
+            "name": "layer1_layer1_1_relu_1_Relu",
+            "shape": [1, 56, 56, 64],
+            "bytes": 802816,
+            "kind": "ARENA"
+          },
+          {
+            "name": "layer1_layer1_1_conv3_weight",
+            "shape": [1, 1, 64, 256],
+            "bytes": 65536,
+            "kind": "CONSTANT"
+          },
+          {
+            "name": "layer1_layer1_1_conv3_bias",
+            "shape": [256],
+            "bytes": 1024,
+            "kind": "CONSTANT"
+          },
+          {
+            "name": "layer1_layer1_1_conv3_Conv",
+            "shape": [1, 56, 56, 256],
+            "bytes": 3211264,
+            "kind": "ARENA"
+          }
+        ]
+      },
+      {
+        "name": "layer1_layer1_1_Add",
+        "pattern": "injective",
+        "nodes": ["Add"],
+        "anchor": null,
+        "args": [
+          {
+            "name": "layer1_layer1_1_conv3_Conv",
+            "shape": [1, 56, 56, 256],
+            "bytes": 3211264,
+            "kind": "ARENA"
+          },
+          {
+            "name": "layer1_layer1_0_relu_2_Relu",
+            "shape": [1, 56, 56, 256],
+            "bytes": 3211264,
+            "kind": "INPUT"
+          },
+          {
+            "name": "layer1_layer1_1_Add",
+            "shape": [1, 56, 56, 256],
+            "bytes": 3211264,
+            "kind": "ARENA"
+          }
+        ]
+      },
+      {
+        "name": "layer1_layer1_1_relu_2_Relu",
+        "pattern": "injective",
+        "nodes": ["Relu"],
+        "anchor": null,
+        "args": [
+          {
+            "name": "layer1_layer1_1_Add",
+            "shape": [1, 56, 56, 256],
+            "bytes": 3211264,
+            "kind": "ARENA"
+          },
+          {
+            "name": "layer1_layer1_1_relu_2_Relu",
+            "shape": [1, 56, 56, 256],
+            "bytes": 3211264,
+            "kind": "OUTPUT"
+          }
+        ]
+      }
+    ],
+    "bytes_moved": 29181440,
+    "arena_bytes": 8028160
+  }
+}
