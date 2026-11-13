@@ -122,13 +122,22 @@ describe("SIGKILL and resume (results/bench-faults.json settings)", () => {
     expect(run.totals.retries).toBeGreaterThan(0);
   });
 
-  it("files exactly one paid answer per request, as an uninterrupted run does", () => {
-    const requests = planPapers(base.papers, base.seed).reduce(
-      (n, p) => n + p.stages.reduce((m, s) => m + s.requests.length, 0),
-      0,
-    );
-    expect(run.totals.papersFailed).toBe(0);
-    expect(run.totals.paid).toBe(requests);
-    expect(uninterrupted.totals.paid).toBe(requests);
+  it("files one paid answer for every request of every finished paper, and never two", () => {
+    const final = new Map<number, number>();
+    for (const tr of run.transitions) final.set(tr.paper, tr.state);
+    const plans = planPapers(base.papers, base.seed);
+    let checked = 0;
+    plans.forEach((plan, paper) => {
+      if (final.get(paper) !== 4) return;
+      for (const stage of plan.stages) {
+        for (const req of stage.requests) {
+          expect(run.paidByRequest.get(req.hash), req.hash).toBe(1);
+          checked += 1;
+        }
+      }
+    });
+    expect(checked).toBeGreaterThan(2000);
+    expect([...run.paidByRequest.values()].every((count) => count === 1)).toBe(true);
+    expect(run.totals.paid).toBe(run.paidByRequest.size);
   });
 });

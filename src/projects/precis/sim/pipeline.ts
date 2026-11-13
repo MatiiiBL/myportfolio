@@ -199,6 +199,8 @@ export interface RunResult {
   /** Paper latency from its first request to its last answer, in seconds. */
   paperLatencies: number[];
   kill: KillReport | null;
+  /** Paid answers filed per request hash (`paper/stage/turn`), from the store. */
+  paidByRequest: ReadonlyMap<string, number>;
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -784,6 +786,7 @@ export function simulate(scenario: Scenario): RunResult {
       .map((first, i) => (sim.last[i] ?? first) - first)
       .filter((x) => !Number.isNaN(x)),
     kill: report ? { ...report, resent: sim.resent, replayed: sim.replayed } : null,
+    paidByRequest: sim.durable.paid,
   };
 }
 
