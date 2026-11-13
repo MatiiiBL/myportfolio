@@ -24,7 +24,7 @@ export function ArchitectureDiagram() {
   return (
     <figure className="dg">
       <svg
-        viewBox={`0 0 ${W} 452`}
+        viewBox={`0 0 ${W} 372`}
         role="img"
         aria-labelledby="vx-arch-title vx-arch-desc"
         className="dg-svg"
@@ -56,7 +56,7 @@ export function ArchitectureDiagram() {
         <line className="dg-link" x1={94} y1={54} x2={94} y2={78} markerEnd="url(#vx-arrow)" />
         <line className="dg-link" x1={266} y1={54} x2={266} y2={78} markerEnd="url(#vx-arrow)" />
 
-        <rect className="dg-frame" x={8} y={82} width={W - 16} height={232} rx={10} />
+        <rect className="dg-frame" x={8} y={82} width={W - 16} height={212} rx={10} />
         <text className="dg-kicker" x={20} y={102}>
           HNSWINDEX
         </text>
@@ -91,24 +91,10 @@ export function ArchitectureDiagram() {
           </g>
         ))}
 
-        <line className="dg-link" x1={180} y1={314} x2={180} y2={334} markerEnd="url(#vx-arrow)" />
-        <Box
-          x={16}
-          y={338}
-          w={W - 32}
-          h={46}
-          title="distance kernels"
-          sub="scalar · NEON · AVX2+FMA, picked at run time"
-        />
-        <line className="dg-link" x1={180} y1={384} x2={180} y2={398} markerEnd="url(#vx-arrow)" />
-        <Box
-          x={16}
-          y={402}
-          w={W - 32}
-          h={46}
-          title="save / load"
-          sub="checksummed, durable save; validated load"
-        />
+        <line className="dg-link" x1={94} y1={294} x2={94} y2={314} markerEnd="url(#vx-arrow)" />
+        <line className="dg-link" x1={266} y1={294} x2={266} y2={314} markerEnd="url(#vx-arrow)" />
+        <Box x={16} y={318} w={156} h={46} title="distance kernels" sub="scalar · NEON · AVX2" />
+        <Box x={188} y={318} w={156} h={46} title="save / load" sub="checksummed, validated" />
       </svg>
     </figure>
   );

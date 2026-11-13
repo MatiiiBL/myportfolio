@@ -17,7 +17,8 @@ import "./HnswExplorer.css";
 const K = EXPLORER_GRAPH.k;
 const EF_MIN = 10;
 const EF_MAX = 100;
-const DEFAULT_QUERY: Point = { x: 600, y: 420 };
+// Far from the entry point, so the default search has a descent worth watching.
+const DEFAULT_QUERY: Point = { x: 400, y: 850 };
 const END = Number.POSITIVE_INFINITY;
 const PAD = 24;
 
@@ -56,7 +57,7 @@ export function HnswExplorer() {
   const truth = useMemo(() => bruteForceKnn(graph.points, query, K), [graph, query]);
   const last = result.steps.length - 1;
   const index = Math.min(step, last);
-  const frame = frameAt(result, index, graph.entryPoint, graph.maxLevel);
+  const frame = frameAt(result, index, graph.entryPoint, graph.maxLevel, Math.max(ef, K));
   const recall = recallAtK(result.neighbors, truth, K);
   // Playing stops by itself at the last step: "playing" only means "advance while there is more".
   const animating = playing && !reduced && index < last;
@@ -147,7 +148,7 @@ export function HnswExplorer() {
             aria-hidden="true"
             focusable="false"
           >
-            <g className="hx-edges">
+            <g className={layer > 0 ? "hx-edges hx-edges-upper" : "hx-edges"}>
               {(edges[layer] ?? []).map(([a, b]) => (
                 <line
                   key={`${a}-${b}`}
@@ -184,14 +185,16 @@ export function HnswExplorer() {
               {pts.map((p, id) => {
                 const level = graph.levels[id] ?? 0;
                 const onLayer = level >= layer;
-                const evaluated = layer === 0 && frame.evaluated.has(id);
-                const className = !onLayer
-                  ? "hx-node hx-off"
-                  : evaluated
-                    ? "hx-node hx-evaluated"
-                    : layer > 0
-                      ? "hx-node hx-upper"
-                      : "hx-node";
+                const evaluated =
+                  (layer === 0 && frame.evaluated.has(id)) || frame.scanned.includes(id);
+                const className = [
+                  "hx-node",
+                  !onLayer && "hx-off",
+                  onLayer && layer > 0 && "hx-upper",
+                  evaluated && "hx-evaluated",
+                ]
+                  .filter(Boolean)
+                  .join(" ");
                 const r = !onLayer ? 4 : layer > 0 ? 10 : evaluated ? 8 : 6;
                 return <circle key={id} className={className} cx={p.x} cy={p.y} r={r} />;
               })}
@@ -207,7 +210,7 @@ export function HnswExplorer() {
                 className="hx-path-node"
                 cx={at(id).x}
                 cy={at(id).y}
-                r={9}
+                r={6}
               />
             ))}
             {!frame.done &&
@@ -322,11 +325,8 @@ export function HnswExplorer() {
             </dd>
           </div>
           <div>
-            <dt>Recall@{K}</dt>
-            <dd>
-              {frame.done ? `${Math.round(recall * K)}/${K}` : "–"}
-              <span className="hx-dim"> vs brute force</span>
-            </dd>
+            <dt>Recall@{K} vs brute force</dt>
+            <dd>{frame.done ? `${Math.round(recall * K)}/${K}` : "–"}</dd>
           </div>
         </dl>
 
@@ -355,10 +355,10 @@ export function HnswExplorer() {
             Distance computed
           </LegendItem>
           <LegendItem mark={<circle className="hx-kept-key" cx="8" cy="8" r="5.5" />}>
-            Kept: best ef so far
+            Best ef so far
           </LegendItem>
-          <LegendItem mark={<circle className="hx-found" cx="8" cy="8" r="4.5" />}>
-            Found: the {K} returned
+          <LegendItem mark={<circle className="hx-found-key" cx="8" cy="8" r="4.5" />}>
+            Returned {K}
           </LegendItem>
           <LegendItem mark={<circle className="hx-true-key" cx="8" cy="8" r="6" />}>
             True {K} nearest

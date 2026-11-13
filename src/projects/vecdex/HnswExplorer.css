@@ -38,6 +38,11 @@
   stroke-width: 1px;
 }
 
+.hx-edges-upper line {
+  stroke: var(--text-3);
+  stroke-width: 1.25px;
+}
+
 .hx-node {
   fill: var(--text-3);
   opacity: 0.75;
@@ -68,7 +73,7 @@
 
 .hx-scan {
   stroke: var(--series-2);
-  stroke-width: 1.5px;
+  stroke-width: 2.5px;
 }
 
 .hx-path {
@@ -81,8 +86,6 @@
 
 .hx-path-node {
   fill: var(--accent);
-  stroke: var(--bg);
-  stroke-width: 3;
 }
 
 .hx-kept,
@@ -102,6 +105,10 @@
   fill: var(--accent);
   stroke: var(--bg);
   stroke-width: 3;
+}
+
+.hx-found-key {
+  fill: var(--accent);
 }
 
 .hx-true,
@@ -145,6 +152,7 @@
 }
 
 .hx-controls button {
+  flex: 1 1 0;
   min-height: 2.25rem;
   padding: 0 var(--space-4);
   border: 1px solid var(--border);
@@ -260,6 +268,10 @@
   color: var(--text);
 }
 
+.hx-layers li[aria-current="step"] .hx-dim {
+  color: var(--text-2);
+}
+
 .hx-legend {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -275,6 +287,50 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
+}
+
+/* On a phone the plot is about 340 px wide for 1,000 units: grow the marks so they stay
+   visible. Browsers without CSS geometry properties keep the attribute radii. */
+@media (max-width: 30rem) {
+  .hx-plot .hx-node {
+    r: 9px;
+  }
+
+  .hx-plot .hx-off {
+    r: 6px;
+  }
+
+  .hx-plot .hx-upper {
+    r: 14px;
+  }
+
+  .hx-plot .hx-evaluated {
+    r: 12px;
+  }
+
+  .hx-plot .hx-path-node {
+    r: 9px;
+  }
+
+  .hx-plot .hx-found {
+    r: 15px;
+  }
+
+  .hx-plot .hx-kept {
+    r: 21px;
+  }
+
+  .hx-plot .hx-true {
+    r: 27px;
+  }
+
+  .hx-plot .hx-current {
+    r: 28px;
+  }
+
+  .hx-controls button {
+    padding: 0 var(--space-2);
+  }
 }
 
 .hx-legend svg {

@@ -34,6 +34,7 @@ export function frameAt(
   index: number,
   entryPoint: number,
   topLayer: number,
+  ef: number,
 ): Frame {
   const frame: Frame = {
     layer: topLayer,
@@ -61,7 +62,11 @@ export function frameAt(
       frame.current = step.from;
       frame.scanned = step.evaluated;
       frame.distanceCount += step.evaluated.length;
-      if (step.to !== step.from) {
+      if (step.evaluated.length === 0) {
+        frame.description =
+          `Layer ${step.layer}: node ${step.from} is the only node here, so the search drops ` +
+          `to layer ${step.layer - 1}.`;
+      } else if (step.to !== step.from) {
         frame.path.push(step.to);
         frame.description =
           `Layer ${step.layer}: checked ${plural(step.evaluated.length, "neighbor")} of node ` +
@@ -84,8 +89,9 @@ export function frameAt(
       frame.bound = step.bound;
       frame.distanceCount += step.evaluated.length;
       frame.description =
-        `Layer 0: expanded node ${step.node}; ${plural(step.evaluated.length, "new neighbor")}, ` +
-        `${step.accepted.length} kept among the best ${Math.max(step.results.length, 1)}.`;
+        `Layer 0: expanded node ${step.node}, measured ` +
+        `${plural(step.evaluated.length, "new neighbor")} and kept ${step.accepted.length}. ` +
+        `The list now holds ${plural(step.results.length, "node")} (at most ef = ${ef}).`;
     } else {
       frame.layer = 0;
       frame.done = true;
