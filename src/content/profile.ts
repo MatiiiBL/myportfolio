@@ -37,6 +37,11 @@ export const profile: Profile = {
   siteUrl: "https://matiiibl.github.io/myportfolio/",
 };
 
+/** The one-line focus statement under the pitch on the home page. */
+export const focus =
+  "From RTL to LLM pipelines: I profile before I optimize and check every fast path against a " +
+  "slow reference.";
+
 export const experience: Experience[] = [
   {
     org: "Forva Systems",

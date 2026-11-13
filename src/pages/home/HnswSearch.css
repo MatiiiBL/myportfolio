@@ -1,0 +1,139 @@
+.hnsw {
+  margin: 0;
+  min-width: 0;
+}
+
+.hnsw-svg {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  touch-action: pan-y;
+  cursor: crosshair;
+  border-radius: var(--radius-2);
+  font-family: var(--font-mono);
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.hnsw-plane {
+  fill: var(--surface);
+  stroke: var(--border);
+  stroke-width: 1;
+}
+
+.hnsw-label {
+  fill: var(--text-3);
+  font-size: 12px;
+}
+
+.hnsw-edge {
+  stroke: var(--border);
+  stroke-width: 0.8;
+}
+
+.hnsw-node {
+  fill: var(--text-3);
+}
+
+.hnsw-visited {
+  fill: none;
+  stroke: var(--accent);
+  stroke-opacity: 0.45;
+  stroke-width: 1;
+}
+
+.hnsw-hop {
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+
+.hnsw-drop {
+  stroke: var(--accent);
+  stroke-width: 1.25;
+  stroke-dasharray: 3 3;
+}
+
+.hnsw-stop {
+  fill: var(--accent);
+  stroke: var(--bg);
+  stroke-width: 1.5;
+}
+
+.hnsw-result {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.5;
+}
+
+.hnsw-query {
+  fill: var(--text);
+  stroke: var(--bg);
+  stroke-width: 2;
+}
+
+.hnsw-query-label {
+  fill: var(--text);
+  font-size: 13px;
+  font-weight: 500;
+  paint-order: stroke;
+  stroke: var(--bg);
+  stroke-width: 4px;
+}
+
+.hnsw-ghost {
+  stroke: var(--text-3);
+  stroke-width: 1.25;
+}
+
+.is-replaying .hnsw-hop {
+  animation: hnsw-draw 200ms var(--ease-out) both;
+}
+
+.is-replaying .hnsw-stop:not(.is-entry),
+.is-replaying .hnsw-drop,
+.is-replaying .hnsw-result {
+  animation: hnsw-appear 160ms var(--ease-out) both;
+}
+
+.is-replaying .hnsw-visited {
+  animation: hnsw-appear 400ms var(--ease-out) both;
+}
+
+@keyframes hnsw-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+}
+
+@keyframes hnsw-appear {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .is-replaying * {
+    animation: none !important;
+  }
+}
+
+.hnsw-caption {
+  display: grid;
+  gap: var(--space-1);
+  margin-top: var(--space-3);
+  font-size: var(--step--1);
+  line-height: 1.5;
+}
+
+.hnsw-readout {
+  color: var(--text-2);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.hnsw-hint {
+  color: var(--text-3);
+}
