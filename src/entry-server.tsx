@@ -21,6 +21,10 @@ export async function render(path: string): Promise<string> {
         <App />
       </StaticRouter>
     </StrictMode>,
+    // A Suspense boundary larger than progressiveChunkSize (12.8 kB by default) is outlined into
+    // a hidden div that only an inline script reveals, so a full project page would be invisible
+    // without JavaScript. With no limit every boundary is written in place.
+    { progressiveChunkSize: Number.POSITIVE_INFINITY },
   );
   return new Response(prelude).text();
 }
