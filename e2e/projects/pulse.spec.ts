@@ -31,10 +31,13 @@ test("the stepper follows the mouse and the keyboard", async ({ page }) => {
   const slider = page.getByRole("slider");
   const cycles = page.locator(".stepper__cycles");
   const start = Number(await slider.inputValue());
+  const announcement = page.locator(".stepper [aria-live]");
 
   await page.getByRole("button", { name: "Forward one cycle" }).click();
   await expect(slider).toHaveValue(String(start + 1));
   await expect(cycles).toHaveText(`CYCLES ${start + 1}`);
+  await expect(announcement).toHaveAttribute("aria-live", "polite");
+  await expect(announcement).toContainText(`CYCLES reads ${start + 1}`);
 
   await page.locator(".array-grid .pe").first().click();
   await expect(page.locator(".stepper__inspector")).toContainText("PE (0, 0)");
@@ -52,9 +55,12 @@ test("the stepper follows the mouse and the keyboard", async ({ page }) => {
   );
   await expect(page.getByRole("table", { name: /written/ })).toHaveAccessibleName(/64 of 64/);
 
+  // While it plays, the summary stays quiet instead of announcing every cycle.
   await page.getByRole("button", { name: "Replay" }).click();
+  await expect(announcement).toHaveAttribute("aria-live", "off");
   await expect.poll(async () => Number(await slider.inputValue())).toBeGreaterThan(2);
   await page.getByRole("button", { name: "Pause" }).click();
+  await expect(announcement).toHaveAttribute("aria-live", "polite");
 });
 
 test("a smaller tile leaves the other PEs out", async ({ page }) => {

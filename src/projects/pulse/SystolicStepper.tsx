@@ -172,6 +172,13 @@ export function SystolicStepper() {
   const summary =
     `${op.m} × ${op.n} × ${op.k} command, ${phaseText.toLowerCase()}; CYCLES reads ${cycle}. ` +
     `${finished} of ${tileSize} sums are final and ${matching} of them equal A × Bᵀ computed directly.`;
+  let multiplying = 0;
+  for (let i = 0; i < op.m; i++) {
+    for (let j = 0; j < op.n; j++) if (status(i, j) === "active") multiplying++;
+  }
+  const picture =
+    `The ${op.m} × ${op.n} tile on the 8 × 8 array, ${phaseText.toLowerCase()}: ` +
+    `${multiplying} PEs multiply in this step and ${finished} hold their final sum.`;
 
   return (
     <div className="stepper">
@@ -246,7 +253,7 @@ export function SystolicStepper() {
             selected={selected}
             onSelect={(i, j) => setSelected([i, j])}
             compact={compact}
-            label={summary}
+            label={picture}
           />
           <ul className="stepper__legend" aria-hidden="true">
             <li>
@@ -263,7 +270,10 @@ export function SystolicStepper() {
         </div>
 
         <div className="stepper__side">
-          <p className="stepper__check">{summary}</p>
+          {/* Announces each step taken by hand; silent while playing, when it would never stop. */}
+          <p className="stepper__check" aria-live={playing ? "off" : "polite"}>
+            {summary}
+          </p>
           <MatrixTable
             caption={`A (${op.m} × ${op.k}), enters from the west`}
             rowName="row"

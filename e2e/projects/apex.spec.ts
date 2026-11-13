@@ -46,6 +46,9 @@ test("the replay follows the keyboard", async ({ page }) => {
   await page.keyboard.press("ArrowRight");
   await expect(slider).toHaveValue("21");
   await expect(status).toHaveText("Exploring, lap 1 of 10");
+  const announcement = page.locator(".replay [aria-live]");
+  await expect(announcement).toHaveAttribute("aria-live", "polite");
+  await expect(announcement).toContainText("21.0 s: exploring, lap 1 of 10");
   // Partway through lap 1, part of the map is built and the car follows a planned path.
   const mapped = Number(
     (await page.locator(".replay__readout dd").nth(2).textContent())?.split("/")[0],
@@ -65,8 +68,12 @@ test("the replay follows the mouse", async ({ page }) => {
   );
   await expect(page.locator(".replay__status")).toHaveText("Racing, lap 3 of 10");
   const t0 = Number(await slider.inputValue());
+  // While it plays, the summary stays quiet instead of announcing every frame.
+  const announcement = page.locator(".replay [aria-live]");
+  await expect(announcement).toHaveAttribute("aria-live", "off");
   await expect.poll(async () => Number(await slider.inputValue())).toBeGreaterThan(t0 + 1);
   await page.getByRole("button", { name: "Pause" }).click();
+  await expect(announcement).toHaveAttribute("aria-live", "polite");
   await expect(page.locator(".map-speed").first()).toBeVisible();
 });
 

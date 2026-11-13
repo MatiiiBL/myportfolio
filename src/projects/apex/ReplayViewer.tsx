@@ -108,12 +108,19 @@ export function ReplayViewer() {
 
   const lapText = lap ? `lap ${lap.lap} of ${replay.laps.length}` : "before the timing line";
   const status = `${STATE_NAMES[state]}, ${lapText}`;
-  const label =
-    `Map of the ${replay.summary.track} layout at ${t.toFixed(1)} s: ${status.toLowerCase()}, ` +
-    `${pose.speed.toFixed(1)} m/s, ${mapped} of ${replay.cones.length} cones mapped.`;
+  const summary =
+    `${t.toFixed(1)} s: ${status.toLowerCase()}, ${pose.speed.toFixed(1)} m/s, ` +
+    `${mapped} of ${replay.cones.length} cones mapped.`;
+  const picture =
+    `Map of the ${replay.summary.track} layout as the car knows it: the cones it has mapped, ` +
+    `the path it follows and the car itself. The readouts above give the time, lap and speed.`;
 
   return (
     <div className="replay">
+      {/* Announces a jump, a lap chosen or a step of the slider; silent while playing. */}
+      <p className="visually-hidden" aria-live={playing ? "off" : "polite"}>
+        {summary}
+      </p>
       <div className="replay__controls">
         <button
           type="button"
@@ -190,7 +197,7 @@ export function ReplayViewer() {
         exploreTrace={exploreTrace}
         plannedPath={pathAt(replay, t)}
         speedRuns={speedRuns}
-        label={label}
+        label={picture}
       />
 
       <ul className="replay__legend" aria-label="Legend">
