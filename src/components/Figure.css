@@ -1,0 +1,47 @@
+.figure {
+  margin: 0;
+  padding: var(--space-5);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-3);
+  background: var(--surface);
+  min-width: 0;
+}
+
+.section-body > .figure {
+  margin-block: var(--space-6);
+}
+
+.figure-head {
+  margin-bottom: var(--space-4);
+}
+
+.figure-title {
+  color: var(--text);
+  font-weight: 600;
+  font-size: var(--step-1);
+  line-height: 1.35;
+}
+
+.figure-subtitle {
+  margin-top: var(--space-1);
+  color: var(--text-3);
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  line-height: 1.5;
+}
+
+.figure-caption {
+  margin-top: var(--space-4);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--grid);
+  color: var(--text-2);
+  font-size: var(--step--1);
+  line-height: 1.55;
+}
+
+@media (max-width: 480px) {
+  .figure {
+    padding: var(--space-4);
+    border-radius: var(--radius-2);
+  }
+}
