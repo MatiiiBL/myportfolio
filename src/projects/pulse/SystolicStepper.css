@@ -1,0 +1,448 @@
+/* The card keeps the page background: muted text (--text-3) is only AA on --bg in light mode. */
+.stepper {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-3);
+  background: var(--bg);
+  padding: var(--space-5);
+  display: grid;
+  gap: var(--space-5);
+}
+
+/* Controls */
+
+.stepper__controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.stepper__button {
+  min-height: 2.25rem;
+  padding: 0 var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-1);
+  background: var(--surface-2);
+  color: var(--text);
+  font: inherit;
+  font-size: var(--step--1);
+  cursor: pointer;
+}
+
+.stepper__button:hover:not(:disabled) {
+  border-color: var(--text-3);
+}
+
+.stepper__button:disabled {
+  color: var(--text-3);
+  cursor: default;
+}
+
+.stepper__button--primary {
+  min-width: 5.5rem;
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-contrast);
+  font-weight: 600;
+}
+
+.stepper__button--primary:hover:not(:disabled) {
+  border-color: var(--text);
+}
+
+.stepper__field {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--step--1);
+  color: var(--text-2);
+}
+
+.stepper__field select {
+  min-height: 2.25rem;
+  max-width: 100%;
+  padding: 0 var(--space-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-1);
+  background: var(--surface-2);
+  color: var(--text);
+  font: inherit;
+}
+
+/* Cycle readout, slider and the command trace */
+
+.stepper__scrub {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.stepper__readout {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2) var(--space-4);
+}
+
+.stepper__cycles {
+  font-family: var(--font-mono);
+  font-size: var(--step-1);
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+.stepper__phase {
+  font-size: var(--step--1);
+  color: var(--text-2);
+}
+
+.stepper__scrub input[type="range"] {
+  width: 100%;
+  margin: 0;
+  accent-color: var(--accent);
+}
+
+.command {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.command__bar {
+  position: relative;
+  display: flex;
+  gap: 2px;
+  height: 8px;
+}
+
+.command__segment {
+  flex-basis: 0;
+  border-radius: 4px;
+  background: var(--grid);
+}
+
+.command__segment--now {
+  background: var(--text-3);
+}
+
+.command__playhead {
+  position: absolute;
+  top: -4px;
+  width: 2px;
+  height: 16px;
+  margin-left: -1px;
+  background: var(--accent);
+  border-radius: 1px;
+}
+
+.command__phases {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  color: var(--text-3);
+}
+
+.command__phases .is-now {
+  color: var(--text);
+}
+
+.command__phase-name {
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.command__lanes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: var(--space-3);
+}
+
+.command__lane {
+  border: 1px solid var(--grid);
+  border-radius: var(--radius-2);
+  padding: var(--space-3) var(--space-4);
+  min-width: 0;
+}
+
+.command__lane-title {
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-2);
+  margin-bottom: var(--space-2);
+}
+
+.command__code {
+  margin: 0;
+  font-size: 0.75rem;
+  line-height: 1.6;
+  color: var(--text-3);
+  white-space: pre;
+  overflow-x: auto;
+}
+
+.command__code .is-past {
+  color: var(--text-3);
+}
+
+.command__code .is-now {
+  color: var(--text);
+}
+
+.command__rows {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 0 0 var(--space-1);
+  padding: 0;
+  list-style: none;
+}
+
+.command__row {
+  min-width: 2.1rem;
+  padding: 0.1rem 0.3rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  text-align: center;
+  color: var(--text-3);
+}
+
+.command__row--reading {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--text);
+}
+
+.command__row--loaded {
+  background: var(--surface-2);
+  color: var(--text-2);
+}
+
+.command__count {
+  font-size: var(--step--1);
+}
+
+.command__count-value {
+  font-size: var(--step-2);
+  font-weight: 600;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+.command__note {
+  font-size: 0.75rem;
+  color: var(--text-3);
+}
+
+/* The array and the matrices */
+
+.stepper__main {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  gap: var(--space-6);
+  align-items: start;
+}
+
+@media (max-width: 56rem) {
+  .stepper__main {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.stepper__array {
+  margin: 0;
+  min-width: 0;
+}
+
+.array-grid {
+  width: 100%;
+  height: auto;
+  font-family: var(--font-mono);
+  touch-action: manipulation;
+}
+
+.array-grid__axis {
+  fill: var(--text-2);
+  font-size: 13px;
+  text-anchor: middle;
+}
+
+.array-grid__queue {
+  fill: var(--text-2);
+  font-size: 13px;
+  text-anchor: middle;
+}
+
+.array-grid__feed {
+  fill: var(--surface-2);
+  stroke: var(--border);
+}
+
+.array-grid__feed-value {
+  fill: var(--text);
+  font-size: 14px;
+  text-anchor: middle;
+}
+
+.array-grid__arrow {
+  fill: none;
+  stroke: var(--text-3);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.pe {
+  cursor: pointer;
+}
+
+.pe__cell {
+  fill: var(--surface);
+  stroke: var(--border);
+  stroke-width: 1;
+}
+
+.pe__acc {
+  fill: var(--text-2);
+  text-anchor: middle;
+  font-variant-numeric: tabular-nums;
+}
+
+.pe__operand {
+  fill: var(--text-2);
+  font-size: 11px;
+}
+
+.pe--active .pe__cell {
+  fill: var(--accent-soft);
+  stroke: var(--accent);
+}
+
+.pe--active .pe__acc {
+  fill: var(--text);
+}
+
+.pe--done .pe__cell {
+  fill: var(--surface-2);
+}
+
+.pe--done .pe__acc {
+  fill: var(--text);
+  font-weight: 500;
+}
+
+.pe--outside {
+  opacity: 0.45;
+}
+
+.pe--outside .pe__acc {
+  fill: var(--text-3);
+}
+
+.pe--selected .pe__cell {
+  stroke: var(--text);
+  stroke-width: 2;
+}
+
+.stepper__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-5);
+  margin: var(--space-3) 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--step--1);
+  color: var(--text-2);
+}
+
+.stepper__legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.swatch {
+  display: inline-block;
+  width: 0.9rem;
+  height: 0.9rem;
+  border-radius: 3px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.swatch--active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.swatch--done {
+  background: var(--surface-2);
+}
+
+.swatch--outside {
+  opacity: 0.45;
+}
+
+.stepper__inspector {
+  min-height: 3.2em;
+  margin-top: var(--space-3);
+  font-size: var(--step--1);
+  color: var(--text-2);
+}
+
+.stepper__side {
+  display: grid;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.stepper__check {
+  font-size: var(--step--1);
+  color: var(--text-2);
+}
+
+.matrix {
+  border-collapse: collapse;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.matrix caption {
+  caption-side: top;
+  text-align: left;
+  font-family: var(--font-sans);
+  font-size: var(--step--1);
+  color: var(--text-2);
+  padding-bottom: var(--space-1);
+}
+
+.matrix th {
+  color: var(--text-3);
+  font-weight: 400;
+  padding: 0 0.3rem;
+}
+
+.matrix td {
+  min-width: 1.9rem;
+  padding: 0.05rem 0.3rem;
+  text-align: right;
+  color: var(--text);
+}
+
+.matrix td.is-past {
+  color: var(--text-3);
+}
+
+.matrix td.is-now {
+  background: var(--accent-soft);
+  outline: 1px solid var(--accent);
+  outline-offset: -1px;
+}
