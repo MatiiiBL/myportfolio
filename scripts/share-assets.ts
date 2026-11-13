@@ -9,11 +9,26 @@ import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { chromium } from "@playwright/test";
+import { createServer } from "vite";
 import { profile } from "../src/content/profile.ts";
-import { buildGraph, HOME_EF, HOME_GRAPH_OPTIONS, search } from "../src/pages/home/hnsw.ts";
-import { layersLayout, planeOutline, project } from "../src/pages/home/layers.ts";
 
 const root = resolve(import.meta.dirname, "..");
+
+// The hero's graph and geometry, loaded through Vite: src/lib imports modules without file
+// extensions, which Vite resolves and Node alone does not.
+type HeroModule = typeof import("../src/pages/home/heroGraph.ts");
+type LayersModule = typeof import("../src/pages/home/layers.ts");
+const vite = await createServer({
+  root,
+  logLevel: "error",
+  appType: "custom",
+  server: { middlewareMode: true },
+});
+const hero = (await vite.ssrLoadModule("/src/pages/home/heroGraph.ts")) as HeroModule;
+const { layersLayout, planeOutline, project } = (await vite.ssrLoadModule(
+  "/src/pages/home/layers.ts",
+)) as LayersModule;
+await vite.close();
 const pub = join(root, "public");
 const work = join(root, "node_modules", ".cache", "share-assets");
 const fonts = (path: string) => pathToFileURL(join(root, "node_modules", path)).href;
@@ -31,31 +46,32 @@ const C = {
 
 const r2 = (v: number) => Math.round(v * 100) / 100;
 
-/** The three-layer graph with one search route, as SVG markup. */
+/** The home page's three-layer graph with its first search route, as SVG markup. */
 function graphSvg(): string {
-  const graph = buildGraph(HOME_GRAPH_OPTIONS);
-  const layout = layersLayout(graph.top + 1);
-  const query = { x: 0.2, y: 0.78 };
-  const trace = search(graph, query, HOME_EF);
+  const graph = hero.heroGraph();
+  const layout = layersLayout(graph.maxLevel + 1);
+  const query = hero.HERO_START;
+  const trace = hero.heroSearch(query);
+  const at = (node: number) => hero.unitPoint(graph, node);
   const parts: string[] = [];
   layout.planes.forEach((plane, layer) => {
     parts.push(`<path d="${planeOutline(plane)}" fill="${C.surface}" stroke="${C.border}"/>`);
     parts.push(
       `<text x="${plane.left + plane.width + plane.skew + 12}" y="${plane.top + plane.depth / 2 + 4}" fill="${C.text3}" font-size="12">L${layer}</text>`,
     );
-    graph.links[layer]?.forEach((neighbors, i) => {
-      for (const j of neighbors) {
-        if (j < i && graph.links[layer]?.[j]?.includes(i)) continue;
-        const a = project(graph.points[i] ?? query, plane);
-        const b = project(graph.points[j] ?? query, plane);
+    graph.links.forEach((layers, i) => {
+      for (const j of layers[layer] ?? []) {
+        if (j < i && graph.links[j]?.[layer]?.includes(i)) continue;
+        const a = project(at(i), plane);
+        const b = project(at(j), plane);
         parts.push(
           `<line x1="${r2(a.x)}" y1="${r2(a.y)}" x2="${r2(b.x)}" y2="${r2(b.y)}" stroke="${C.border}" stroke-width="0.8"/>`,
         );
       }
     });
-    graph.points.forEach((p, i) => {
+    graph.points.forEach((_, i) => {
       if ((graph.levels[i] ?? 0) < layer) return;
-      const s = project(p, plane);
+      const s = project(at(i), plane);
       parts.push(
         `<circle cx="${r2(s.x)}" cy="${r2(s.y)}" r="${layer === 0 ? 2.2 : 3}" fill="${C.text3}"/>`,
       );
@@ -65,7 +81,7 @@ function graphSvg(): string {
     const plane = layout.planes[layer];
     const below = layout.planes[layer - 1];
     if (!plane) continue;
-    const pts = path.map((i) => project(graph.points[i] ?? query, plane));
+    const pts = path.map((i) => project(at(i), plane));
     if (pts.length > 1) {
       parts.push(
         `<polyline points="${pts.map((p) => `${r2(p.x)},${r2(p.y)}`).join(" ")}" fill="none" stroke="${C.accent}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`,
@@ -79,7 +95,7 @@ function graphSvg(): string {
     const last = pts[pts.length - 1];
     const lastNode = path[path.length - 1];
     if (below && last && lastNode !== undefined) {
-      const to = project(graph.points[lastNode] ?? query, below);
+      const to = project(at(lastNode), below);
       parts.push(
         `<line x1="${r2(last.x)}" y1="${r2(last.y)}" x2="${r2(to.x)}" y2="${r2(to.y)}" stroke="${C.accent}" stroke-width="1.25" stroke-dasharray="3 3"/>`,
       );
@@ -88,7 +104,7 @@ function graphSvg(): string {
   const plane0 = layout.planes[0];
   if (plane0) {
     const q = project(query, plane0);
-    const res = project(graph.points[trace.result] ?? query, plane0);
+    const res = project(at(trace.result), plane0);
     parts.push(
       `<circle cx="${r2(res.x)}" cy="${r2(res.y)}" r="7" fill="none" stroke="${C.accent}" stroke-width="1.5"/>`,
     );

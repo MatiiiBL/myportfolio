@@ -1,4 +1,4 @@
-import type { Point } from "./hnsw";
+import type { Point } from "../../lib/hnsw/hnsw";
 
 // Geometry of the three-layer drawing: each layer is a flat parallelogram seen from above at an
 // angle, stacked top layer first, so a point keeps its screen x on every layer and the descent

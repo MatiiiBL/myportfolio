@@ -7,13 +7,13 @@ import {
   type KeyboardEvent,
   type PointerEvent,
 } from "react";
-import { buildGraph, HOME_EF, HOME_GRAPH_OPTIONS, search, type Point } from "./hnsw";
+import type { Point } from "../../lib/hnsw/hnsw";
+import { HERO_GRAPH, HERO_START, heroGraph, heroSearch, unitPoint } from "./heroGraph";
 import { layersLayout, planeAt, planeOutline, project, unproject } from "./layers";
 import "./HnswSearch.css";
 
-const graph = buildGraph(HOME_GRAPH_OPTIONS);
-const layout = layersLayout(graph.top + 1);
-const START: Point = { x: 0.2, y: 0.78 };
+const graph = heroGraph();
+const layout = layersLayout(graph.maxLevel + 1);
 const STEP_MS = 140;
 const KEY_STEP = 0.04;
 
@@ -29,11 +29,11 @@ const Layers = memo(function Layers() {
   return (
     <g>
       {layout.planes.map((plane, layer) => {
-        const at = (i: number) => project(graph.points[i] ?? START, plane);
+        const at = (i: number) => project(unitPoint(graph, i), plane);
         let edges = "";
-        graph.links[layer]?.forEach((neighbors, i) => {
-          for (const j of neighbors) {
-            if (j < i && graph.links[layer]?.[j]?.includes(i)) continue;
+        graph.links.forEach((layers, i) => {
+          for (const j of layers[layer] ?? []) {
+            if (j < i && graph.links[j]?.[layer]?.includes(i)) continue;
             const a = at(i);
             const b = at(j);
             edges += `M${r2(a.x)} ${r2(a.y)}L${r2(b.x)} ${r2(b.y)}`;
@@ -66,25 +66,24 @@ const Layers = memo(function Layers() {
 });
 
 /**
- * The home page's signature piece: a real HNSW index over 96 points in three layers. Wherever
- * the visitor points (or moves the query with the arrow keys), the search runs again and its
- * route is drawn: greedy hops on the upper layers, a drop at each layer, a beam search on
+ * The home page's signature piece: the HNSW graph vecdex builds for 96 points, in three layers.
+ * Wherever the visitor points (or moves the query with the arrow keys), the search runs again and
+ * its route is drawn: greedy hops on the upper layers, a drop at each layer, a beam search on
  * layer 0. A click, a tap or Enter replays the descent step by step.
  */
 export function HnswSearch() {
-  const [query, setQuery] = useState<Point>(START);
+  const [query, setQuery] = useState<Point>(HERO_START);
   const [replay, setReplay] = useState(0);
   const [announcement, setAnnouncement] = useState("");
   const svgRef = useRef<SVGSVGElement>(null);
   const hintId = `${useId()}hint`;
-  const trace = useMemo(() => search(graph, query, HOME_EF), [query]);
+  const trace = useMemo(() => heroSearch(query), [query]);
 
   const describe = (q: Point) => {
-    const t = search(graph, q, HOME_EF);
-    const verdict =
-      t.result === t.exact
-        ? "the same point an exhaustive scan finds"
-        : "a near neighbor; an exhaustive scan finds a closer one";
+    const t = heroSearch(q);
+    const verdict = t.exact
+      ? "the same point an exhaustive scan finds"
+      : "a near neighbor; an exhaustive scan finds a closer one";
     return `Query at ${q.x.toFixed(2)}, ${q.y.toFixed(2)}: ${t.distances} distance computations instead of ${graph.points.length}, and the result is ${verdict}.`;
   };
 
@@ -128,7 +127,7 @@ export function HnswSearch() {
     const plane = layout.planes[layer];
     const below = layout.planes[layer - 1];
     if (!plane) return null;
-    const at = (i: number) => project(graph.points[i] ?? START, plane);
+    const at = (i: number) => project(unitPoint(graph, i), plane);
     const hops = path.slice(1).map((node, h) => {
       const a = at(path[h] ?? node);
       const b = at(node);
@@ -148,13 +147,13 @@ export function HnswSearch() {
         </g>
       );
     });
-    const start = at(path[0] ?? graph.entry);
-    const last = path[path.length - 1] ?? graph.entry;
+    const start = at(path[0] ?? graph.entryPoint);
+    const last = path[path.length - 1] ?? graph.entryPoint;
     const end = at(last);
     const drop = below
       ? (() => {
           const i = step++;
-          const to = project(graph.points[last] ?? START, below);
+          const to = project(unitPoint(graph, last), below);
           return (
             <line
               className="hnsw-drop"
@@ -182,7 +181,7 @@ export function HnswSearch() {
     const plane = layout.planes[layer];
     if (!plane) return [];
     return v.map((i) => {
-      const p = project(graph.points[i] ?? START, plane);
+      const p = project(unitPoint(graph, i), plane);
       return (
         <circle key={`${layer}-${i}`} className="hnsw-visited" cx={r2(p.x)} cy={r2(p.y)} r={4.6} />
       );
@@ -191,7 +190,7 @@ export function HnswSearch() {
 
   const q0 = layout.planes[0] ? project(query, layout.planes[0]) : { x: 0, y: 0 };
   const result = layout.planes[0]
-    ? project(graph.points[trace.result] ?? START, layout.planes[0])
+    ? project(unitPoint(graph, trace.result), layout.planes[0])
     : { x: 0, y: 0 };
 
   return (
@@ -247,12 +246,13 @@ export function HnswSearch() {
       <figcaption className="hnsw-caption">
         <span className="hnsw-readout">
           {trace.distances} of {graph.points.length} distances computed ·{" "}
-          {trace.result === trace.exact ? "same answer as a full scan" : "a full scan finds closer"}
+          {trace.exact ? "same answer as a full scan" : "a full scan finds closer"}
         </span>
         <span id={hintId} className="hnsw-hint">
-          A search on an HNSW graph, the index behind vecdex: greedy hops toward the query q on each
-          upper layer, a drop where it can get no closer, then a beam search on layer 0. Point, tap
-          or use the arrow keys to move q.
+          The HNSW graph vecdex&apos;s own code builds for these {graph.points.length} points (M ={" "}
+          {HERO_GRAPH.M}), searched the way vecdex searches it: greedy hops toward the query q on
+          each upper layer, a drop where it can get no closer, then a beam search on layer 0. Point,
+          tap or use the arrow keys to move q.
         </span>
       </figcaption>
       <p className="visually-hidden" aria-live="polite">
