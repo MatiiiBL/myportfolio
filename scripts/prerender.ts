@@ -61,18 +61,53 @@ function chunkStyles(key: string, seen = new Set<string>()): string[] {
 
 const entryStyles = chunkStyles("index.html");
 
+/** The lazy chunk that holds a route's page: the home page or a project page body. */
+function routeChunk(path: string): string | null {
+  if (path === "/") return "src/pages/Home.tsx";
+  const slug = /^\/projects\/([^/]+)\/$/.exec(path)?.[1];
+  return slug ? `src/projects/${slug}/Page.tsx` : null;
+}
+
 /**
- * The stylesheets of a project page's lazy chunk, which its prerendered body needs from the
- * first paint. Its scripts are not preloaded: the body is already in the HTML, and on a phone
- * network preloading them delays the largest paint (Lighthouse measured 2.8 s against 2.4 s).
+ * The styles of a route's lazy chunk, which its prerendered body needs from the first paint.
+ * They are a few kilobytes, so they are inlined: the shared stylesheet, cached across pages,
+ * stays the only request that holds up the first paint (Lighthouse measured each extra one at
+ * 150-300 ms on its phone network). Each inlined file also gets a disabled <link>: browsers do
+ * not download a disabled stylesheet, and Vite's loader sees the link and does not fetch the
+ * file again when the chunk loads.
+ *
+ * The chunk's scripts are not preloaded either: the body is already in the HTML, and preloading
+ * them delayed the largest paint on a phone network (2.8 s against 2.4 s on Pulse).
  */
 function routeAssets(path: string): string[] {
-  const slug = /^\/projects\/([^/]+)\/$/.exec(path)?.[1];
-  if (!slug) return [];
-  return chunkStyles(`src/projects/${slug}/Page.tsx`)
+  const chunk = routeChunk(path);
+  if (!chunk) return [];
+  return chunkStyles(chunk)
     .filter((file) => !entryStyles.includes(file))
-    .map((file) => `<link rel="stylesheet" crossorigin href="${BASE}${file}">`);
+    .flatMap((file) => [
+      `<style>${stylesheet(file)}</style>`,
+      `<link rel="stylesheet" crossorigin href="${BASE}${file}" disabled>`,
+    ]);
 }
+
+function stylesheet(file: string): string {
+  const css = stylesheets.get(file);
+  if (css === undefined) throw new Error(`The manifest names ${file}, which is not in dist/`);
+  return css;
+}
+
+// Every emitted stylesheet by its path in the manifest. Their url()s are absolute, so the CSS
+// works inlined in any page.
+const stylesheets = new Map<string, string>(
+  await Promise.all(
+    assets
+      .filter((name) => name.endsWith(".css"))
+      .map(async (name) => {
+        const css = await readFile(join(dist, "assets", name), "utf8");
+        return [`assets/${name}`, css.replaceAll("</style", "<\\/style")] as [string, string];
+      }),
+  ),
+);
 
 /** The text faces used above the fold, preloaded so the first paint uses them. */
 const fontPreloads = [
