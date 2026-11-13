@@ -12,7 +12,7 @@ import {
   simulateCompute,
   type GemmOp,
 } from "./systolic";
-import { useMediaQuery } from "./useMediaQuery";
+import { useMediaQuery } from "../../hooks/useMediaQuery";
 import "./SystolicStepper.css";
 
 interface Preset {

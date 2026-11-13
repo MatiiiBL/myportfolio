@@ -1,8 +1,10 @@
 import { useSyncExternalStore } from "react";
 
 /**
- * Whether a media query matches, kept in sync with the browser. The server render (and the
- * prerendered HTML) assumes it does not match, so a page renders its default layout first.
+ * Whether a media query matches, kept in sync with the browser: for example
+ * `useMediaQuery("(prefers-reduced-motion: reduce)")` or `useMediaQuery("(max-width: 40rem)")`.
+ * The server render and the prerendered HTML assume it does not match, so a component renders
+ * its default form first and adapts on the client.
  */
 export function useMediaQuery(query: string): boolean {
   return useSyncExternalStore(

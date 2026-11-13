@@ -13,7 +13,7 @@ import {
   type MissionState,
 } from "./replay";
 import { TrackMap } from "./TrackMap";
-import { useMediaQuery } from "./useMediaQuery";
+import { useMediaQuery } from "../../hooks/useMediaQuery";
 import "./ReplayViewer.css";
 
 const REPLAY = loadReplay();

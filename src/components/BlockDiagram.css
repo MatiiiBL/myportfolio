@@ -1,0 +1,45 @@
+.block-diagram {
+  display: block;
+  width: 100%;
+  max-width: 28rem;
+  height: auto;
+  margin-inline: auto;
+}
+
+.block-diagram__block {
+  fill: var(--surface-2);
+  stroke: var(--border);
+}
+
+.block-diagram__block--em {
+  fill: var(--accent-soft);
+  stroke: var(--accent);
+}
+
+.block-diagram__group {
+  fill: none;
+  stroke: var(--border);
+}
+
+.block-diagram__title {
+  fill: var(--text);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.block-diagram__sub,
+.block-diagram__label {
+  fill: var(--text-2);
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+.block-diagram__arrow {
+  fill: none;
+  stroke: var(--text-3);
+  stroke-width: 1.5;
+}
+
+.block-diagram__head {
+  fill: var(--text-3);
+}

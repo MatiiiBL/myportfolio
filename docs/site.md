@@ -91,6 +91,24 @@ tags) around the page body exported by `src/projects/<slug>/Page.tsx`. A body is
 Pages are code-split (lazy-loaded) so the home page stays light; a page's heavy data loads with
 it, never with the home page.
 
+### Shared page pieces
+
+Use these instead of writing a page's own version, so every project page looks and behaves the
+same:
+
+- `src/components/ProjectPage.css`: the body styles. Wrap the sections in `.project-page` and use
+  `.project-prose` (reading width), `.project-source` with `.project-file` (the one-line source
+  under a table or list), `.project-table-wrap` and `.project-table` (small results tables; a wrap
+  that can scroll sideways on a phone gets `role="region"`, an `aria-label` and `tabIndex={0}`),
+  `.project-grid`, `.project-how` (the architecture figure beside the design decisions),
+  `.project-decisions` (one `<article>` with an `<h3>` per decision) and `.project-limits`.
+- `src/components/BlockDiagram.tsx`: the architecture diagram. `<BlockDiagram>` takes a title and
+  a prose description (its text alternative) and holds `<Block>` boxes or group frames, `<Arrow>`
+  polylines with an optional label, and free `<Label>`s, all themed through the tokens. Draw it in
+  a portrait viewBox about 400 units wide so it stays legible on a phone, inside a `<Figure>`.
+- `src/hooks/useMediaQuery.ts`: `useMediaQuery(query)`, for `prefers-reduced-motion` and narrow
+  layouts. It returns false on the server, so the prerendered HTML is the default form.
+
 ## 6. Charts and visualizations
 
 - Build charts from the shared primitives in `src/components/charts/` (axes, scales via

@@ -1,0 +1,147 @@
+/*
+ * Shared styles for the body of a project page (src/projects/<slug>/Page.tsx), so every page sets
+ * prose, sources, small tables, design decisions and limits the same way. A page imports this
+ * file and wraps its sections in an element with the class "project-page".
+ *
+ *   .project-prose        paragraphs at reading width
+ *   .project-source       the one-line source under a table or a list; .project-file for the
+ *                         file name in it (mono)
+ *   .project-table-wrap   a table that may scroll sideways on a phone: give it role="region",
+ *                         an aria-label and tabIndex={0} so keyboards can scroll it
+ *   .project-table        a small results table (a caption, row headers, numeric cells)
+ *   .project-grid         side-by-side blocks that stack on narrow screens
+ *   .project-how          a diagram Figure beside the design decisions, stacked below 52rem
+ *   .project-decisions    the design decisions, one <article> with an <h3> each
+ *   .project-limits       the limits, a list with a <strong> lead per item
+ */
+
+.project-page code {
+  color: var(--text);
+}
+
+.project-prose {
+  max-width: var(--prose-width);
+}
+
+.project-prose > * + * {
+  margin-top: var(--space-4);
+}
+
+.project-source {
+  font-size: var(--step--1);
+  color: var(--text-2);
+}
+
+.project-file {
+  font-family: var(--font-mono);
+  font-size: 0.95em;
+}
+
+.project-table-wrap {
+  overflow-x: auto;
+}
+
+.project-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--step--1);
+  font-variant-numeric: tabular-nums;
+}
+
+.project-table caption {
+  text-align: left;
+  color: var(--text);
+  font-weight: 600;
+  padding-bottom: var(--space-2);
+}
+
+.project-table th,
+.project-table td {
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--grid);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.project-table th[scope="row"] {
+  text-align: left;
+  font-weight: 400;
+  color: var(--text-2);
+  white-space: normal;
+}
+
+.project-table thead th {
+  white-space: normal;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-2);
+  border-bottom-color: var(--border);
+}
+
+.project-table td {
+  color: var(--text);
+}
+
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(20rem, 100%), 1fr));
+  gap: var(--space-6);
+}
+
+.project-grid > * > * + * {
+  margin-top: var(--space-2);
+}
+
+.project-how {
+  display: grid;
+  grid-template-columns: minmax(0, 27rem) minmax(0, 1fr);
+  gap: var(--space-6);
+  align-items: start;
+}
+
+.section-body > .project-how > .figure {
+  margin: 0;
+}
+
+@media (max-width: 52rem) {
+  .project-how {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.project-decisions {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.project-decisions article {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2);
+  padding: var(--space-5);
+}
+
+.project-decisions h3 {
+  font-size: var(--step-1);
+  margin-bottom: var(--space-3);
+}
+
+.project-decisions p {
+  font-size: var(--step--1);
+  line-height: 1.65;
+}
+
+.project-limits {
+  max-width: var(--prose-width);
+  margin: 0;
+  padding-left: var(--space-5);
+}
+
+.project-limits li + li {
+  margin-top: var(--space-3);
+}
+
+.project-limits strong {
+  color: var(--text);
+  font-weight: 600;
+}

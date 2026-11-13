@@ -5,14 +5,17 @@ import { ArchitectureDiagram } from "./ArchitectureDiagram";
 import replay from "./data/replay.json";
 import results from "./data/results.json";
 import { ReplayViewer } from "./ReplayViewer";
-import "./Page.css";
+import "../../components/ProjectPage.css";
 
 const REPO = "https://github.com/MatiiiBL/apex-driverless";
 const COMMIT = "442528b";
 
 function SourceLink({ file, anchor }: { file: string; anchor?: string }) {
   return (
-    <a className="apex-file" href={`${REPO}/blob/${COMMIT}/${file}${anchor ? `#${anchor}` : ""}`}>
+    <a
+      className="project-file"
+      href={`${REPO}/blob/${COMMIT}/${file}${anchor ? `#${anchor}` : ""}`}
+    >
       {file}
     </a>
   );
@@ -25,9 +28,9 @@ export default function Page() {
   const { summary } = replay;
   const [stack, oracle] = results.baseline;
   return (
-    <div className="apex">
+    <div className="project-page">
       <Section id="overview" title="Overview">
-        <div className="apex-prose">
+        <div className="project-prose">
           <p>
             Apex is the software of an autonomous Formula Student Driverless race car, and the
             simulator it races in, written from scratch in C++20. The car is staged on a track it
@@ -55,7 +58,7 @@ export default function Page() {
         kicker="Interactive"
         navLabel="Replay"
       >
-        <div className="apex-prose">
+        <div className="project-prose">
           <p>
             One recorded run: the default car on the {summary.trackLength} m{" "}
             <code>{summary.track}</code> layout, seed {summary.seed}. During lap 1 the cones appear
@@ -86,7 +89,7 @@ export default function Page() {
       </Section>
 
       <Section id="results" title="Results">
-        <div className="apex-prose">
+        <div className="project-prose">
           <p>
             From the repository&apos;s evaluation: eleven tracks the stack had never seen (eight
             generated circuits and three reference layouts), three seeds each. Every run is paired
@@ -98,12 +101,12 @@ export default function Page() {
 
         {/* Wide tables scroll sideways on a phone, so the wrapper takes focus for keyboards. */}
         <div
-          className="apex-table-wrap"
+          className="project-table-wrap"
           role="region"
           aria-label="Baseline results table"
           tabIndex={0}
         >
-          <table className="apex-table">
+          <table className="project-table">
             <caption>33 ten-lap runs, the full stack against the oracle</caption>
             <thead>
               <tr>
@@ -134,7 +137,7 @@ export default function Page() {
             </tbody>
           </table>
         </div>
-        <p className="apex-source">
+        <p className="project-source">
           Means over the runs; the racing lap is the mean of laps 2 to 10, map error is the RMS
           distance from each landmark to its cone after lap 1 (1.4 cm at the median run), tracking
           is the RMS lateral error from the raceline. Perfect perception and state make a racing lap
@@ -234,12 +237,12 @@ export default function Page() {
         />
 
         <div
-          className="apex-table-wrap"
+          className="project-table-wrap"
           role="region"
           aria-label="Controller comparison table"
           tabIndex={0}
         >
-          <table className="apex-table">
+          <table className="project-table">
             <caption>The path-tracking controller, 12 runs each</caption>
             <thead>
               <tr>
@@ -263,7 +266,7 @@ export default function Page() {
             </tbody>
           </table>
         </div>
-        <p className="apex-source">
+        <p className="project-source">
           Pure pursuit cuts corners: in the two runs traced, its cones fell with the car&apos;s
           center 0.78 to 1.07 m off the centerline. Source:{" "}
           <SourceLink file="docs/evaluation.md" anchor="tracking" />.
@@ -271,7 +274,7 @@ export default function Page() {
       </Section>
 
       <Section id="how" title="How it works">
-        <div className="apex-how">
+        <div className="project-how">
           <Figure
             title="Two programs in one loop"
             subtitle="lockstep · 1 ms physics · 20 ms control"
@@ -285,7 +288,7 @@ export default function Page() {
           >
             <ArchitectureDiagram />
           </Figure>
-          <div className="apex-decisions">
+          <div className="project-decisions">
             <article>
               <h3>The car never links the simulator</h3>
               <p>
@@ -323,7 +326,7 @@ export default function Page() {
       </Section>
 
       <Section id="limits" title="Limits">
-        <ul className="apex-limits">
+        <ul className="project-limits">
           <li>
             <strong>The world is simulated, and simple.</strong> The ground is flat, LiDAR scans are
             instantaneous, knocked cones stay put, sensor noise is Gaussian, and the tires have no
@@ -350,7 +353,7 @@ export default function Page() {
             else running.
           </li>
         </ul>
-        <p className="apex-source">
+        <p className="project-source">
           Source: <SourceLink file="README.md" anchor="limitations" />.
         </p>
       </Section>

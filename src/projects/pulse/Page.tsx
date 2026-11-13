@@ -5,14 +5,17 @@ import { ArchitectureDiagram } from "./ArchitectureDiagram";
 import results from "./data/results.json";
 import { FmaxChart } from "./FmaxChart";
 import { SystolicStepper } from "./SystolicStepper";
-import "./Page.css";
+import "../../components/ProjectPage.css";
 
 const REPO = "https://github.com/MatiiiBL/riscv-npu-soc";
 const COMMIT = "5bc8ccf";
 
 function SourceLink({ file, anchor }: { file: string; anchor?: string }) {
   return (
-    <a className="pulse-file" href={`${REPO}/blob/${COMMIT}/${file}${anchor ? `#${anchor}` : ""}`}>
+    <a
+      className="project-file"
+      href={`${REPO}/blob/${COMMIT}/${file}${anchor ? `#${anchor}` : ""}`}
+    >
       {file}
     </a>
   );
@@ -23,9 +26,9 @@ export default function Page() {
   const { coremark, fpga } = results;
   const mnist = results.speedups[0];
   return (
-    <div className="pulse">
+    <div className="project-page">
       <Section id="overview" title="Overview">
-        <div className="pulse-prose">
+        <div className="project-prose">
           <p>
             Pulse is a small system-on-chip I wrote in SystemVerilog. A 5-stage pipelined RISC-V CPU
             (RV32IM: the base integer instructions plus multiply and divide) drives a neural
@@ -47,7 +50,7 @@ export default function Page() {
       </Section>
 
       <Section id="array" title="The array, cycle by cycle" kicker="Interactive" navLabel="Array">
-        <div className="pulse-prose">
+        <div className="project-prose">
           <p>
             One NPU command at the timing of the RTL. The CPU writes the registers and{" "}
             <code>START</code>; the DMA loads each row of A and B into the operand buffers, one
@@ -82,7 +85,7 @@ export default function Page() {
       </Section>
 
       <Section id="results" title="Results">
-        <div className="pulse-prose">
+        <div className="project-prose">
           <p>
             Measured on the RTL with Verilator, which counts cycles exactly; times assume the 40 MHz
             clock the FPGA build meets. The CPU baselines are the same kernels in plain C, compiled
@@ -151,9 +154,9 @@ export default function Page() {
           }
         />
 
-        <div className="pulse-grid">
-          <div className="pulse-table-wrap">
-            <table className="pulse-table">
+        <div className="project-grid">
+          <div>
+            <table className="project-table">
               <caption>CoreMark, 10 iterations</caption>
               <thead>
                 <tr>
@@ -180,13 +183,13 @@ export default function Page() {
                 </tr>
               </tbody>
             </table>
-            <p className="pulse-source">
+            <p className="project-source">
               A 64-entry BTB with 2-bit counters mispredicts {coremark.mispredictRate}% of
               CoreMark&apos;s branches. Source: <SourceLink file="README.md" anchor="cpu" />.
             </p>
           </div>
-          <div className="pulse-table-wrap">
-            <table className="pulse-table">
+          <div>
+            <table className="project-table">
               <caption>FPGA: {fpga.board}</caption>
               <thead>
                 <tr>
@@ -205,7 +208,7 @@ export default function Page() {
                 ))}
               </tbody>
             </table>
-            <p className="pulse-source">
+            <p className="project-source">
               At {fpga.clockMHz} MHz from the on-chip PLL. Source:{" "}
               <SourceLink file="docs/fpga.md" anchor="6-results" />.
             </p>
@@ -214,7 +217,7 @@ export default function Page() {
       </Section>
 
       <Section id="how" title="How it works">
-        <div className="pulse-how">
+        <div className="project-how">
           <Figure
             title="The system-on-chip"
             subtitle="Harvard memories · one clock · every slave answers in one cycle"
@@ -228,7 +231,7 @@ export default function Page() {
           >
             <ArchitectureDiagram />
           </Figure>
-          <div className="pulse-decisions">
+          <div className="project-decisions">
             <article>
               <h3>Two implementations of one spec</h3>
               <p>
@@ -268,7 +271,7 @@ export default function Page() {
       </Section>
 
       <Section id="limits" title="Limits">
-        <ul className="pulse-limits">
+        <ul className="project-limits">
           <li>
             <strong>Not yet run on a physical board.</strong> The bitstream builds and meets timing
             at 40 MHz, and its firmware runs in simulation with the board&apos;s real UART logic.
@@ -292,7 +295,7 @@ export default function Page() {
             not a valid submission under CoreMark&apos;s run rules.
           </li>
         </ul>
-        <p className="pulse-source">
+        <p className="project-source">
           Source: <SourceLink file="README.md" anchor="limitations-and-next-steps" />.
         </p>
       </Section>
