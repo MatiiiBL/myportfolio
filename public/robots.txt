@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://matiiibl.github.io/myportfolio/sitemap.xml
