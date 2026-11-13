@@ -137,8 +137,17 @@ export interface Sample {
   done: number;
   /** Papers in each state, indexed by PaperState. */
   states: number[];
-  /** Fill of the client's request, input and output buckets (0-1; 1 while still unknown). */
+  /** Fill of the client's request, input and output buckets (0-1; -1 until a limit is learned). */
   buckets: [number, number, number];
+  /** Counts so far: answered and paid, served from the cache, retried, rate-limited (429),
+   * overloaded (529), failed otherwise (5xx and timeouts), and sent again after a kill. */
+  paid: number;
+  cached: number;
+  retries: number;
+  rateLimited: number;
+  overloaded: number;
+  errors: number;
+  resent: number;
 }
 
 export interface Transition {
@@ -701,7 +710,7 @@ export function simulate(scenario: Scenario): RunResult {
   const sample = () => {
     const p = sim.process;
     const fill = (b: TokenBucket) =>
-      b.ratePerMin === null ? 1 : Math.max(0, Math.min(1, b.level / b.capacity));
+      b.ratePerMin === null ? -1 : Math.max(0, Math.min(1, b.level / b.capacity));
     const states = counts();
     samples.push({
       t: sim.q.now,
@@ -711,6 +720,13 @@ export function simulate(scenario: Scenario): RunResult {
       done: states[4] ?? 0,
       states,
       buckets: [fill(p.buckets[0]), fill(p.buckets[1]), fill(p.buckets[2])],
+      paid: sim.totals.paid,
+      cached: sim.totals.cached,
+      retries: sim.totals.retries,
+      rateLimited: sim.totals.rateLimited,
+      overloaded: sim.totals.overloaded,
+      errors: sim.totals.serverErrors + sim.totals.timeouts,
+      resent: sim.resent,
     });
   };
 
