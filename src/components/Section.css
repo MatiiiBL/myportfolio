@@ -1,6 +1,5 @@
 .section {
   padding-block: var(--space-7);
-  scroll-margin-top: var(--space-8);
 }
 
 .section-kicker {
@@ -17,6 +16,52 @@
   margin-bottom: var(--space-5);
 }
 
-.section-body > * + * {
+/*
+ * Running-text defaults for a section's body. They sit inside :where() so they carry no
+ * specificity: any class on a component inside a section (a card, a chart, a list of chips)
+ * overrides them without a fight.
+ */
+:where(.section-body > * + *) {
   margin-top: var(--space-4);
+}
+
+/* Running text keeps a readable measure; figures and tables use the full column. */
+:where(.section-body > p, .section-body > ul, .section-body > ol, .section-body > blockquote) {
+  max-width: var(--prose-width);
+}
+
+:where(.section-body > ul, .section-body > ol) {
+  padding-left: 1.25rem;
+}
+
+:where(.section-body > ul, .section-body > ol) > li + li {
+  margin-top: var(--space-2);
+}
+
+:where(.section-body > h3) {
+  margin-top: var(--space-6);
+  font-size: var(--step-1);
+}
+
+:where(.section-body) a {
+  color: var(--text);
+  text-decoration-color: var(--accent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+:where(.section-body) a:hover {
+  color: var(--accent);
+}
+
+:where(.section-body) strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+:where(.section-body) code {
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+  background: var(--surface-2);
+  color: var(--text);
 }

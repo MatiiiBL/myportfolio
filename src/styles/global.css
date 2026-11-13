@@ -9,6 +9,14 @@
 html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
+  /* Anchored sections land below the sticky header. */
+  scroll-padding-top: 4.5rem;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
 body {
@@ -59,6 +67,52 @@ canvas {
   outline: 2px solid var(--focus);
   outline-offset: 2px;
   border-radius: 4px;
+}
+
+/* The content column: 1120 px wide with a gutter on each side. */
+.container {
+  max-width: var(--content-width);
+  margin-inline: auto;
+  padding-inline: var(--space-5);
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding-inline: var(--space-4);
+  }
+}
+
+/*
+ * Tables in page content: hairline rows, figures that line up. Inside :where() so a table with
+ * its own class overrides them.
+ */
+:where(.section-body) table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--step--1);
+}
+
+:where(.section-body) caption {
+  margin-bottom: var(--space-2);
+  color: var(--text-3);
+  text-align: left;
+}
+
+:where(.section-body) :is(th, td) {
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--grid);
+  text-align: left;
+  vertical-align: top;
+}
+
+:where(.section-body) thead th {
+  color: var(--text);
+  font-weight: 600;
+  border-bottom-color: var(--border);
+}
+
+:where(.section-body) td {
+  font-variant-numeric: tabular-nums;
 }
 
 .visually-hidden {

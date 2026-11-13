@@ -4,15 +4,33 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="color-scheme" content="dark light" />
-    <meta name="theme-color" content="#0d1117" />
+    <meta name="theme-color" content="#0d1117" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <script>
+      // Apply a saved theme choice before the first paint, so the page never flashes the other
+      // theme. src/components/theme.ts reads and writes the same key.
+      try {
+        var theme = localStorage.getItem("theme");
+        if (theme === "dark" || theme === "light") {
+          document.documentElement.dataset.theme = theme;
+          document.querySelectorAll('meta[name="theme-color"]').forEach(function (meta) {
+            meta.content = theme === "dark" ? "#0d1117" : "#ffffff";
+          });
+        }
+      } catch (error) {}
+    </script>
+    <title>Matías Blanco</title>
     <meta
       name="description"
       content="Matías Blanco, Computer Engineering at Columbia. I build fast, verified systems from scratch: a RISC-V SoC, a driverless racing stack, a tensor compiler, vector search and LLM inference."
     />
-    <title>Matías Blanco</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <!--app-head-->
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root"><!--app-html--></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
