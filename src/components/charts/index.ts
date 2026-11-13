@@ -76,6 +76,7 @@ export {
   resolveDomain,
   textWidth,
   tickFormatter,
+  thinTicks,
   tickLabelWidth,
   X_TICK_SPACING,
   Y_TICK_SPACING,

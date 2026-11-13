@@ -10,7 +10,9 @@ import {
   numericScale,
   resolveDomain,
   textWidth,
+  thinTicks,
   tickFormatter,
+  X_TICK_SPACING,
 } from "./scales";
 
 describe("scales", () => {
@@ -24,6 +26,49 @@ describe("scales", () => {
     const axis = { type: "log" as const };
     const scale = numericScale(axis, [1000, 20_000], [0, 600]);
     expect(axisTicks(axis, scale, 600)).toEqual([1000, 2000, 5000, 10_000, 20_000]);
+  });
+
+  it("thins explicit ticks that would crowd a short axis, keeping both ends", () => {
+    const axis = {
+      type: "linear" as const,
+      ticks: [1, 64, 128, 192, 256],
+      domain: [1, 256] as [number, number],
+    };
+    // 280 px: 70 px apart, enough for three-digit labels at 60 px.
+    const wide = numericScale(axis, [1, 256], [0, 280]);
+    expect(axisTicks(axis, wide, 280, X_TICK_SPACING)).toEqual([1, 64, 128, 192, 256]);
+    // 140 px: 35 px apart; every other one stays, and the last one always does.
+    const narrow = numericScale(axis, [1, 256], [0, 140]);
+    expect(axisTicks(axis, narrow, 140, X_TICK_SPACING)).toEqual([1, 128, 256]);
+  });
+
+  it("thins uneven explicit ticks by their pixel gaps, not their count", () => {
+    const axis = {
+      type: "linear" as const,
+      ticks: [0, 0.5, 1, 2, 4],
+      domain: [0, 4] as [number, number],
+    };
+    const scale = numericScale(axis, [0, 4], [0, 220]);
+    expect(axisTicks(axis, scale, 220, X_TICK_SPACING)).toEqual([0, 2, 4]);
+  });
+
+  it("gives wide x labels at least their own width", () => {
+    const axis = {
+      type: "linear" as const,
+      ticks: [0, 2500, 5000, 7500, 10_000],
+      domain: [0, 10_000] as [number, number],
+    };
+    const scale = numericScale(axis, [0, 10_000], [0, 300]);
+    // 75 px apart, enough for "2.5K"; full-width labels would need more.
+    expect(axisTicks(axis, scale, 300, X_TICK_SPACING)).toHaveLength(5);
+    const along = { ...axis, tickFormat: (v: number) => `${v.toLocaleString("en-US")} ops/s` };
+    expect(axisTicks(along, scale, 300, X_TICK_SPACING)).toEqual([0, 5000, 10_000]);
+  });
+
+  it("thins the y axis by height alone, keeping the given order", () => {
+    // 25 px apart on a y axis that grows upward; every other tick stays.
+    const scale = numericScale({ type: "linear", domain: [0, 40] }, [0, 40], [200, 100]);
+    expect(thinTicks([0, 10, 20, 30, 40], scale, 39)).toEqual([0, 20, 40]);
   });
 
   it("rejects a log axis that reaches zero", () => {

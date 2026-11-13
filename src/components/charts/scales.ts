@@ -82,7 +82,8 @@ export function tickCount(pixels: number, spacing = 64): number {
 /**
  * Tick values for a numeric axis spanning `pixels`, about one per `spacing` pixels (wider along
  * x, where labels sit side by side). Log axes show powers of ten when the domain spans two or
- * more decades, and the 1-2-5 sequence when it spans less, so labels never crowd.
+ * more decades, and the 1-2-5 sequence when it spans less, so labels never crowd. Explicit
+ * ticks are thinned the same way when the axis is too short for all of them.
  */
 export function axisTicks(
   axis: NumericAxis,
@@ -90,7 +91,7 @@ export function axisTicks(
   pixels: number,
   spacing = 64,
 ): number[] {
-  if (axis.ticks) return axis.ticks;
+  if (axis.ticks) return thinTicks(axis.ticks, scale, explicitTickGap(axis, axis.ticks, spacing));
   const [d0, d1] = scale.domain() as [number, number];
   const lo = Math.min(d0, d1);
   const hi = Math.max(d0, d1);
@@ -112,6 +113,37 @@ export function axisTicks(
     return ticks.filter((_, i) => i % stride === 0);
   }
   return scaleLinear().domain([lo, hi]).ticks(tickCount(pixels, spacing));
+}
+
+/**
+ * The least distance between two explicit ticks: three quarters of the generated spacing, and
+ * along x (where labels sit side by side) never less than the widest label plus a gap.
+ */
+function explicitTickGap(axis: NumericAxis, ticks: number[], spacing: number): number {
+  if (spacing < X_TICK_SPACING) return spacing * 0.75;
+  const format = tickFormatter(axis, ticks);
+  const widest = Math.max(0, ...ticks.map((t) => textWidth(format(t))));
+  return Math.max(spacing * 0.75, widest + 12);
+}
+
+/**
+ * Keeps ticks, from the start of the axis, that are at least `gap` pixels from the last one
+ * kept. The last tick always stays, since it marks where the axis ends; if it is too close, it
+ * takes the place of the one before it. The ticks that stay keep the order they were given in.
+ */
+export function thinTicks(ticks: number[], scale: NumericScale, gap: number): number[] {
+  const sorted = [...ticks].sort((a, b) => scale(a) - scale(b));
+  const kept: number[] = [];
+  for (const t of sorted) {
+    const last = kept[kept.length - 1];
+    if (last === undefined || Math.abs(scale(t) - scale(last)) >= gap) kept.push(t);
+  }
+  const end = sorted[sorted.length - 1];
+  if (end !== undefined && kept[kept.length - 1] !== end) {
+    if (kept.length > 1) kept.pop();
+    kept.push(end);
+  }
+  return ticks.filter((t) => kept.includes(t));
 }
 
 /** Removes binary floating-point noise (0.30000000000000004) from a computed tick. */

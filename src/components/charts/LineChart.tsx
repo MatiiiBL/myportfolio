@@ -63,11 +63,17 @@ export interface LineChartProps extends ChartText {
   y: NumericAxis;
   /** Drawing height in pixels, axes included (default 300). */
   height?: number;
-  /** Label each line at its last point, beside the legend; skipped when the ends collide. */
+  /**
+   * Label each line at its last point, beside the legend. Skipped when the ends collide or the
+   * labels would take more than 30% of the width, as on a phone.
+   */
   endLabels?: boolean;
   references?: Reference[];
   annotations?: ChartAnnotation[];
 }
+
+/** The largest share of the chart's width that end labels may take from the plot. */
+const END_LABEL_SHARE = 0.3;
 
 /**
  * Lines over a numeric x axis. When every series shares the same x values the tooltip is a
@@ -104,8 +110,11 @@ export function LineChart({
     const yTicks = axisTicks(y, yScale, bottom - top, Y_TICK_SPACING);
     const yTickFormat = tickFormatter(y, yTicks);
     const left = tickLabelWidth(yTicks, yTickFormat) + 4;
-    const labelRoom = endLabels ? Math.max(...series.map((s) => textWidth(s.label))) + 14 : 0;
-    const right = width - Math.max(12, labelRoom);
+    // End labels sit to the right of the plot. When they would take more than 30% of the width
+    // (long names on a phone) the plot keeps the room and the legend carries the names alone.
+    const widestEnd = Math.max(0, ...series.map((s) => textWidth(s.label))) + 14;
+    const showEnds = endLabels && widestEnd <= width * END_LABEL_SHARE;
+    const right = width - Math.max(12, showEnds ? widestEnd : 0);
     const xScale = numericScale(
       x,
       resolveDomain(
@@ -231,7 +240,7 @@ export function LineChart({
               plot={plot}
             />
           ))}
-          {endLabels &&
+          {showEnds &&
             endsFit &&
             ends.map((e) => (
               <text key={e.label} className="chart-end-label" x={f(e.x + 8)} y={f(e.y + 4)}>
