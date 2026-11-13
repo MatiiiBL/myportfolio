@@ -65,8 +65,9 @@ jobs:
 
       # Pushes dist/ to the gh-pages branch, which GitHub Pages serves at
       # https://matiiibl.github.io/myportfolio/. It adds .nojekyll, so Pages serves the files
-      # as they are.
-      - uses: peaceiris/actions-gh-pages@v4
+      # as they are. The action runs with write access, so it is pinned to a commit rather than
+      # a tag, which its owner could move; this is the commit of release v4.1.0.
+      - uses: peaceiris/actions-gh-pages@84c30a85c19949d7eee79c4ff27748b70285e453 # v4.1.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
