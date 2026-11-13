@@ -100,12 +100,29 @@ test("reduced motion shows the finished run, without playback", async ({ page })
   expect(end).toBeGreaterThan(0);
 });
 
-test("nothing scrolls sideways on a 390 px screen", async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  await open(page);
-  await expect(page.locator(".paper-grid canvas")).toBeVisible();
-  const overflow = await page.evaluate(
-    () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
-  );
-  expect(overflow).toBe(0);
+test.describe("without JavaScript", () => {
+  test.use({ javaScriptEnabled: false });
+
+  test("the prerendered page shows the finished run and its charts", async ({ page }) => {
+    await page.goto(PAGE);
+    const [now, end] = await times(page);
+    expect(end).toBeGreaterThan(0);
+    expect(now).toBe(end);
+    await expect(page.locator(".stages")).toContainText("Done, to topics2,000");
+    // Both charts are drawn to the end: one line each for the window and the slots held, and
+    // two for the papers per minute.
+    await expect(page.locator(".live-chart .chart-line")).toHaveCount(4);
+  });
 });
+
+for (const width of [320, 390]) {
+  test(`nothing scrolls sideways on a ${width} px screen`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 844 });
+    await open(page);
+    await expect(page.locator(".paper-grid canvas")).toBeVisible();
+    const overflow = await page.evaluate(
+      () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+    );
+    expect(overflow).toBe(0);
+  });
+}

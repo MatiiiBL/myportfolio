@@ -105,19 +105,24 @@ export function PipelineSim() {
   // The benchmark's measure: papers finished over the minutes elapsed.
   const average = useMemo(() => run.samples.map((s) => (s.t > 0 ? (s.done * 60) / s.t : 0)), [run]);
   const speed = Math.max(30, Math.round(end / PLAY_SECONDS));
-  // With reduced motion the run is shown complete; the slider still moves through it.
-  const now = Math.min(t ?? (reduced ? end : 0), end);
+  // Until it plays, the figure shows the finished run: in the prerendered HTML, before it
+  // scrolls into view, and with reduced motion. The slider moves through it either way.
+  const now = Math.min(t ?? end, end);
   const sample = run.samples[Math.floor(now)] as Sample;
   const running = playing && !reduced && now < end;
 
-  // Start playing the first time the figure scrolls into view.
+  // The first time the figure scrolls into view, play the run from the start, unless the
+  // visitor has already picked a time.
   useEffect(() => {
     const el = root.current;
-    if (!el || seen || reduced || typeof IntersectionObserver === "undefined") return;
+    if (!el || seen || reduced || t !== null || typeof IntersectionObserver === "undefined") {
+      return;
+    }
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries.some((e) => e.isIntersecting)) {
           setSeen(true);
+          setT(0);
           setPlaying(true);
         }
       },
@@ -125,7 +130,7 @@ export function PipelineSim() {
     );
     observer.observe(el);
     return () => observer.disconnect();
-  }, [seen, reduced]);
+  }, [seen, reduced, t]);
 
   useEffect(() => {
     if (!running) return;
@@ -151,7 +156,8 @@ export function PipelineSim() {
     if (next.preset) setPreset(next.preset);
     if (next.ceiling) setCeiling(next.ceiling);
     setKillAt(null);
-    setT(null);
+    // A new run plays from the start; with reduced motion it is shown finished.
+    setT(reduced ? null : 0);
     setPlaying(!reduced);
   };
 
