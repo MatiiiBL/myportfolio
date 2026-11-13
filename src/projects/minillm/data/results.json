@@ -1,0 +1,62 @@
+{
+  "weights": [
+    { "format": "f32", "mb": 538.1, "note": "the checkpoint's values" },
+    { "format": "bf16", "mb": 269.1, "note": "exact for this checkpoint; the default" },
+    { "format": "Q8_0", "mb": 143.0, "note": "8-bit values, an f16 scale per 32" }
+  ],
+  "kl": [
+    { "set": "Oracle prompts", "positions": 218, "measured": 0.00771, "budget": 0.01 },
+    { "set": "Prose", "positions": 1060, "measured": 0.00289, "budget": 0.004 },
+    { "set": "Code", "positions": 2748, "measured": 0.00186, "budget": 0.0025 }
+  ],
+  "errors": [
+    {
+      "stage": "silu_mul",
+      "shape": "[8, 1536]",
+      "maxAbs": "3.6e-7",
+      "tolerance": "1e-7 + 1e-6 |x|"
+    },
+    {
+      "stage": "rmsnorm",
+      "shape": "[8, 576]",
+      "maxAbs": "1.9e-6",
+      "tolerance": "1e-6 + 1e-5 |x|"
+    },
+    {
+      "stage": "softmax",
+      "shape": "[1, 49152]",
+      "maxAbs": "2.1e-6",
+      "tolerance": "1e-6 + 1e-5 |x|"
+    },
+    {
+      "stage": "RoPE, positions 0–7 and 4,000",
+      "shape": "q, k",
+      "maxAbs": "2.4e-7",
+      "tolerance": "1e-6 + 1e-5 |x|"
+    },
+    {
+      "stage": "attention (online softmax)",
+      "shape": "layers 0 and 15",
+      "maxAbs": "1.3e-6",
+      "tolerance": "1e-5 + 1e-4 |x|"
+    },
+    {
+      "stage": "q, k, v, o projections",
+      "shape": "layers 0 and 15",
+      "maxAbs": "2.9e-6",
+      "tolerance": "1e-5 + 1e-4 |x|"
+    },
+    {
+      "stage": "matmul (LM head rows)",
+      "shape": "[1, 576] × [4096, 576]",
+      "maxAbs": "6.9e-5",
+      "tolerance": "2e-4 + 1e-4 |x|"
+    },
+    {
+      "stage": "final logits, after 30 layers",
+      "shape": "[49152], 3 prompts",
+      "maxAbs": "4.6e-5",
+      "tolerance": "3e-4 + 1e-4 |x|"
+    }
+  ]
+}
