@@ -130,7 +130,7 @@ export function SystolicStepper() {
 
   const phaseText = {
     load: `Load, cycle ${at.inPhase + 1} of ${timing.load}`,
-    compute: `Compute, step ${at.inPhase} of ${timing.compute}`,
+    compute: `Compute, step ${at.inPhase} of 0–${timing.compute - 1}`,
     writeBack: `Write-back, cycle ${at.inPhase + 1} of ${timing.writeBack}`,
     done: "Done",
   }[at.phase];
@@ -141,7 +141,7 @@ export function SystolicStepper() {
     const name = `PE (${si}, ${sj})`;
     const s = status(si, sj);
     if (s === "outside") {
-      return `${name} is outside the ${op.m} × ${op.n} tile: its feeders send zeros, so it keeps its sum.`;
+      return `${name} is outside the ${op.m} × ${op.n} tile: its feeders send zeros, so it only ever adds zero.`;
     }
     if (s === "done") {
       return `${name} holds C[${si}][${sj}] = ${pe?.acc ?? 0}, final since step ${finishStep(si, sj, op.k) + 1}.`;
