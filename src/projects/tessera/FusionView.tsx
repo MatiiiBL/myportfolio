@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Figure } from "../../components/Figure";
 import block from "./data/fusion-block.json";
+import { SourceLink } from "./SourceLink";
 import "./FusionView.css";
 
 interface Arg {
@@ -85,9 +86,11 @@ export function FusionView() {
           Each card is one kernel, with the bytes of its arguments (what it reads and writes if it
           touches each once) drawn to one scale. Select an operator to find it in the other column.
           Computed with Tessera&apos;s own passes (<code>optimize</code>, <code>fuse</code>,{" "}
-          <code>plan_memory</code>) on the block rebuilt with the model&apos;s shapes; see{" "}
-          <code>data/SOURCE.md</code>. Over the whole model, fusion takes ResNet-50 from 123 kernels
-          to 56 and from 322.3 to 205.7 MiB moved (results/models.md).
+          <code>plan_memory</code>) on the block rebuilt with the model&apos;s shapes and node
+          names; the weights do not matter to fusion. Over the whole model, fusion takes ResNet-50
+          from 123 kernels to 56 and from 322.3 to 205.7 MiB moved (
+          <SourceLink file="results/models.md" />
+          ).
         </>
       }
     >

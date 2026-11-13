@@ -1,15 +1,19 @@
+import type { ReactNode } from "react";
 import { LineChart } from "../../components/charts";
 import bench from "./data/bench-throughput.json";
 import faults from "./data/bench-faults.json";
-
-const REPO = "https://github.com/MatiiiBL/precis/blob/main";
-
-function SourceLink({ path, label }: { path: string; label?: string }) {
-  return <a href={`${REPO}/${path}`}>{label ?? path}</a>;
-}
+import { SourceLink } from "./SourceLink";
 
 const pct = (x: number) => `${Math.round(x * 100)}%`;
 const n = (x: number) => x.toLocaleString("en-US");
+
+function TableWrap({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <div className="project-table-wrap" role="region" aria-label={label} tabIndex={0}>
+      {children}
+    </div>
+  );
+}
 
 export function ThroughputResults() {
   const at128 = bench.points.find((p) => p.concurrency === 128);
@@ -50,7 +54,7 @@ export function ThroughputResults() {
                   y: at128.papers_per_minute,
                   label: "input-token limit binds",
                   note: `${pct(at128.input_tokens_per_minute / bench.itpm_limit)} of 2M tokens/min, no 429s`,
-                  placement: "below-left",
+                  placement: "below-right",
                 },
               ]
             : []
@@ -61,13 +65,13 @@ export function ThroughputResults() {
             2 million input and 400,000 output tokens per minute, and 2 s to the first token plus 20
             ms per output token. Up to a ceiling of 64, throughput grows with concurrency (about 1.9
             papers per minute per slot); from 128 the input-token limit holds it at 165 to 166.
-            Source: <SourceLink path="results/bench-throughput.md" />.
+            Source: <SourceLink file="results/bench-throughput.md" />.
           </>
         }
       />
-      <div className="dive-table-wrap">
-        <table className="dive-table">
-          <caption>The same runs: rates against the limits and paper latency.</caption>
+      <TableWrap label="Throughput benchmark at every ceiling">
+        <table className="project-table">
+          <caption>The same runs: rates against the limits, and paper latency</caption>
           <thead>
             <tr>
               <th scope="col">Ceiling</th>
@@ -75,7 +79,7 @@ export function ThroughputResults() {
               <th scope="col">Requests/min</th>
               <th scope="col">Input tokens used</th>
               <th scope="col">429s</th>
-              <th scope="col">p50 / p95 paper, min</th>
+              <th scope="col">Paper p50 / p95, min</th>
             </tr>
           </thead>
           <tbody>
@@ -94,10 +98,10 @@ export function ThroughputResults() {
             ))}
           </tbody>
         </table>
-        <p className="dive-source">
-          Source: <SourceLink path="results/bench-throughput.md" />.
-        </p>
-      </div>
+      </TableWrap>
+      <p className="project-source">
+        Source: <SourceLink file="results/bench-throughput.md" />.
+      </p>
     </>
   );
 }
@@ -119,114 +123,98 @@ export function FaultResults() {
     ["Requests paid for twice", n(faults.paid_twice)],
   ];
   return (
-    <div className="dive-table-wrap">
-      <table className="dive-table dive-table-pairs">
-        <caption>
-          Killed with SIGKILL partway through, with 4% 429, 2% 529, 2% 500 and 1% timeouts injected,
-          then resumed (offline).
-        </caption>
-        <tbody>
-          {rows.map(([label, value]) => (
-            <tr key={label}>
-              <th scope="row">{label}</th>
-              <td>{value}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <p className="dive-source">
-        Source: <SourceLink path="results/bench-faults.md" />.
+    <div>
+      <TableWrap label="Crash recovery benchmark">
+        <table className="project-table">
+          <caption>SIGKILL mid-run with 9% of requests failing, then a resume</caption>
+          <tbody>
+            {rows.map(([label, value]) => (
+              <tr key={label}>
+                <th scope="row">{label}</th>
+                <td>{value}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </TableWrap>
+      <p className="project-source">
+        Injected per request: 4% 429, 2% 529, 2% 500, 1% timeouts. Offline. Source:{" "}
+        <SourceLink file="results/bench-faults.md" />.
       </p>
     </div>
   );
 }
 
 export function CorpusResults() {
+  const rows: [string, string][] = [
+    ["Papers found", "2,918"],
+    ["Parsed from arXiv's HTML", "2,670 (91.5%)"],
+    ["Parsed from the PDF", "226 (7.7%)"],
+    ["Failed: withdrawn, garbled or too short", "22 (0.8%)"],
+    ["Median paper, tokens", "8,670"],
+    ["Whole pipeline offline, 2,889 papers", "42 s"],
+  ];
   return (
-    <div className="dive-table-wrap">
-      <table className="dive-table dive-table-pairs">
-        <caption>The real corpus: arXiv cs.AR, July 2025 to October 2026.</caption>
-        <tbody>
-          <tr>
-            <th scope="row">Papers found</th>
-            <td>2,918</td>
-          </tr>
-          <tr>
-            <th scope="row">Parsed from arXiv&apos;s HTML</th>
-            <td>2,670 (91.5%)</td>
-          </tr>
-          <tr>
-            <th scope="row">Parsed from the PDF</th>
-            <td>226 (7.7%)</td>
-          </tr>
-          <tr>
-            <th scope="row">Failed (withdrawn, garbled, too short)</th>
-            <td>22 (0.8%)</td>
-          </tr>
-          <tr>
-            <th scope="row">Median paper, tokens</th>
-            <td>8,670</td>
-          </tr>
-          <tr>
-            <th scope="row">Whole pipeline offline (2,889 papers)</th>
-            <td>42 s, 14,063 requests</td>
-          </tr>
-        </tbody>
-      </table>
-      <p className="dive-source">
-        Source: <SourceLink path="docs/ingest.md#the-full-corpus" label="docs/ingest.md" /> and the{" "}
-        <SourceLink path="README.md#results" label="README" />.
+    <div>
+      <TableWrap label="The real corpus">
+        <table className="project-table">
+          <caption>arXiv cs.AR, July 2025 to October 2026</caption>
+          <tbody>
+            {rows.map(([label, value]) => (
+              <tr key={label}>
+                <th scope="row">{label}</th>
+                <td>{value}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </TableWrap>
+      <p className="project-source">
+        Downloaded from arXiv itself. Source:{" "}
+        <SourceLink file="docs/ingest.md" anchor="the-full-corpus" /> and the{" "}
+        <SourceLink file="README.md" anchor="results" />.
       </p>
     </div>
   );
 }
 
 export function StrategyResults() {
+  const rows: [string, string, string, string, string, string][] = [
+    ["Agentic (tools)", "2.21", "10,750", "53%", "0.45", "$7.45"],
+    ["Full text", "1", "9,999", "100%", "1.00", "$8.93"],
+    ["Map-reduce", "2.71", "11,655", "100%", "1.10", "$10.71"],
+  ];
   return (
-    <div className="dive-table-wrap">
-      <table className="dive-table">
-        <caption>Three ways to read a paper, offline, 200 synthetic papers (read stage).</caption>
-        <thead>
-          <tr>
-            <th scope="col">Strategy</th>
-            <th scope="col">Requests / paper</th>
-            <th scope="col">Tokens / paper, median</th>
-            <th scope="col">Share of the body read</th>
-            <th scope="col">Extra tokens per body token</th>
-            <th scope="col">Cost, 200 papers</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <th scope="row">Agentic (tools)</th>
-            <td>2.21</td>
-            <td>10,750</td>
-            <td>53%</td>
-            <td>0.45</td>
-            <td>$7.45</td>
-          </tr>
-          <tr>
-            <th scope="row">Full text</th>
-            <td>1</td>
-            <td>9,999</td>
-            <td>100%</td>
-            <td>1.00</td>
-            <td>$8.93</td>
-          </tr>
-          <tr>
-            <th scope="row">Map-reduce</th>
-            <td>2.71</td>
-            <td>11,655</td>
-            <td>100%</td>
-            <td>1.10</td>
-            <td>$10.71</td>
-          </tr>
-        </tbody>
-      </table>
-      <p className="dive-source">
+    <>
+      <TableWrap label="Reading strategies">
+        <table className="project-table">
+          <caption>Three ways to read a paper (read stage, 200 synthetic papers, offline)</caption>
+          <thead>
+            <tr>
+              <th scope="col">Strategy</th>
+              <th scope="col">Requests / paper</th>
+              <th scope="col">Tokens / paper, median</th>
+              <th scope="col">Body read</th>
+              <th scope="col">Tokens per extra body token</th>
+              <th scope="col">Cost, 200 papers</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map(([name, ...cells]) => (
+              <tr key={name}>
+                <th scope="row">{name}</th>
+                {cells.map((c, i) => (
+                  <td key={i}>{c}</td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </TableWrap>
+      <p className="project-source">
         Costs are what the simulated usage would cost at Claude Opus 5.5 prices; nothing was paid.
-        Source: <SourceLink path="docs/agents.md#7-measurements-offline" label="docs/agents.md" />.
+        Source: <SourceLink file="docs/agents.md" anchor="7-measurements-offline" />.
       </p>
-    </div>
+    </>
   );
 }

@@ -100,7 +100,8 @@ Use these instead of writing a page's own version, so every project page looks a
 same:
 
 - `src/components/ProjectPage.css`: the body styles. Wrap the sections in `.project-page` and use
-  `.project-prose` (reading width), `.project-source` with `.project-file` (the one-line source
+  `.project-prose` (reading width), `.project-subhead` (an `<h3>` that splits a long section),
+  `.project-source` with `.project-file` (the one-line source
   under a table or list), `.project-table-wrap` and `.project-table` (small results tables; a wrap
   that can scroll sideways on a phone gets `role="region"`, an `aria-label` and `tabIndex={0}`;
   `.project-text` on the cells of a column of words), `.project-grid`, `.project-how` (the

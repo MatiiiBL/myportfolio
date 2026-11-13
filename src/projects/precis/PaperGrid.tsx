@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import { useWidth } from "../../components/charts/useWidth";
 import type { PaperState, Transition } from "./sim/pipeline";
 import { STATE_TOKENS } from "./stateTokens";
-import { useThemeKey } from "./useReducedMotion";
+import { useThemeKey } from "./useThemeKey";
 
 const COLUMNS = 50;
 const GAP = 1;

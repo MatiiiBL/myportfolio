@@ -4,6 +4,7 @@
  * file and wraps its sections in an element with the class "project-page".
  *
  *   .project-prose        paragraphs at reading width
+ *   .project-subhead      an <h3> that splits a long section (Results) into parts
  *   .project-source       the one-line source under a table or a list; .project-file for the
  *                         file name in it (mono)
  *   .project-table-wrap   a table that may scroll sideways on a phone: give it role="region",
@@ -40,6 +41,14 @@
 
 .project-prose > * + * {
   margin-top: var(--space-4);
+}
+
+.project-subhead {
+  font-size: var(--step-1);
+}
+
+.project-prose > .project-subhead {
+  margin-top: var(--space-6);
 }
 
 .project-source {

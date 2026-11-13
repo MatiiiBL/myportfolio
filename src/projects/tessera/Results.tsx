@@ -1,9 +1,10 @@
+import type { ReactNode } from "react";
 import { BarChart, LineChart } from "../../components/charts";
 import models from "./data/models.json";
 import tuning from "./data/tuning.json";
 import gemm from "./data/gemm.json";
+import { SourceLink } from "./SourceLink";
 
-const REPO = "https://github.com/MatiiiBL/tessera/blob/main";
 const MIB = 1024 * 1024;
 
 type Latency = { median: number; p10: number; p90: number; maxRel: number };
@@ -37,8 +38,12 @@ const LATENCY_COLUMNS: [SystemName, string][] = [
   ["tessera-metal", "Tessera GPU"],
 ];
 
-function SourceLink({ path }: { path: string }) {
-  return <a href={`${REPO}/${path}`}>{path}</a>;
+function TableWrap({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <div className="project-table-wrap" role="region" aria-label={label} tabIndex={0}>
+      {children}
+    </div>
+  );
 }
 
 export function LatencyResults() {
@@ -71,15 +76,13 @@ export function LatencyResults() {
             ONNX Runtime&apos;s median latency divided by each system&apos;s, so 2× is twice as
             fast. Medians of at least 50 runs, Tessera with its committed tuning logs;
             Tessera&apos;s CPU runs are pooled from five fresh processes. Source:{" "}
-            <SourceLink path="results/models.md" />.
+            <SourceLink file="results/models.md" />.
           </>
         }
       />
-      <div className="dive-table-wrap">
-        <table className="dive-table">
-          <caption>
-            Median latency in milliseconds (lower is better); the fastest system in bold.
-          </caption>
+      <TableWrap label="Median latency of each model and system">
+        <table className="project-table">
+          <caption>Median latency, ms (lower is better; the fastest in bold)</caption>
           <thead>
             <tr>
               <th scope="col">Model</th>
@@ -105,11 +108,11 @@ export function LatencyResults() {
             })}
           </tbody>
         </table>
-        <p className="dive-source">
-          Source: <SourceLink path="results/models.md" />, measured 2026-11-12 at commit{" "}
-          <code>{models.commit}</code>.
-        </p>
-      </div>
+      </TableWrap>
+      <p className="project-source">
+        Measured 2026-11-12 at commit <code>{models.commit}</code>. Source:{" "}
+        <SourceLink file="results/models.md" />.
+      </p>
     </>
   );
 }
@@ -156,13 +159,13 @@ export function TuningResults() {
             (found exhaustively, since the synthetic task&apos;s costs are analytic). After 64
             measurements the model-guided search is at {at(task.curves.model, 64).toFixed(2)} of the
             optimum and random search at {at(task.curves.random, 64).toFixed(2)}. Source:{" "}
-            <SourceLink path="results/tuning.md" />.
+            <SourceLink file="results/tuning.md" />.
           </>
         }
       />
-      <div className="dive-table-wrap">
-        <table className="dive-table">
-          <caption>Median latency in milliseconds, template defaults and tuned.</caption>
+      <TableWrap label="Latency with the template defaults and tuned">
+        <table className="project-table">
+          <caption>Median latency, ms: template defaults and tuned</caption>
           <thead>
             <tr>
               <th scope="col">Model</th>
@@ -184,53 +187,51 @@ export function TuningResults() {
             ))}
           </tbody>
         </table>
-        <p className="dive-source">
-          Source: <SourceLink path="results/models.md" />; the logs are{" "}
-          <SourceLink path="results/tuning" />.
-        </p>
-      </div>
+      </TableWrap>
+      <p className="project-source">
+        Source: <SourceLink file="results/models.md" />; the tuning logs are in{" "}
+        <SourceLink file="results/tuning" />.
+      </p>
     </>
   );
 }
 
 export function FusionResults() {
+  const mib = (b: number) => (b / MIB).toFixed(1);
   return (
-    <div className="dive-table-wrap">
-      <table className="dive-table">
-        <caption>Fusion on whole models: kernels, bytes moved and memory.</caption>
-        <thead>
-          <tr>
-            <th scope="col">Model</th>
-            <th scope="col">Kernels, fused / off</th>
-            <th scope="col">Bytes moved, MiB</th>
-            <th scope="col">Arena / intermediates, MiB</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((r) => {
-            const full = r.ablations["c:sme"].full;
-            const off = r.ablations["c:sme"]["fusion off"];
-            const mib = (b: number) => (b / MIB).toFixed(1);
-            return (
-              <tr key={r.name}>
-                <th scope="row">{r.name}</th>
-                <td>
-                  {full.kernels} / {off.kernels}
-                </td>
-                <td>
-                  {mib(full.bytesMoved)} / {mib(off.bytesMoved)}
-                </td>
-                <td>
-                  {mib(full.arena)} / {mib(full.intermediates)}
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-      <p className="dive-source">
-        Bytes moved is the sum over kernel launches of the bytes of every argument, a lower bound on
-        memory traffic. Source: <SourceLink path="results/models.md" />.
+    <div>
+      <TableWrap label="Fusion on whole models">
+        <table className="project-table">
+          <caption>Fusion on whole models</caption>
+          <thead>
+            <tr>
+              <th scope="col">Model</th>
+              <th scope="col">Kernels, fused / off</th>
+              <th scope="col">MiB moved, fused / off</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((r) => {
+              const full = r.ablations["c:sme"].full;
+              const off = r.ablations["c:sme"]["fusion off"];
+              return (
+                <tr key={r.name}>
+                  <th scope="row">{r.name}</th>
+                  <td>
+                    {full.kernels} / {off.kernels}
+                  </td>
+                  <td>
+                    {mib(full.bytesMoved)} / {mib(off.bytesMoved)}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </TableWrap>
+      <p className="project-source">
+        Bytes moved: the sum over kernel launches of every argument&apos;s bytes, a lower bound on
+        memory traffic. Source: <SourceLink file="results/models.md" />.
       </p>
     </div>
   );
@@ -241,7 +242,6 @@ const GEMM_SHAPES = [
   "2048x2048x2048",
   "128x768x768",
   "128x3072x768",
-  "128x768x3072",
   "128x50257x768",
 ];
 
@@ -252,35 +252,38 @@ export function KernelResults() {
     return typeof v === "number" ? v.toLocaleString("en-US", { maximumFractionDigits: 0 }) : "";
   };
   return (
-    <div className="dive-table-wrap">
-      <table className="dive-table">
-        <caption>Float32 GEMM throughput, GFLOP/s (C = A × B, B constant; M×N×K).</caption>
-        <thead>
-          <tr>
-            <th scope="col">Shape</th>
-            <th scope="col">NumPy (Accelerate)</th>
-            <th scope="col">Tessera CPU</th>
-            <th scope="col">PyTorch MPS</th>
-            <th scope="col">Tessera GPU</th>
-          </tr>
-        </thead>
-        <tbody>
-          {GEMM_SHAPES.map((shape) => {
-            const row = byShape.get(shape);
-            return (
-              <tr key={shape}>
-                <th scope="row">{shape.replaceAll("x", "×")}</th>
-                <td>{cell(row, "numpy")}</td>
-                <td>{cell(row, "tessera-c:sme")}</td>
-                <td>{cell(row, "pytorch-mps")}</td>
-                <td>{cell(row, "tessera-metal")}</td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-      <p className="dive-source">
-        Source: <SourceLink path="results/ops.md" />.
+    <div>
+      <TableWrap label="GEMM throughput">
+        <table className="project-table">
+          <caption>Float32 GEMM, GFLOP/s (M×N×K)</caption>
+          <thead>
+            <tr>
+              <th scope="col">Shape</th>
+              <th scope="col">Accelerate</th>
+              <th scope="col">Tessera CPU</th>
+              <th scope="col">MPS</th>
+              <th scope="col">Tessera GPU</th>
+            </tr>
+          </thead>
+          <tbody>
+            {GEMM_SHAPES.map((shape) => {
+              const row = byShape.get(shape);
+              return (
+                <tr key={shape}>
+                  <th scope="row">{shape.replaceAll("x", "×")}</th>
+                  <td>{cell(row, "numpy")}</td>
+                  <td>{cell(row, "tessera-c:sme")}</td>
+                  <td>{cell(row, "pytorch-mps")}</td>
+                  <td>{cell(row, "tessera-metal")}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </TableWrap>
+      <p className="project-source">
+        C = A × B with B constant; Accelerate through NumPy, MPS through PyTorch. Source:{" "}
+        <SourceLink file="results/ops.md" />.
       </p>
     </div>
   );

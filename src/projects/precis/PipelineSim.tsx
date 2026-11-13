@@ -13,7 +13,8 @@ import {
   type Scenario,
 } from "./sim/pipeline";
 import { STATE_TOKENS } from "./stateTokens";
-import { useReducedMotion } from "./useReducedMotion";
+import { SourceLink } from "./SourceLink";
+import { useMediaQuery } from "../../hooks/useMediaQuery";
 import "./PipelineSim.css";
 
 type Preset = "limits" | "overload" | "faults";
@@ -90,7 +91,7 @@ export function PipelineSim() {
   const [t, setT] = useState<number | null>(null);
   const [playing, setPlaying] = useState(false);
   const [seen, setSeen] = useState(false);
-  const reduced = useReducedMotion();
+  const reduced = useMediaQuery("(prefers-reduced-motion: reduce)");
   const id = useId();
   const root = useRef<HTMLDivElement>(null);
 
@@ -185,10 +186,8 @@ export function PipelineSim() {
           replayed from the cache, and only requests in flight at the kill are sent again. The
           finished papers then go to the topic stage, which runs once on the whole corpus. Rules and
           constants come from the repository; the workload is calibrated to{" "}
-          <a href="https://github.com/MatiiiBL/precis/blob/main/results/bench-throughput.md">
-            results/bench-throughput.md
-          </a>
-          , and the tests check the simulation against it at every ceiling.
+          <SourceLink file="results/bench-throughput.md" />, and the tests check the simulation
+          against it at every ceiling.
         </>
       }
     >

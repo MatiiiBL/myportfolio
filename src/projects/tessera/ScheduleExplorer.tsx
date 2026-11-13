@@ -11,7 +11,8 @@ import {
   type Order,
 } from "./schedule/matmul";
 import { tileFacts, tileSteps, type TileStep } from "./schedule/tiles";
-import { useReducedMotion } from "./useReducedMotion";
+import { SourceLink } from "./SourceLink";
+import { useMediaQuery } from "../../hooks/useMediaQuery";
 import "./ScheduleExplorer.css";
 
 const SHAPE = DOC_KERNEL;
@@ -42,7 +43,7 @@ export function ScheduleExplorer() {
   const [playing, setPlaying] = useState(false);
   const [pinned, setPinned] = useState<number | null>(null);
   const [hovered, setHovered] = useState<number | null>(null);
-  const reduced = useReducedMotion();
+  const reduced = useMediaQuery("(prefers-reduced-motion: reduce)");
   const id = useId();
 
   const scheduled = useMemo(() => scheduleMatmul(SHAPE, cfg), [cfg]);
@@ -125,10 +126,8 @@ export function ScheduleExplorer() {
           steps through the loop above the reduction: the register tile of the output it
           accumulates, the rows of A and the strip of W it reads. The trace and the loop IR are
           checked against Tessera&apos;s own output at all 224 points of the knob space. Source:{" "}
-          <a href="https://github.com/MatiiiBL/tessera/blob/main/src/tessera/backend/c/templates/matmul.py">
-            backend/c/templates/matmul.py
-          </a>
-          ; this is the kernel <code>docs/cpu.md</code> prints as generated C.
+          <SourceLink file="src/tessera/backend/c/templates/matmul.py" />; this is the kernel{" "}
+          <SourceLink file="docs/cpu.md" anchor="generated-code" /> prints as generated C.
         </>
       }
     >
