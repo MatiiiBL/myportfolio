@@ -116,12 +116,10 @@ export function DecodeStep() {
               type="button"
               className={i > t ? "ds-token is-future" : "ds-token"}
               aria-current={i === t ? "step" : undefined}
-              aria-label={`Position ${i}: "${token}"`}
               tabIndex={i === t ? 0 : -1}
               onClick={() => select(i, false)}
             >
-              <span className="ds-pos">{i}</span>
-              <span className="ds-text">{shown(token)}</span>
+              <span className="ds-pos">{i}</span> <span className="ds-text">{shown(token)}</span>
             </button>
           </li>
         ))}

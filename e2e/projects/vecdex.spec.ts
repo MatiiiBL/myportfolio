@@ -1,7 +1,8 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
-const URL = "./projects/vecdex";
+const URL = "./projects/vecdex/";
+const AXE_TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa", "best-practice"];
 
 for (const colorScheme of ["dark", "light"] as const) {
   test.describe(`vecdex page, ${colorScheme} theme`, () => {
@@ -14,7 +15,8 @@ for (const colorScheme of ["dark", "light"] as const) {
         await expect(page.getByRole("heading", { level: 2, name: title })).toBeVisible();
       }
       await expect(page.locator(".hx-plot svg circle").first()).toBeVisible();
-      const results = await new AxeBuilder({ page }).analyze();
+      await page.waitForLoadState("networkidle");
+      const results = await new AxeBuilder({ page }).withTags(AXE_TAGS).analyze();
       expect(results.violations).toEqual([]);
     });
   });
@@ -76,9 +78,8 @@ test("has no horizontal scroll on a 390 px screen", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(URL);
   await expect(page.locator(".hx-plot")).toBeVisible();
-  // A string, because the e2e TypeScript project has no DOM types.
-  const overflow = await page.evaluate<number>(
-    "document.documentElement.scrollWidth - document.documentElement.clientWidth",
+  const overflow = await page.evaluate(
+    () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
   );
   expect(overflow).toBe(0);
 });

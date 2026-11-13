@@ -101,14 +101,24 @@
 }
 
 .ds-attn-wrap {
+  /* Positioned, so the visually hidden values inside stay within the scroll box. */
+  position: relative;
   overflow-x: auto;
   min-width: 0;
 }
 
 .ds-attn {
+  width: auto;
   border-collapse: separate;
   border-spacing: 2px;
   font-size: var(--step--1);
+}
+
+/* A grid of cells, not a text table: drop the page's table padding and rules. */
+.ds-attn :where(th, td) {
+  padding: 0;
+  border-bottom: 0;
+  vertical-align: middle;
 }
 
 .ds-caption {
@@ -288,13 +298,23 @@ tr.is-new .ds-rowhead {
 }
 
 @media (max-width: 30rem) {
+  .ds-attn {
+    border-spacing: 1px;
+  }
+
+  /* 24 px: the smallest comfortable touch target (WCAG 2.5.8). */
   .ds-cell,
   .ds-head {
-    width: 1.3rem;
+    width: 1.5rem;
+    min-width: 1.5rem;
+  }
+
+  .ds-head {
+    height: 1.5rem;
   }
 
   .ds-detail {
-    width: 4.5rem;
+    width: 3.25rem;
     padding-left: var(--space-2);
   }
 
