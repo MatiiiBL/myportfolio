@@ -126,73 +126,76 @@ export function DecodeStep() {
       </ol>
 
       <div className="ds-main">
-        <div className="ds-attn-wrap" role="region" aria-label="Attention weights" tabIndex={0}>
-          <table className="ds-attn">
-            <caption className="ds-caption">
-              Layer {layer}: how much each of the 9 query heads of position {t} (&quot;
-              {shown(TOKENS[t] ?? "")}&quot;) attends to each cached position
-            </caption>
-            <thead>
-              <tr className="ds-groups">
-                <td />
-                {[0, 1, 2].map((g) => (
-                  <th key={g} scope="colgroup" colSpan={3}>
-                    KV head {g}
-                  </th>
-                ))}
-                <td />
-              </tr>
-              <tr>
-                <th scope="col" className="ds-rowhead">
-                  Cached
-                </th>
-                {HEADS.map((h) => (
-                  <th key={h} scope="col" className={kvHeadOf(SMOLLM2, h) % 2 ? "ds-odd" : ""}>
-                    <button
-                      type="button"
-                      className="ds-head"
-                      aria-pressed={h === head}
-                      aria-label={`Query head ${h}`}
-                      onClick={() => setHead(h)}
-                    >
-                      {h}
-                    </button>
-                  </th>
-                ))}
-                <th scope="col" className="ds-detail-head">
-                  Head {head}
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {(weights[0] ?? []).map((_, s) => (
-                <tr key={s} className={s === t ? "is-new" : undefined}>
-                  <th scope="row" className="ds-rowhead">
-                    <span className="ds-pos">{s}</span> {shown(TOKENS[s] ?? "")}
-                  </th>
-                  {HEADS.map((h) => {
-                    const w = weights[h]?.[s] ?? 0;
-                    return (
-                      <td
-                        key={h}
-                        className={h === head ? "ds-cell is-selected" : "ds-cell"}
-                        style={{ "--w": w.toFixed(3) } as CSSProperties}
-                      >
-                        <span className="visually-hidden">{w.toFixed(2)}</span>
-                      </td>
-                    );
-                  })}
-                  <td className="ds-detail">
-                    <span
-                      className="ds-weight"
-                      style={{ width: `${((selected[s] ?? 0) * 100).toFixed(1)}%` }}
-                    />
-                    <span className="ds-value">{(selected[s] ?? 0).toFixed(2)}</span>
-                  </td>
+        <div>
+          <p id={`${ids}-attn`} className="ds-label">
+            Layer {layer}: how much each of the 9 query heads of position {t} (&quot;
+            {shown(TOKENS[t] ?? "")}&quot;) attends to each cached position
+          </p>
+          <div className="ds-attn-wrap" role="region" aria-labelledby={`${ids}-attn`} tabIndex={0}>
+            <table className="ds-attn" aria-labelledby={`${ids}-attn`}>
+              <thead>
+                <tr className="ds-groups">
+                  <td />
+                  {[0, 1, 2].map((g) => (
+                    <th key={g} scope="colgroup" colSpan={3}>
+                      KV head {g}
+                    </th>
+                  ))}
+                  <td />
                 </tr>
-              ))}
-            </tbody>
-          </table>
+                <tr>
+                  <th scope="col" className="ds-rowhead">
+                    Cached
+                  </th>
+                  {HEADS.map((h) => (
+                    <th key={h} scope="col" className={kvHeadOf(SMOLLM2, h) % 2 ? "ds-odd" : ""}>
+                      <button
+                        type="button"
+                        className="ds-head"
+                        aria-pressed={h === head}
+                        aria-label={`Query head ${h}`}
+                        onClick={() => setHead(h)}
+                      >
+                        {h}
+                      </button>
+                    </th>
+                  ))}
+                  <th scope="col" className="ds-detail-head">
+                    <span className="ds-wide">Head </span>
+                    {head}
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {(weights[0] ?? []).map((_, s) => (
+                  <tr key={s} className={s === t ? "is-new" : undefined}>
+                    <th scope="row" className="ds-rowhead">
+                      <span className="ds-pos">{s}</span> {shown(TOKENS[s] ?? "")}
+                    </th>
+                    {HEADS.map((h) => {
+                      const w = weights[h]?.[s] ?? 0;
+                      return (
+                        <td
+                          key={h}
+                          className={h === head ? "ds-cell is-selected" : "ds-cell"}
+                          style={{ "--w": w.toFixed(3) } as CSSProperties}
+                        >
+                          <span className="visually-hidden">{w.toFixed(2)}</span>
+                        </td>
+                      );
+                    })}
+                    <td className="ds-detail">
+                      <span
+                        className="ds-weight"
+                        style={{ width: `${((selected[s] ?? 0) * 100).toFixed(1)}%` }}
+                      />
+                      <span className="ds-value">{(selected[s] ?? 0).toFixed(2)}</span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
           <div className="ds-scale" aria-hidden="true">
             <span>0</span>
             <span className="ds-ramp" />

@@ -121,11 +121,8 @@
   vertical-align: middle;
 }
 
-.ds-caption {
-  caption-side: top;
-  text-align: left;
-  padding-bottom: var(--space-2);
-  color: var(--text-2);
+.ds-attn-wrap {
+  margin-top: var(--space-2);
 }
 
 .ds-groups th {
@@ -314,8 +311,24 @@ tr.is-new .ds-rowhead {
   }
 
   .ds-detail {
-    width: 3.25rem;
+    width: 2.25rem;
     padding-left: var(--space-2);
+  }
+
+  /* Room for nine 24 px columns: the selected head keeps its values, not its bars, and row
+     labels keep their tokens; the positions stay in the accessible text. */
+  .ds-weight,
+  .ds-wide {
+    display: none;
+  }
+
+  .ds-rowhead .ds-pos {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
   }
 
   .ds-rowhead {
