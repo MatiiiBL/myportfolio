@@ -20,11 +20,15 @@
       } catch (error) {}
       // The home page's scroll intro (src/pages/home/intro) pins the hero for four screens of
       // scroll; marking it here applies that height before the first paint. Only when scripts
-      // run and the visitor has not asked for reduced motion. It plays once per session: after
-      // that (src/pages/home/intro/arrive.ts keeps the key), or when the visit starts at a
-      // section of the home page, the hero is laid out as the intro leaves it.
+      // run, the visitor has not asked for reduced motion and the window is large enough (the
+      // build writes in the query from src/pages/home/intro/screen.ts). It plays once per
+      // session: after that (src/pages/home/intro/arrive.ts keeps the key), or when the visit
+      // starts at a section of the home page, the hero is laid out as the intro leaves it.
       try {
-        if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        if (
+          !matchMedia("(prefers-reduced-motion: reduce)").matches &&
+          matchMedia("(min-width: 1024px) and (min-height: 600px)").matches
+        ) {
           var path = location.pathname;
           var home = path === "/myportfolio/" || path === "/myportfolio/index.html";
           var intro = home && location.hash.length > 1 ? "arrived" : "play";
@@ -65,7 +69,7 @@
 </style>
     <link rel="stylesheet" crossorigin href="/myportfolio/assets/Section-CFzk_xjI.css" disabled>
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"Person","name":"Matías Blanco","url":"https://matiiibl.github.io/myportfolio/","email":"mailto:matias.blancobalaguer@columbia.edu","description":"I build fast, verified systems from scratch.","jobTitle":"Computer Engineering student at Columbia University","affiliation":{"@type":"CollegeOrUniversity","name":"Columbia University"},"address":{"@type":"PostalAddress","addressLocality":"New York, NY"},"knowsLanguage":["Spanish","English","Portuguese","Chinese"],"sameAs":["https://github.com/MatiiiBL","https://www.linkedin.com/in/matias-blanco-uy/"]}</script>
-    <script type="module" crossorigin src="/myportfolio/assets/index-CS-tTE_Z.js"></script>
+    <script type="module" crossorigin src="/myportfolio/assets/index-MqCG0OiK.js"></script>
     <link rel="stylesheet" crossorigin href="/myportfolio/assets/index-NsLan7xt.css">
   </head>
   <body>
