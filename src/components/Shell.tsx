@@ -55,7 +55,7 @@ export function Shell({ children }: { children: ReactNode }) {
             </li>
           </ul>
           <p className="site-footer-note">
-            Built by hand, <a href={SOURCE_URL}>source on GitHub</a>.
+            <a href={SOURCE_URL}>Source on GitHub</a>.
           </p>
         </div>
       </footer>
