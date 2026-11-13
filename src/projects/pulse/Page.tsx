@@ -34,17 +34,18 @@ export default function Page() {
             (RV32IM: the base integer instructions plus multiply and divide) drives a neural
             processing unit (NPU): an 8 × 8 systolic array of INT8 multiply-accumulate cells with
             its own DMA engine. Bare-metal C firmware, built with clang, programs the NPU through
-            memory-mapped registers. Quantized MNIST runs 115 times faster on the NPU than on the
-            CPU alone, with bit-identical results, and the design meets timing at 40 MHz on a
-            Lattice ECP5 FPGA with a fully open-source flow.
+            memory-mapped registers. In cycle-accurate simulation of the RTL, quantized MNIST runs
+            115 times faster on the NPU than on the CPU alone, with bit-identical results. The
+            design meets timing at 40 MHz on a Lattice ECP5 FPGA with a fully open-source flow: it
+            is placed and routed, but has not yet run on a board.
           </p>
           <p>
             The array is the easy part. The hard parts are keeping it fed and proving the chip
-            right. Eight rows and eight columns of operands must arrive every cycle, so the memory
-            system, not the multipliers, sets the throughput. And the RTL is checked against a C++
-            reference simulator written separately from the same spec, compared at every retired
-            instruction on thousands of random programs, while the NPU is tested bit for bit against
-            a Python model in six array and port configurations.
+            right. A full tile needs a new operand for each of the eight rows and eight columns, 16
+            bytes, every cycle, so the memory system, not the multipliers, sets the throughput. And
+            the RTL is checked against a C++ reference simulator written separately from the same
+            spec, compared at every retired instruction on thousands of random programs, while the
+            NPU is tested bit for bit against a Python model in six array and port configurations.
           </p>
         </div>
       </Section>
@@ -75,7 +76,7 @@ export default function Page() {
               takes the full INT8 range. The picture runs a cycle-level model written from{" "}
               <SourceLink file="rtl/npu/npu_opbuf.sv" />, <SourceLink file="rtl/npu/npu_pe.sv" />{" "}
               and <SourceLink file="rtl/npu/npu_top.sv" />; its tests check it against a plain
-              matrix product and against every cycle count measured on the RTL in{" "}
+              matrix product and against every cycle count measured in RTL simulation in{" "}
               <SourceLink file="docs/npu.md" anchor="6-performance" />.
             </>
           }
@@ -87,9 +88,11 @@ export default function Page() {
       <Section id="results" title="Results">
         <div className="project-prose">
           <p>
-            Measured on the RTL with Verilator, which counts cycles exactly; times assume the 40 MHz
-            clock the FPGA build meets. The CPU baselines are the same kernels in plain C, compiled
-            with clang <code>-O2</code> and checked for equal output.
+            Every number below comes from cycle-accurate simulation of the RTL with Verilator, or
+            from the FPGA tools for timing and area; times assume the 40 MHz clock that the placed
+            and routed design meets. The chip has not run on a board yet. The CPU baselines are the
+            same kernels in plain C, compiled with clang <code>-O2</code> and checked for equal
+            output.
           </p>
         </div>
 
@@ -105,9 +108,9 @@ export default function Page() {
           caption={
             <>
               MNIST is a 784-128-10 multilayer perceptron, batch 8:{" "}
-              {mnist?.cpu.toLocaleString("en-US")} cycles per image on the CPU (8.8 ms) against{" "}
-              {mnist?.npu.toLocaleString("en-US")} (76 µs). Small GEMMs are dominated by the driver,
-              large ones by moving operands. Source:{" "}
+              {mnist?.cpu.toLocaleString("en-US")} cycles per image on the CPU (8.8 ms at 40 MHz)
+              against {mnist?.npu.toLocaleString("en-US")} (76 µs). Small GEMMs are dominated by the
+              driver, large ones by moving operands. Source:{" "}
               <SourceLink file="README.md" anchor="results" />.
             </>
           }
@@ -115,7 +118,7 @@ export default function Page() {
 
         <BarChart
           title="One 8 × 8 × 1024 tile, as the operand path improved"
-          subtitle="multiply-accumulates per cycle · peak 64"
+          subtitle="multiply-accumulates per NPU cycle, write-back included · peak 64"
           categories={results.tileSteps.map((s) => s.config)}
           categoryLabel="NPU configuration"
           series={[
@@ -129,9 +132,14 @@ export default function Page() {
           references={[{ value: 64, label: "peak" }]}
           caption={
             <>
-              A wider DMA port (16 bytes per cycle from four banks) and operand reuse took one tile
-              from {results.tileSteps[0]?.cycles.toLocaleString("en-US")} cycles to{" "}
-              {results.tileSteps.at(-1)?.cycles.toLocaleString("en-US")}. Source:{" "}
+              Each bar is one command, counted from <code>START</code> to <code>DONE</code>. With
+              both operands loaded, the 16-byte port from four banks reaches{" "}
+              {results.tileSteps[1]?.macsPerCycle}; keeping the weights (<code>B_KEEP</code>), as a
+              tiled GEMM does while it walks the rows of A, reaches{" "}
+              {results.tileSteps[2]?.macsPerCycle}. The last bar keeps both operands, so the DMA
+              loads nothing and only compute and write-back remain: it is the array&apos;s ceiling,
+              not a sustained rate. End to end, with the driver&apos;s register writes and polling,
+              the GEMM benchmarks reach up to 29.5 MACs per cycle. Source:{" "}
               <SourceLink file="README.md" anchor="npu-vs-cpu" />.
             </>
           }
@@ -143,8 +151,8 @@ export default function Page() {
           caption={
             <>
               Every critical path of the first version started at a block RAM output; each step
-              removed one. The final pipeline reaches {fpga.fmaxRange} at a 40 MHz constraint.
-              Source:{" "}
+              removed one. The final pipeline reaches {fpga.fmaxRange} at a 40 MHz constraint; Fmax
+              is nextpnr&apos;s estimate after place and route. Source:{" "}
               <SourceLink
                 file="README.md"
                 anchor="fpga-radiona-ulx3s-lattice-lfe5u-85f-speed-grade-6"

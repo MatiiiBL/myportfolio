@@ -32,14 +32,14 @@ export default function Page() {
       <Section id="overview" title="Overview">
         <div className="project-prose">
           <p>
-            Apex is the software of an autonomous Formula Student Driverless race car, and the
-            simulator it races in, written from scratch in C++20. The car is staged on a track it
-            has never seen, marked only by blue cones on the left and yellow cones on the right. On
-            lap 1 it finds the cones with a LiDAR and a camera, builds a map while localizing in it
-            (EKF-SLAM: an extended Kalman filter over the car&apos;s pose and every cone), and
-            drives a path planned through the cones it has seen so far. Back at the line it closes
-            the map, computes a minimum-curvature raceline and races nine more laps with model
-            predictive control (MPC).
+            I wrote Apex from scratch in C++20: the software of an autonomous Formula Student
+            Driverless race car, and the simulator it races in. Every run on this page happens in
+            that simulator. The car is staged on a track it has never seen, marked only by blue
+            cones on the left and yellow cones on the right. On lap 1 it finds the cones with a
+            LiDAR and a camera, builds a map while localizing in it (EKF-SLAM: an extended Kalman
+            filter over the car&apos;s pose and every cone), and drives a path planned through the
+            cones it has seen so far. Back at the line it closes the map, computes a
+            minimum-curvature raceline and races nine more laps with model predictive control (MPC).
           </p>
           <p>
             Each part is a known algorithm. The hard part is making them work together on noisy
@@ -60,7 +60,7 @@ export default function Page() {
       >
         <div className="project-prose">
           <p>
-            One recorded run: the default car on the {summary.trackLength} m{" "}
+            One run recorded in the simulator: the default car on the {summary.trackLength} m{" "}
             <code>{summary.track}</code> layout, seed {summary.seed}. During lap 1 the cones appear
             as the estimator adds them to its map, and the bold line ahead of the car is the path
             the planner finds through what is mapped so far, planned to come to rest before its end.
@@ -73,14 +73,14 @@ export default function Page() {
           subtitle="simulated · recorded with apex replay · pose every 0.1 s"
           caption={
             <>
-              The car finished in {summary.totalTime} s with no penalty: lap 1 in {summary.lap1} s,
-              the best racing lap in {summary.bestLap} s, up to {summary.maxSpeed} m/s. It mapped{" "}
-              {summary.landmarks} landmarks for {summary.cones} cones, with{" "}
-              {(summary.mapRms * 100).toFixed(1)} cm RMS position error in this run. Faint dots are
-              cones it has not mapped yet; the car never sees them. Play, scrub with the slider (its
-              arrow keys move 1 s, Page Up and Page Down 10 s), or pick a lap. Recorded with{" "}
-              <code>apex replay</code> and <SourceLink file="results/runs/configs/replay.json" />,
-              then downsampled for the page.
+              In this simulated run the car finished in {summary.totalTime} s with no penalty: lap 1
+              in {summary.lap1} s, the best racing lap in {summary.bestLap} s, up to{" "}
+              {summary.maxSpeed} m/s. It mapped {summary.landmarks} landmarks for {summary.cones}{" "}
+              cones, with {(summary.mapRms * 100).toFixed(1)} cm RMS position error in this run.
+              Faint dots are cones it has not mapped yet; the car never sees them. Play, scrub with
+              the slider (its arrow keys move 1 s, Page Up and Page Down 10 s), or pick a lap.
+              Recorded with <code>apex replay</code> and{" "}
+              <SourceLink file="results/runs/configs/replay.json" />, then downsampled for the page.
             </>
           }
         >
@@ -107,7 +107,7 @@ export default function Page() {
           tabIndex={0}
         >
           <table className="project-table">
-            <caption>33 ten-lap runs, the full stack against the oracle</caption>
+            <caption>33 simulated ten-lap runs, the full stack against the oracle</caption>
             <thead>
               <tr>
                 <td />
@@ -166,9 +166,10 @@ export default function Page() {
           value={{ type: "log", label: "time per call", format: micro, tickFormat: micro }}
           caption={
             <>
-              The full stack, three laps on each reference layout with nothing else running. The MPC
-              is the tightest, at {results.compute[0]?.p99Us} µs against 2 ms; the whole closed
-              loop, simulator included, runs 43.6 times faster than real time. Source:{" "}
+              Wall-clock time of the car&apos;s software while it drives three simulated laps on
+              each reference layout, with nothing else running. The MPC is the tightest, at{" "}
+              {results.compute[0]?.p99Us} µs against 2 ms; the whole closed loop, simulator
+              included, runs 43.6 times faster than real time. Source:{" "}
               <SourceLink file="docs/evaluation.md" anchor="compute" />.
             </>
           }
@@ -176,7 +177,7 @@ export default function Page() {
 
         <LineChart
           title="Map and localization error as sensor noise grows"
-          subtitle="12 runs per level · RMS, mean over runs"
+          subtitle="12 simulated runs per level · RMS, mean over runs"
           x={{ type: "linear", label: "sensor noise (× default)", ticks: [0, 0.5, 1, 2, 4] }}
           y={{ type: "linear", label: "error (cm)", format: (v) => `${v.toFixed(1)} cm` }}
           series={[
@@ -227,10 +228,10 @@ export default function Page() {
           endLabels
           caption={
             <>
-              Both solve every QP of 1,000 MPC calls. The structure-exploiting solver is 4.7 to 5.2
-              times faster warm-started, and its cost grows linearly with the horizon. The
-              raceline&apos;s dense QP solver beats OSQP too: {results.racelineQp.oursMs} ms against{" "}
-              {results.racelineQp.osqpMs} ms at 1e-9. Source:{" "}
+              Both solve every QP of 1,000 MPC calls on the simulated mixed layout. The
+              structure-exploiting solver is 4.7 to 5.2 times faster warm-started, and its cost
+              grows linearly with the horizon. The raceline&apos;s dense QP solver beats OSQP too:{" "}
+              {results.racelineQp.oursMs} ms against {results.racelineQp.osqpMs} ms at 1e-9. Source:{" "}
               <SourceLink file="results/control/qp_bench.md" />.
             </>
           }
@@ -243,7 +244,7 @@ export default function Page() {
           tabIndex={0}
         >
           <table className="project-table">
-            <caption>The path-tracking controller, 12 runs each</caption>
+            <caption>The path-tracking controller, 12 simulated runs each</caption>
             <thead>
               <tr>
                 <td />
