@@ -212,6 +212,12 @@ test("the theme toggle cycles system, dark and light, and remembers the choice",
   await page.getByRole("button", { name: /^Theme:/ }).click();
   await expect(root).not.toHaveAttribute("data-theme");
   expect(await page.evaluate(() => localStorage.getItem("theme"))).toBeNull();
+  // Back on the system theme, each theme-color meta has its own scheme's color again, so the
+  // browser's UI follows the system when it changes.
+  const themeColor = (scheme: string) =>
+    page.locator(`meta[name="theme-color"][media="(prefers-color-scheme: ${scheme})"]`);
+  await expect(themeColor("dark")).toHaveAttribute("content", "#0d1117");
+  await expect(themeColor("light")).toHaveAttribute("content", "#ffffff");
 });
 
 test("following links updates the title, the scroll position and the focus", async ({ page }) => {
