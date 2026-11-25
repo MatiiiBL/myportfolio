@@ -1,5 +1,6 @@
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { Figure } from "../../components/Figure";
+import { papersFinished } from "./finished";
 import bench from "./data/bench-throughput.json";
 import { LiveChart } from "./LiveChart";
 import { PaperGrid } from "./PaperGrid";
@@ -407,7 +408,7 @@ export function PipelineSim() {
                 cost, {sample.resent} of the {killed.inFlight} requests in flight at the kill sent
                 again.
                 {finished &&
-                  ` All ${n(run.totals.papersDone)} papers finished; requests paid for twice: ${run.totals.paidTwice}.`}
+                  ` ${papersFinished(run.totals, run.scenario.papers)}; requests paid for twice: ${run.totals.paidTwice}.`}
               </p>
             )}
           </div>
