@@ -10,7 +10,10 @@ export default defineConfig({
   // scripts/prerender.ts reads the manifest to find each route's lazy chunk and its stylesheets.
   build: { manifest: true },
   test: {
-    environment: "jsdom",
+    // Most tests check pure functions, so they run in Node. A test file that renders components
+    // or touches the DOM starts with a `// @vitest-environment jsdom` comment and gets its own
+    // jsdom; building one for every file was over half of the suite's time.
+    environment: "node",
     // Testing Library unmounts rendered components after each test only when afterEach is global.
     globals: true,
     setupFiles: ["./src/test/setup.ts"],
