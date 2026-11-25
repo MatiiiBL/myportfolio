@@ -332,6 +332,28 @@ test.describe("the scroll intro", () => {
     await expect(page.locator("html")).toHaveAttribute("data-intro", "play");
     await expect(page.locator(".intro")).toHaveAttribute("data-stage", "silicon");
   });
+
+  test("arrives at once when the visitor asks for reduced motion while it plays", async ({
+    page,
+  }) => {
+    await page.goto("./");
+    await scrollIntroTo(page, 0.34);
+    await expect(page.locator(".intro")).toHaveAttribute("data-stage", "robots");
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await expectArrived(page);
+  });
+
+  test("arrives at once, showing the hero's search, when its engine fails to load", async ({
+    page,
+  }) => {
+    // A page cached from before a deploy can name an engine chunk that is no longer there.
+    await page.route(/\/assets\/engine-[\w-]+\.js$/, (route) => route.abort());
+    await page.goto("./");
+    await expectArrived(page);
+    await page.getByRole("group", { name: /HNSW search demo/ }).focus();
+    await page.keyboard.press("ArrowRight");
+    await expect(page.locator(".hnsw-readout")).toContainText("of 96 distances computed");
+  });
 });
 
 test.describe("in smaller windows", () => {

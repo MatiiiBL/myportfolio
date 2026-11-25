@@ -79,14 +79,17 @@ function fit(box: Box, aspect: number): Box {
   return { x: box.x + (box.w - w) / 2, y: box.y + (box.h - h) / 2, w, h };
 }
 
-/** Starts the intro on its root element; returns the function that stops it. */
-export function startIntro(root: HTMLElement): () => void {
+/**
+ * Starts the intro on its root element; returns the function that stops it, or null when it
+ * cannot start (no 2D canvas context, or the hero's markup is not there).
+ */
+export function startIntro(root: HTMLElement): (() => void) | null {
   const pinEl = root.querySelector<HTMLElement>(".intro-pin");
   const canvasEl = root.querySelector<HTMLCanvasElement>(".intro-canvas");
   const svgEl = root.querySelector<SVGSVGElement>(".hnsw-svg");
   const figureEl = root.querySelector<HTMLElement>(".hero-figure");
   const context = canvasEl?.getContext("2d");
-  if (!pinEl || !canvasEl || !svgEl || !figureEl || !context) return () => {};
+  if (!pinEl || !canvasEl || !svgEl || !figureEl || !context) return null;
   const pin: HTMLElement = pinEl;
   const canvas: HTMLCanvasElement = canvasEl;
   const svg: SVGSVGElement = svgEl;

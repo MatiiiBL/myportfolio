@@ -54,8 +54,10 @@ export function ScheduleExplorer() {
   const last = steps.length - 1;
   const current = steps[Math.min(index, last)] as TileStep;
   const highlight = hovered ?? pinned;
-  // Playback stops by itself at the last tile.
-  const running = playing && !reduced && index < last;
+  // Playback stops by itself at the last tile, and stays stopped: stepping back, changing a knob
+  // or Reset after the end must not start it again.
+  if (playing && index >= last) setPlaying(false);
+  const running = playing && !reduced;
   const outerExtent =
     cfg.order === "nm" ? SHAPE.n / cfg.tile_n : (SHAPE.m / cfg.tile_m) * (SHAPE.n / cfg.tile_n);
 

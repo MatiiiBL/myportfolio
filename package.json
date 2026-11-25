@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build && vite build --ssr src/entry-server.tsx --outDir dist-ssr && node scripts/prerender.ts",
+    "build": "tsc -b && vite build && node scripts/budget.ts && vite build --ssr src/entry-server.tsx --outDir dist-ssr && node scripts/prerender.ts",
     "preview": "node scripts/serve.ts",
     "typecheck": "tsc -b",
     "lint": "eslint .",

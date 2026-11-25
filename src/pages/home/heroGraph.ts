@@ -39,7 +39,10 @@ export interface LayerRoute {
   layer: number;
   /** The nodes the search walked through, from where it entered the layer to where it left. */
   path: number[];
-  /** Every node whose distance to the query was computed on this layer. */
+  /**
+   * Every node whose distance to the query was computed on this layer, once each: a greedy walk
+   * computes a neighbor's distance again when a later step reaches it again.
+   */
   visited: number[];
 }
 
@@ -100,15 +103,20 @@ export function routeOf(graph: HnswGraph, search: SearchResult): LayerRoute[] {
     return route;
   };
 
+  // The drawing keys each visited ring by layer and node, so a node must appear once per layer.
+  const visit = (route: LayerRoute, nodes: readonly number[]) => {
+    for (const node of nodes) if (!route.visited.includes(node)) route.visited.push(node);
+  };
+
   const parent = new Map<number, number>();
   for (const step of search.steps) {
     if (step.kind === "greedy") {
       const route = at(step.layer);
       if (route.path.length === 0) route.path.push(step.from);
       if (step.to !== route.path[route.path.length - 1]) route.path.push(step.to);
-      route.visited.push(...step.evaluated);
+      visit(route, step.evaluated);
     } else if (step.kind === "expand") {
-      at(0).visited.push(...step.evaluated);
+      visit(at(0), step.evaluated);
       for (const id of step.accepted) if (!parent.has(id)) parent.set(id, step.node);
     }
   }

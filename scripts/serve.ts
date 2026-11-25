@@ -66,7 +66,17 @@ createServer((req, res) => {
   }
   if (!url.pathname.startsWith(BASE)) return notFound();
 
-  const relative = normalize(decodeURIComponent(url.pathname.slice(BASE.length)));
+  let decoded: string;
+  try {
+    decoded = decodeURIComponent(url.pathname.slice(BASE.length));
+  } catch {
+    // A malformed escape such as %E0%A4%A: GitHub Pages answers 400. Unhandled, the URIError
+    // would stop the server, and every test after it would fail to connect.
+    res.writeHead(400, { "Content-Type": "text/plain; charset=utf-8" });
+    res.end("Bad request\n");
+    return;
+  }
+  const relative = normalize(decoded);
   if (relative.startsWith("..")) return notFound();
   const target = join(dist, relative);
 

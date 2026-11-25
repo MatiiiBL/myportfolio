@@ -32,11 +32,19 @@ export function setTheme(theme: Theme): void {
   for (const listener of listeners) listener();
 }
 
-/** Keeps the browser UI color (theme-color) on the page background. */
+/** The page background in each scheme (--bg in tokens.css), as index.html's metas give it. */
+const SCHEME_BG = { dark: "#0d1117", light: "#ffffff" } as const;
+
+/**
+ * Keeps the browser UI color (theme-color) on the page background. A chosen theme puts both
+ * metas on its background; "system" gives each back its own scheme's, so the browser UI follows
+ * the system when it changes.
+ */
 function syncThemeColor(): void {
   const bg = getComputedStyle(document.documentElement).getPropertyValue("--bg").trim();
+  const system = currentTheme() === "system";
   for (const meta of document.querySelectorAll<HTMLMetaElement>('meta[name="theme-color"]')) {
-    meta.content = bg;
+    meta.content = system ? SCHEME_BG[meta.media.includes("light") ? "light" : "dark"] : bg;
   }
 }
 
