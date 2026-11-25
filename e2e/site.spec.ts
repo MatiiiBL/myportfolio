@@ -147,6 +147,22 @@ test("the static HTML carries the content, the metadata and the lazy page bodies
   expect((await request.get("./og.png")).headers()["content-type"]).toBe("image/png");
 });
 
+test("a page's index.html address shows that page, without the file name", async ({ page }) => {
+  const first = projects[0];
+  if (!first) throw new Error("no projects");
+  for (const [path, heading] of [
+    ["", profile.name],
+    [`projects/${first.slug}/`, first.name],
+  ] as const) {
+    const errors = collectErrors(page, 200);
+    await page.goto(`./${path}index.html`);
+    await expect(page).toHaveURL(new RegExp(`/myportfolio/${path}$`));
+    await page.waitForLoadState("networkidle");
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(heading);
+    expect(errors).toEqual([]);
+  }
+});
+
 test("a malformed path gets 400, as on GitHub Pages, and the server keeps serving", async ({
   request,
 }) => {

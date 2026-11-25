@@ -12,6 +12,15 @@ import App from "./App";
 const root = document.getElementById("root");
 if (!root) throw new Error("index.html has no #root element");
 
+// GitHub Pages also serves each prerendered page at its file's path (/myportfolio/index.html,
+// /myportfolio/projects/pulse/index.html). The routes are the directory paths, so the router
+// would hydrate such a page as the 404 page; drop the file name from the address first.
+const { pathname, search, hash } = window.location;
+if (pathname.endsWith("/index.html")) {
+  const path = pathname.slice(0, -"index.html".length);
+  window.history.replaceState(window.history.state, "", path + search + hash);
+}
+
 const app = (
   <StrictMode>
     <BrowserRouter basename={import.meta.env.BASE_URL}>
