@@ -118,12 +118,15 @@ export function Intro({ children }: { children: ReactNode }) {
     focusMoved(document.activeElement);
     // A window that becomes too small for the stage (a resize, a rotation, split screen) arrives
     // at once, rather than leave a squeezed stage; growing it again does not bring the intro back.
+    // So does asking for reduced motion while it plays: the head script would not have started it.
     const large = window.matchMedia(INTRO_SCREEN);
-    const onResize = () => {
-      if (!large.matches) arrive(element);
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const onMedia = () => {
+      if (!large.matches || reduce.matches) arrive(element);
     };
-    large.addEventListener("change", onResize);
-    onResize();
+    large.addEventListener("change", onMedia);
+    reduce.addEventListener("change", onMedia);
+    onMedia();
 
     // Until the intro arrives its stage keeps the hero's search hidden, and only the engine
     // arrives it on scroll. So when the engine cannot run (its chunk failed to download, as a
@@ -147,7 +150,8 @@ export function Intro({ children }: { children: ReactNode }) {
       document.removeEventListener("click", onClick, true);
       window.removeEventListener("keydown", onKey);
       document.removeEventListener("focusin", onFocus);
-      large.removeEventListener("change", onResize);
+      large.removeEventListener("change", onMedia);
+      reduce.removeEventListener("change", onMedia);
     };
   }, [mode]);
 

@@ -98,8 +98,10 @@ when JavaScript runs and the visitor has not asked for reduced motion. In a smal
 formations would be too small to read (a phone) or the stage too squeezed (a short laptop window,
 a phone on its side), so there, as with reduced motion, without JavaScript and in the prerendered
 HTML, the home page is the plain hero from the first paint. A window that becomes smaller while
-the intro plays (a resize, a rotation, split screen) arrives at once, the same way; growing it
-again does not bring the intro back.
+the intro plays (a resize, a rotation, split screen), or a visitor who turns on reduced motion
+meanwhile, arrives at once, the same way; growing the window again does not bring the intro back.
+It also arrives at once when its canvas engine cannot run (its chunk failed to download, or the
+browser gives no 2D canvas), so the hero's search is never left hidden.
 
 It is isolated so it can go as easily as it came:
 
@@ -120,9 +122,14 @@ script, the mount point, the tests and this section:
 git revert --no-edit $(git log --format=%h -- src/pages/home/intro)
 ```
 
-Today those are three commits: "Open the home page with a scroll intro through four projects"
+Today those are six commits: "Open the home page with a scroll intro through four projects"
 (`9f6e85b`), "Play the home page's scroll intro once per session" (`8805daf`), which made it
-one-way, and "Play the scroll intro only in large windows".
+one-way, "Play the scroll intro only in large windows" (`85aed0e`), "Run unit tests in Node and
+give jsdom only to the files that use it" (`748c969`), "Show the hero when the scroll intro's
+engine cannot run" (`5d0b851`) and "Stop the scroll intro when the visitor asks for reduced
+motion". `748c969` changed the unit test setup for the whole suite and touched the intro only to
+give `arrive.test.ts` jsdom, so reverting it puts every test file back on jsdom: the tests pass as
+before, more slowly. Leaving it out of the revert stops it at a conflict on that file.
 
 ## Deploy
 

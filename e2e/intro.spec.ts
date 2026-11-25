@@ -333,6 +333,16 @@ test.describe("the scroll intro", () => {
     await expect(page.locator(".intro")).toHaveAttribute("data-stage", "silicon");
   });
 
+  test("arrives at once when the visitor asks for reduced motion while it plays", async ({
+    page,
+  }) => {
+    await page.goto("./");
+    await scrollIntroTo(page, 0.34);
+    await expect(page.locator(".intro")).toHaveAttribute("data-stage", "robots");
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await expectArrived(page);
+  });
+
   test("arrives at once, showing the hero's search, when its engine fails to load", async ({
     page,
   }) => {
