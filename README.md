@@ -27,7 +27,7 @@ npm run dev        # http://localhost:5173/myportfolio/
 | Command                | What it does                                                                                                                                     |
 | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `npm run check`        | Prettier, ESLint, TypeScript, the Vitest unit tests and the production build. Every commit passes it.                                            |
-| `npm run build`        | Type-checks, builds the client, builds `src/entry-server.tsx` for Node and runs `scripts/prerender.ts`, which writes every page into `dist/`.    |
+| `npm run build`        | Type-checks, builds the client, holds the home page to its JavaScript budget (`scripts/budget.ts`) and prerenders every page into `dist/`.       |
 | `npm run preview`      | Serves `dist/` the way GitHub Pages does (404 page with status 404, trailing-slash redirects, gzip) at http://localhost:4173/myportfolio/.       |
 | `npm run e2e`          | Playwright tests against the build, in desktop and mobile Chrome. Run `npx playwright install chromium` once first.                              |
 | `npm run share-assets` | Redraws `public/og.png` (the 1200×630 share image) and the PNG icons with headless Chromium. Run it after changing the profile text or the icon. |
@@ -62,6 +62,7 @@ src/
   entry-server.tsx  renders a route to HTML for the prerender
 scripts/
   prerender.ts      writes every route's static HTML, head tags and sitemap.xml into dist/
+  budget.ts         fails the build when the home page's JavaScript is over 120 kB gzipped
   serve.ts          serves dist/ like GitHub Pages, for preview, e2e and Lighthouse
   share-assets.ts   draws the share image and the icons in public/
 public/             favicon, icons, share image, robots.txt

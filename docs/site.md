@@ -38,7 +38,8 @@ src/
     <slug>/       Page.tsx (default export: the page body) + that project's visualizations,
                   data (data/*.json with a SOURCE note) and tests
   entry-server.tsx  renders a route to HTML for the prerender
-scripts/          prerender.ts, serve.ts (dist/ served like GitHub Pages), share-assets.ts
+scripts/          prerender.ts, budget.ts (the home page's JavaScript budget), serve.ts (dist/
+                  served like GitHub Pages), share-assets.ts
 public/           favicon, icons, share image (og.png), robots.txt
 e2e/              Playwright tests against the production build
 docs/site.md      this document
@@ -144,16 +145,17 @@ same:
   in both themes, alt text, no information carried by color alone, works at 320 px wide and at
   200% zoom.
 - Performance: Lighthouse 95+ in every category on the home page and every project page (mobile
-  profile). Home page JavaScript under 120 kB gzipped; fonts self-hosted (no third-party
+  profile). Home page JavaScript under 120 kB gzipped, counting the scroll intro's engine
+  (`scripts/budget.ts` fails the build when it is over); fonts self-hosted (no third-party
   requests at all); images sized and lazy-loaded.
 - Works without JavaScript for reading (prerendered HTML); interactivity is an enhancement.
 - No analytics, trackers or cookies.
 
 ## 8. Build and deploy
 
-`npm run build` = typecheck + Vite build + prerender. The deploy workflow runs the checks and the
-end-to-end tests, then publishes `dist/` to `gh-pages` on every push to `Main`. Work happens on
-branches; `Main` is pushed only when the site is ready.
+`npm run build` = typecheck + Vite build + JavaScript budget + prerender. The deploy workflow
+runs the checks and the end-to-end tests, then publishes `dist/` to `gh-pages` on every push to
+`Main`. Work happens on branches; `Main` is pushed only when the site is ready.
 
 The end-to-end tests run against `dist/` served by `scripts/serve.ts`, which behaves like GitHub
 Pages (404.html with status 404, trailing-slash redirects, gzip). `E2E_PORT` picks another port
