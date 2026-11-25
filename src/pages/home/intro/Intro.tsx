@@ -125,11 +125,22 @@ export function Intro({ children }: { children: ReactNode }) {
     large.addEventListener("change", onResize);
     onResize();
 
-    let stop: (() => void) | undefined;
+    // Until the intro arrives its stage keeps the hero's search hidden, and only the engine
+    // arrives it on scroll. So when the engine cannot run (its chunk failed to download, as a
+    // page cached from before a deploy can ask for one that is gone, or the canvas cannot draw),
+    // the intro arrives at once and the visitor gets the hero.
+    let stop: (() => void) | null = null;
     let cancelled = false;
-    void import("./engine").then(({ startIntro }) => {
-      if (!cancelled && introMode() === "play") stop = startIntro(element);
-    });
+    void import("./engine").then(
+      ({ startIntro }) => {
+        if (cancelled || introMode() !== "play") return;
+        stop = startIntro(element);
+        if (!stop) arrive(element);
+      },
+      () => {
+        if (!cancelled) arrive(element);
+      },
+    );
     return () => {
       cancelled = true;
       stop?.();
