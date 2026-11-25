@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { bruteForceKnn, l2Squared, searchHnsw } from "../../lib/hnsw/hnsw";
 import { GRID } from "../../lib/hnsw/points";
-import { HERO_GRAPH, heroGraph, heroSearch, routeOf } from "./heroGraph";
+import { HERO_GRAPH, HERO_START, heroGraph, heroSearch, routeOf } from "./heroGraph";
 
 const graph = heroGraph();
 const N = 25;
@@ -34,6 +34,29 @@ describe("the home page's HNSW graph", () => {
       });
       expect(layers[2]?.path.at(-1)).toBe(search.neighbors[0]?.id);
     }
+  });
+
+  it("marks each node it computed a distance to once per layer, and counts every computation", () => {
+    for (const q of grid) {
+      const search = searchHnsw(graph, q, 1, HERO_GRAPH.ef);
+      const computed = new Map<number, Set<number>>();
+      for (const step of search.steps) {
+        if (step.kind === "stop") continue;
+        const layer = step.kind === "greedy" ? step.layer : 0;
+        const nodes = computed.get(layer) ?? new Set<number>();
+        for (const node of step.evaluated) nodes.add(node);
+        computed.set(layer, nodes);
+      }
+      for (const route of routeOf(graph, search)) {
+        expect(new Set(route.visited).size).toBe(route.visited.length);
+        expect(new Set(route.visited)).toEqual(computed.get(route.layer) ?? new Set());
+      }
+    }
+    // The walk from the first frame's query computes some distances twice; the readout counts
+    // them all, as vecdex does.
+    const first = heroSearch(HERO_START);
+    expect(first.layers.map((l) => l.visited.length)).toEqual([4, 8, 18]);
+    expect(first.distances).toBe(36);
   });
 
   it("says whether a full scan would find a closer point, and it almost never does", () => {
