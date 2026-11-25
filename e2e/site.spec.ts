@@ -147,6 +147,13 @@ test("the static HTML carries the content, the metadata and the lazy page bodies
   expect((await request.get("./og.png")).headers()["content-type"]).toBe("image/png");
 });
 
+test("a malformed path gets 400, as on GitHub Pages, and the server keeps serving", async ({
+  request,
+}) => {
+  expect((await request.get("./%E0%A4%A")).status()).toBe(400);
+  expect((await request.get("./")).status()).toBe(200);
+});
+
 test.describe("without JavaScript", () => {
   test.use({ javaScriptEnabled: false });
 
