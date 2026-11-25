@@ -90,6 +90,29 @@ test("the access view steps through the tiles", async ({ page }) => {
   await page.getByRole("button", { name: "Pause" }).click();
 });
 
+test("playback that has reached the last tile stays stopped", async ({ page }) => {
+  await open(page);
+  const slider = page.getByRole("slider", { name: "Tile" });
+  await slider.focus();
+  await page.keyboard.press("End");
+  await page.keyboard.press("ArrowLeft");
+  await page.getByRole("button", { name: "Play" }).click();
+  await expect(page.locator(".step-label")).toContainText("Tile 128 of 128");
+  // Playback advances about ten tiles a second, so half a second would show it running again.
+  await page.getByRole("button", { name: "Previous tile" }).click();
+  await page.waitForTimeout(500);
+  await expect(slider).toHaveValue("126");
+  await knob(page, /tile_m/)
+    .getByText("8", { exact: true })
+    .click();
+  await page.waitForTimeout(500);
+  await expect(slider).toHaveValue("0");
+  await page.getByRole("button", { name: "Reset to the defaults" }).click();
+  await page.waitForTimeout(500);
+  await expect(slider).toHaveValue("0");
+  await expect(page.getByRole("button", { name: "Play" })).toBeVisible();
+});
+
 test("selecting an operator finds it in the other column", async ({ page }) => {
   await open(page);
   const fused = page.getByRole("region", { name: "Fused" });
